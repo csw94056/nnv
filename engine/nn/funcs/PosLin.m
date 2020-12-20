@@ -1990,6 +1990,464 @@ classdef PosLin
     end
     
     
+    methods(Static) % reachability analysis using abstract-domain
+        
+        % step over-approximate reachability analysis using abstract-domain
+        % we use r set to represent abstract-domain with
+        function A = stepReachAbstractDomain_absdom(varargin)
+            % @I: absdom-input set
+            % @index: index of neuron performing stepReach
+            % @A: absdom output set represent abstract-domain of the output
+            % set
+            
+            % author: Sung Woo Choi
+            % date: 12/18/2020
+            
+            % reference: An Abstract Domain for Certifying Neural Networks,
+            % Gagandeep Singh, POPL 2019
+            
+            switch nargin
+                case 4
+                    I = varargin{1};
+                    index = varargin{2};
+                    l = varargin{3};
+                    u = varargin{4};
+                case 2
+                    I = varargin{1};
+                    index = varargin{2}
+                    [l, u] = I.getRange(index);
+                otherwise
+                    error('Invalid number of input arguments (should be 2 or 4)');
+            end
+            
+            if ~isa(I, 'AbsDom')
+                error('Input is not a AbsDom');
+            end
+            
+            lower_a = I.lower_a;
+            upper_a = I.upper_a;
+            lb = I.lb;
+            ub = I.ub;
+            len = length(lower_a);
+            if l >= 0
+                L = zeros(1, I.dim + 1);
+                L(index+1) = 1;
+                lower_a{len}(index,:) = L;
+                
+                U = zeros(1, I.dim + 1);
+                U(index+1) = 1;
+                upper_a{len}(index,:) = U;
+                
+                lb{len}(index) = l;
+                ub{len}(index) = u;
+
+                A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+            elseif u <= 0
+                lower_a{len}(index,:) = zeros(1, I.dim + 1);
+                upper_a{len}(index,:) = zeros(1, I.dim + 1);
+                
+                lb{len}(index) = 0;
+                ub{len}(index) = 0;
+
+                A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+            else % lb < 0 && ub > 0
+                if u <= -l % area of the first candidate abstract-domain; case (b)
+                    % constraint 1: y[index] >= 0
+                    lower_a{len}(index,:) = zeros(1, I.dim + 1);
+                    
+                    % constraint 2: y[index] <= ub(x[index] - lb)/(ub - lb)
+                    U = zeros(1, I.dim + 1);
+                    U(1) = -u*l/(u - l);
+                    U(index+1) = u/(u - l);
+                    upper_a{len}(index,:) = U;
+                    
+                    lb{len}(index) = 0;
+                    ub{len}(index) = u;
+                else % area of the second candidate abstract-domain; case (c)
+                    % constraint 1: y[index] >= x[index]
+                    L = zeros(1, I.dim + 1);
+                    L(index+1) = 1;
+                    lower_a{len}(index,:) = L;
+                    
+                    % constraint 2: y[index] <= ub(x[index] - lb)/(ub - lb)
+                    U = zeros(1, I.dim + 1);
+                    U(1) = -l*u/(u - l);
+                    U(index+1) = u/(u - l);
+                    upper_a{len}(index,:) = U;
+
+                    lb{len}(index) = l;
+                    ub{len}(index) = u;
+                end
+                
+                A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+            end
+        end
+        
+        % over-approximate reachability analysis using abstract-domain
+        function A = reach_absdom(varargin)
+            % @I: absdom input set
+            % @A: absdom output set
+            
+            % author: Sung Woo Choi
+            % date: 12/18/2020
+            
+            switch nargin
+                case 1
+                    I = varargin{1};
+                    dis_opt = [];
+                case 2
+                    I = varargin{2};
+                    dis_opt = varargin{2};
+                otherwise
+                    error('Invalid number of input arguments, should be 1 or 2');
+            end
+            
+            if ~isa(I, 'AbsDom')
+                error('Input is not a AbsDom');
+            end
+            
+            if isempty(I)
+                A = [];
+            else
+                lower_a = I.lower_a;
+                upper_a = I.upper_a;
+                lb = I.lb;
+                ub = I.ub;
+                len = length(lower_a);
+                
+                % create new matrices for lower and upper constraints and bounds.
+                lower_a{len+1} = zeros(I.dim, I.dim + 1);
+                upper_a{len+1} = zeros(I.dim, I.dim + 1);
+                lb{len+1} = zeros(I.dim, 1);
+                ub{len+1} = zeros(I.dim, 1);
+                In = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+            
+                for i=1:I.dim
+                    if strcmp(dis_opt, 'display')
+                        fprintf('\nPerforming approximate PosLin_%d operation using AbsDom', i);
+                    end
+                    In = PosLin.stepReachAbstractDomain_absdom(In,i,lb{len}(i),ub{len}(i));
+                end
+                A = In;
+            end
+        end
+    end
+    
+    methods(Static) % reachability analysis sstar set with two predicate constraints and abstract-domain instead of linear program
+        
+        % step over-approximate reachability analysis using two predicate
+        % cosntraints and abstract domain for finding upper and lower bounds
+        % we use rstar set to represent abstract-domain
+        
+        function R = stepReachAbstractDomain_twoConstraints_rstar(varargin)
+            % @I: rstar-input set
+            % @index: index of neuron performing stepReach
+            % @A: rstar output set represent abstract-domain of the output
+            % set
+            
+            % author: Sung Woo Choi
+            % date: 12/18/2020
+            
+            % reference: An Abstract Domain for Certifying Neural Networks,
+            % Gagandeep Singh, POPL 2019
+            
+            switch nargin
+                case 4
+                    I = varargin{1};
+                    index = varargin{2};
+                    l = varargin{3};
+                    u = varargin{4};
+                case 2
+                    I = varargin{1};
+                    index = varargin{2}
+                    [l, u] = I.getRange(index);
+                otherwise
+                    error('Invalid number of input arguments (should be 2 or 4)');
+            end
+            
+            if ~isa(I, 'RStar')
+                error('Input is not a RStar');
+            end
+            
+            lower_a = I.lower_a;
+            upper_a = I.upper_a;
+            lb = I.lb;
+            ub = I.ub;
+            len = length(lower_a);
+            
+            if l >= 0
+                L = zeros(1, I.dim + 1);
+                L(index+1) = 1;
+                lower_a{len}(index,:) = L;
+                
+                U = zeros(1, I.dim + 1);
+                U(index+1) = 1;
+                upper_a{len}(index,:) = U;
+                
+                lb{len}(index) = l;
+                ub{len}(index) = u;
+
+                R = RStar(I.V, I.C, I.d, lower_a, upper_a, lb, ub, I.iter);
+            elseif u <= 0
+                new_V = I.V;
+                new_V(index,:) = 0;
+                
+                lower_a{len}(index,:) = zeros(1, I.dim + 1);
+                upper_a{len}(index,:) = zeros(1, I.dim + 1);
+                
+                lb{len}(index) = 0;
+                ub{len}(index) = 0;
+
+                R = RStar(new_V, I.C, I.d, lower_a, upper_a, lb, ub, I.iter);
+            else % lb < 0 && ub > 0
+                % y[i] = ReLU(x[i]) = a[m+1]
+                new_V = [I.V zeros(I.dim, 1)];
+                new_V(index, :) = 0;
+                new_V(index, end) = 1;
+
+                C0 = [I.C zeros(size(I.C,1),1)];
+                d0 = I.d;
+                
+                % constraint 1: y[i] <= ub(x[i]-lb)/(ub-lb)
+                C1 = [-u*I.X(index,:)/(u-l) 1];
+                d1 = u*(I.c(index)-l)/(u-l);       
+                
+                if u <= -l % area of the first candidate abstract-domain; case (b)
+                    % constraint 2: y[i] >= 0
+                    m = size(I.C,2);
+                    C2 = [zeros(1,m) -1];
+                    d2 = 0;
+                    
+                    lower_a{len}(index,:) = zeros(1, I.dim + 1);
+
+                    U = zeros(1, I.dim + 1);
+                    U(1) = -u*l/(u - l);
+                    U(index+1) = u/(u - l);
+                    upper_a{len}(index,:) = U;
+                    
+                    lb{len}(index) = 0;
+                    ub{len}(index) = u;
+                else % area of the second candidate abstract-domain; case (c)
+                    % constraint 2: y[i] >= x[i]
+                    C2 = [I.X(index,:) -1];
+                    d2 = -I.c(index);
+                    
+                    % constraint 2: y[i] >= x[i]
+                    L = zeros(1, I.dim + 1);
+                    L(index+1) = 1;
+                    lower_a{len}(index,:) = L;
+
+                    U = zeros(1, I.dim + 1);
+                    U(1) = -l*u/(u - l);
+                    U(index+1) = u/(u - l);
+                    upper_a{len}(index,:) = U;
+
+                    lb{len}(index) = l;
+                    ub{len}(index) = u;
+                end
+                
+                new_C = [C0; C1; C2];
+                new_d = [d0; d1; d2];
+
+                R = RStar(new_V, new_C, new_d, lower_a, upper_a, lb, ub, I.iter);
+            end
+        end
+        
+        % over-approximate reachability analysis using rstar with abstract
+        % domain and two predicate constraints
+        function R = reach_rstar_absdom_with_two_pred_const(varargin)
+            % @I: rstar input set
+            % @: rstar output set
+            
+            switch nargin
+                case 1
+                    I = varargin{1};
+                    dis_opt = [];
+                case 2
+                    I = varargin{2};
+                    dis_opt = varargin{2};
+                otherwise
+                    error('Invalid number of input arguments, should be 1 or 2');
+            end
+            
+            if ~isa(I, 'RStar')
+                error('Input is not a RStar');
+            end
+            
+            if isempty(I)
+               R = [];
+            else
+                lower_a = I.lower_a;
+                upper_a = I.upper_a;
+                lb = I.lb;
+                ub = I.ub;
+                len = length(lower_a);
+                
+                % create new matrices for lower and upper constraints and bounds.
+                lower_a{len+1} = zeros(I.dim, I.dim + 1);
+                upper_a{len+1} = zeros(I.dim, I.dim + 1);
+                lb{len+1} = zeros(I.dim, 1);
+                ub{len+1} = zeros(I.dim, 1);
+                In = RStar(I.V, I.C, I.d, lower_a, upper_a, lb, ub, I.iter);
+                
+                for i=1:I.dim
+                    if strcmp(dis_opt, 'display')
+                        fprintf('\nPerforming approximate PosLin_%d operation using RStar', i);
+                    end
+                    In = PosLin.stepReachAbstractDomain_twoConstraints_rstar(In,i,lb{len}(i),ub{len}(i));        
+                end
+                R = In;
+            end
+        end
+    end
+    
+    methods(Static) % reaachability analysis using abstract-domain of upper bound (case b) with three predicate constraints
+    
+        % step over-approximate reachability analysis using three predicate
+        % constraints and abstract domain of upper bound (case b)
+        % we use rstar set to prereset this method
+        function R = stepReachAbstractDomain_threeConstraints_rstar(varargin)
+            % @I: rstar-input set
+            % @index: index of neuron performing stepReach
+            % @A: rstar output set represent abstract-domain of the output
+            % set
+            
+            % author: Sung Woo Choi
+            % date: 12/18/2020
+            
+            switch nargin
+                case 4
+                    I = varargin{1};
+                    index = varargin{2};
+                    l = varargin{3};
+                    u = varargin{4};
+                case 2
+                    I = varargin{1};
+                    index = varargin{2}
+                    [l, u] = I.getRange(index);
+                otherwise
+                    error('Invalid number of input arguments (should be 2 or 4)');
+            end
+            
+            if ~isa(I, 'RStar')
+                error('Input is not a RStar');
+            end
+            
+            lower_a = I.lower_a;
+            upper_a = I.upper_a;
+            lb = I.lb;
+            ub = I.ub;
+            len = length(lower_a);
+            
+            if l >= 0
+                L = zeros(1, I.dim + 1);
+                L(index+1) = 1;
+                lower_a{len}(index,:) = L;
+                
+                U = zeros(1, I.dim + 1);
+                U(index+1) = 1;
+                upper_a{len}(index,:) = U;
+                
+                lb{len}(index) = l;
+                ub{len}(index) = u;
+
+                R = RStar(I.V, I.C, I.d, lower_a, upper_a, lb, ub, I.iter);
+            elseif u <= 0
+                new_V = I.V;
+                new_V(index,:) = 0;
+                
+                lower_a{len}(index,:) = zeros(1, I.dim + 1);
+                upper_a{len}(index,:) = zeros(1, I.dim + 1);
+                
+                lb{len}(index) = 0;
+                ub{len}(index) = 0;
+
+                R = RStar(new_V, I.C, I.d, lower_a, upper_a, lb, ub, I.iter);
+            else % lb < 0 && ub > 0
+                new_V = [I.V zeros(I.dim, 1)];
+                new_V(index, :) = 0;
+                new_V(index, end) = 1;
+                
+                C0 = [I.C zeros(size(I.C,1),1)];
+                d0 = I.d;
+                % constraint 1: y[i] <= ub(x[i]-lb)/(ub-lb)
+                C1 = [-u*I.X(index,:)/(u-l) 1];
+                d1 = u*(I.c(index)-l)/(u-l);
+                
+                U = zeros(1, I.dim + 1);
+                U(1) = -l*u/(u - l);
+                U(index+1) = u/(u - l);
+                upper_a{len}(index,:) = U;
+                
+                % constraint 2: y[i] >= 0
+                m = size(I.C,2);
+                C2 = [zeros(1,m) -1];
+                d2 = 0;
+                
+                lower_a{len}(index,:) = zeros(1, I.dim + 1);
+                
+                % constraint 3: y[i] >= x[i]
+                C3 = [I.X(index,:) -1];
+                d3 = -I.c(index);
+                
+                lb{len}(index) = 0;
+                ub{len}(index) = u;
+
+                new_C = [C0; C1; C2; C3];
+                new_d = [d0; d1; d2; d3];
+                
+                R = RStar(new_V, new_C, new_d, lower_a, upper_a, lb, ub, I.iter);
+            end
+        end
+        
+        % over-approximate reachability analysis using rstar with abstract
+        % domain and three predicate constraints
+        function R = reach_rstar_absdom_case_b_with_three_pred_const(varargin)
+            % @I: rstar input set
+            % @: rstar output set
+            
+            switch nargin
+                case 1
+                    I = varargin{1};
+                    dis_opt = [];
+                case 2
+                    I = varargin{2};
+                    dis_opt = varargin{2};
+                otherwise
+                    error('Invalid number of input arguments, should be 1 or 2');
+            end
+            
+            if ~isa(I, 'RStar')
+                error('Input is not a RStar');
+            end
+            
+            if isempty(I)
+               R = [];
+            else
+                lower_a = I.lower_a;
+                upper_a = I.upper_a;
+                lb = I.lb;
+                ub = I.ub;
+                len = length(lower_a);
+                
+                % create new matrices for lower and upper constraints and bounds.
+                lower_a{len+1} = zeros(I.dim, I.dim + 1);
+                upper_a{len+1} = zeros(I.dim, I.dim + 1);
+                lb{len+1} = zeros(I.dim, 1);
+                ub{len+1} = zeros(I.dim, 1);
+                In = RStar(I.V, I.C, I.d, lower_a, upper_a, lb, ub, I.iter);
+                
+                for i=1:I.dim
+                    if strcmp(dis_opt, 'display')
+                        fprintf('\nPerforming approximate PosLin_%d operation using RStar', i);
+                    end
+                    In = PosLin.stepReachAbstractDomain_threeConstraints_rstar(In,i,lb{len}(i),ub{len}(i));        
+                end
+                R = In;
+            end
+        end 
+    end
+    
     methods(Static) % main reach method
         
         % main function for reachability analysis
@@ -2082,6 +2540,12 @@ classdef PosLin
                 fprintf('\nNNV have not yet support Exact Face-Latice Method');
             elseif strcmp(method, 'approx-face-latice') % over-approximate analysis using face-latice
                 fprintf('\nNNV have not yet support Approximate Face-Latice Method');
+            elseif strcmp(method, 'absdom') % over-approximate analysis using abastract-domain based on eran
+                R = PosLin.reach_absdom(I, option, dis_opt);
+            elseif strcmp(method, 'rstar-absdom-two') % over-approximate analysis using abstract-domain with 2 star constraints
+                R = PosLin.reach_rstar_absdom_with_two_pred_const(I, option, disp_opt);
+            elseif strcmp(method, 'rstar-absdom-three') % over-approximate analysis using abstract-domain with 3 star constraints
+                R = PosLin.reach_rstar_absdom_case_b_with_three_pred_const(I, option, disp_opt);
             end
                             
         end
