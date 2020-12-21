@@ -2096,7 +2096,7 @@ classdef PosLin
                     I = varargin{1};
                     dis_opt = [];
                 case 2
-                    I = varargin{2};
+                    I = varargin{1};
                     dis_opt = varargin{2};
                 otherwise
                     error('Invalid number of input arguments, should be 1 or 2');
@@ -2264,7 +2264,7 @@ classdef PosLin
                     I = varargin{1};
                     dis_opt = [];
                 case 2
-                    I = varargin{2};
+                    I = varargin{1};
                     dis_opt = varargin{2};
                 otherwise
                     error('Invalid number of input arguments, should be 1 or 2');
@@ -2411,7 +2411,7 @@ classdef PosLin
                     I = varargin{1};
                     dis_opt = [];
                 case 2
-                    I = varargin{2};
+                    I = varargin{1};
                     dis_opt = varargin{2};
                 otherwise
                     error('Invalid number of input arguments, should be 1 or 2');
@@ -2541,11 +2541,11 @@ classdef PosLin
             elseif strcmp(method, 'approx-face-latice') % over-approximate analysis using face-latice
                 fprintf('\nNNV have not yet support Approximate Face-Latice Method');
             elseif strcmp(method, 'absdom') % over-approximate analysis using abastract-domain based on eran
-                R = PosLin.reach_absdom(I, option, dis_opt);
+                R = PosLin.reach_absdom(I, dis_opt);
             elseif strcmp(method, 'rstar-absdom-two') % over-approximate analysis using abstract-domain with 2 star constraints
-                R = PosLin.reach_rstar_absdom_with_two_pred_const(I, option, disp_opt);
+                R = PosLin.reach_rstar_absdom_with_two_pred_const(I, dis_opt);
             elseif strcmp(method, 'rstar-absdom-three') % over-approximate analysis using abstract-domain with 3 star constraints
-                R = PosLin.reach_rstar_absdom_case_b_with_three_pred_const(I, option, disp_opt);
+                R = PosLin.reach_rstar_absdom_case_b_with_three_pred_const(I, dis_opt);
             end
                             
         end
