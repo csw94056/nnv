@@ -1,0 +1,164 @@
+>> reach_P3
+Warning: hysdel compiler could not be found.Warning: hysdel compiler could not be found.>> verify_P3
+
+Normalize output set
+Normalize 1^th exact polyhedron reach set
+Normalize 9^th exact polyhedron reach set
+Normalize 10^th exact polyhedron reach set
+Normalize 31^th exact polyhedron reach set
+Normalize 32^th exact polyhedron reach set
+Normalize 2^th exact polyhedron reach set
+Normalize 11^th exact polyhedron reach set
+Normalize 12^th exact polyhedron reach set
+Normalize 25^th exact polyhedron reach set
+Normalize 3^th exact polyhedron reach set
+Normalize 13^th exact polyhedron reach set
+Normalize 14^th exact polyhedron reach set
+Normalize 28^th exact polyhedron reach set
+Normalize 4^th exact polyhedron reach set
+Normalize 15^th exact polyhedron reach set
+Normalize 16^th exact polyhedron reach set
+Normalize 30^th exact polyhedron reach set
+Normalize 5^th exact polyhedron reach set
+Normalize 17^th exact polyhedron reach set
+Normalize 18^th exact polyhedron reach set
+Normalize 29^th exact polyhedron reach set
+Normalize 6^th exact polyhedron reach set
+Normalize 19^th exact polyhedron reach set
+Normalize 20^th exact polyhedron reach set
+Normalize 27^th exact polyhedron reach set
+Normalize 7^th exact polyhedron reach set
+Normalize 21^th exact polyhedron reach set
+Normalize 22^th exact polyhedron reach set
+Normalize 26^th exact polyhedron reach set
+Normalize 8^th exact polyhedron reach set
+Normalize 23^th exact polyhedron reach set
+Normalize 24^th exact polyhedron reach set
+Normalize 33^th exact polyhedron reach set
+Normalize 34^th exact polyhedron reach set
+Normalize 1^th exact star reach set
+Normalize 9^th exact star reach set
+Normalize 10^th exact star reach set
+Normalize 25^th exact star reach set
+Normalize 30^th exact star reach set
+Normalize 2^th exact star reach set
+Normalize 11^th exact star reach set
+Normalize 12^th exact star reach set
+Normalize 26^th exact star reach set
+Normalize 3^th exact star reach set
+Normalize 13^th exact star reach set
+Normalize 14^th exact star reach set
+Normalize 27^th exact star reach set
+Normalize 33^th exact star reach set
+Normalize 34^th exact star reach set
+Normalize 4^th exact star reach set
+Normalize 15^th exact star reach set
+Normalize 16^th exact star reach set
+Normalize 28^th exact star reach set
+Normalize 5^th exact star reach set
+Normalize 17^th exact star reach set
+Normalize 18^th exact star reach set
+Normalize 29^th exact star reach set
+Normalize 31^th exact star reach set
+Normalize 32^th exact star reach set
+Normalize 6^th exact star reach set
+Normalize 19^th exact star reach set
+Normalize 20^th exact star reach set
+Normalize 7^th exact star reach set
+Normalize 21^th exact star reach set
+Normalize 22^th exact star reach set
+Normalize 8^th exact star reach set
+Normalize 23^th exact star reach set
+Normalize 24^th exact star reach set
+Verifying exact polyhedron reach set...
+The 1^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 10^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 9^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 34^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 33^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 2^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 12^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 11^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 27^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 3^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 14^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 13^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 25^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 4^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 16^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 15^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 32^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 31^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 5^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 18^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 17^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 28^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 6^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 20^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 19^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 29^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 7^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 22^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 21^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 30^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 8^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 24^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 23^th polyhedron output set does not reaches the unsafe region, P3 holds
+The 26^th polyhedron output set does not reaches the unsafe region, P3 holds
+P3 holds on N5_7
+Finish verifying exact polyhedron reach set in 0.4075 seconds.
+Verifying exact star reach set...
+The 1^th star output set does not reaches the unsafe region, P3 holds
+The 10^th star output set does not reaches the unsafe region, P3 holds
+The 9^th star output set does not reaches the unsafe region, P3 holds
+The 26^th star output set does not reaches the unsafe region, P3 holds
+The 2^th star output set does not reaches the unsafe region, P3 holds
+The 12^th star output set does not reaches the unsafe region, P3 holds
+The 11^th star output set does not reaches the unsafe region, P3 holds
+The 27^th star output set does not reaches the unsafe region, P3 holds
+The 3^th star output set does not reaches the unsafe region, P3 holds
+The 14^th star output set does not reaches the unsafe region, P3 holds
+The 13^th star output set does not reaches the unsafe region, P3 holds
+The 25^th star output set does not reaches the unsafe region, P3 holds
+The 4^th star output set does not reaches the unsafe region, P3 holds
+The 16^th star output set does not reaches the unsafe region, P3 holds
+The 15^th star output set does not reaches the unsafe region, P3 holds
+The 30^th star output set does not reaches the unsafe region, P3 holds
+The 5^th star output set does not reaches the unsafe region, P3 holds
+The 18^th star output set does not reaches the unsafe region, P3 holds
+The 17^th star output set does not reaches the unsafe region, P3 holds
+The 28^th star output set does not reaches the unsafe region, P3 holds
+The 6^th star output set does not reaches the unsafe region, P3 holds
+The 20^th star output set does not reaches the unsafe region, P3 holds
+The 19^th star output set does not reaches the unsafe region, P3 holds
+The 29^th star output set does not reaches the unsafe region, P3 holds
+The 7^th star output set does not reaches the unsafe region, P3 holds
+The 22^th star output set does not reaches the unsafe region, P3 holds
+The 21^th star output set does not reaches the unsafe region, P3 holds
+The 34^th star output set does not reaches the unsafe region, P3 holds
+The 33^th star output set does not reaches the unsafe region, P3 holds
+The 8^th star output set does not reaches the unsafe region, P3 holds
+The 24^th star output set does not reaches the unsafe region, P3 holds
+The 23^th star output set does not reaches the unsafe region, P3 holds
+The 32^th star output set does not reaches the unsafe region, P3 holds
+The 31^th star output set does not reaches the unsafe region, P3 holds
+P3 holds on N5_7
+Finish verifying exact star reach set in 0.1430 seconds.
+Verifying over-approximate star reach set...
+The over-approximate star reach set does not reaches the unsafe region, P3 holds on N5_7
+Finish verifying over-approximate star reach set in 0.0093 seconds.
+Verifying over-approximate zonotope reach set...
+The over-approximate zonotope reach set does not reaches the unsafe region, P3 holds on N5_7
+Finish verifying over-approximate zonotope reach set in 0.0080 seconds.
+Verifying over-approximate star abstract-domain reach set...
+The over-approximate star abstract-domain reach set does not reaches the unsafe region, P3 holds on N5_7
+Finish verifying over-approximate star abstract-domain reach set in 0.0077 seconds.
+Verifying over-approximate AbsDom adstract-domain reach set...
+The over-approximate AbsDom abstract-domain reach set does not reaches the unsafe region, P3 holds on N5_7
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0100 seconds.
+Verifying over-approximate rstar abstract-domain with two predicate constraint reach set...
+The over-approximate rstar abstract-domain with two predicate constraint reach set reaches the unsafe region, safety is unknown, P3 may be violated on N5_7
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0095 seconds.
+Verifying over-approximate rstar abstract-domain with three predicate constraint reach set...
+The over-approximate rstar abstract-domain with three predicate constraint reach set does not reaches the unsafe region, P3 holds on N5_7
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0094 seconds.>> 

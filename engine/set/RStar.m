@@ -6,13 +6,16 @@ classdef RStar
         V = []; % basic matrix that contains c and X
         C = []; % constraint matrix
         d = []; % constraint vector
-        c = []; % center vector
-        X = []; % basic matrix
+        c = []; % center vector from V
+        X = []; % basic matrix from V
+        
+        predicate_lb = []; % lower bound vector of predicate variable
+        predicate_ub = []; % upper bound vector of predicate variable
         
         lower_a = {[]}; % a set of matrix for lower constraint for bound (a[<=]) ((1 a[1] a[2] ... a[n])'
         upper_a = {[]}; % a set of matrix for upper constraint for bound (a[>=])
-        lb = []; % a set of matrix for lower bound
-        ub = []; % a set of matrix for upper bound
+        lb = {[]}; % a set of matrix for lower bound
+        ub = {[]}; % a set of matrix for upper bound
 
         iter = inf; % number of iterations for back substitution
         dim = 0; % dimension of current relaxed star set
@@ -30,23 +33,55 @@ classdef RStar
                 
             switch nargin
                 
-                case 8
+                case 10
                     V = varargin{1};
                     C = varargin{2};
                     d = varargin{3};
-                    lower_a = varargin{4};
-                    upper_a = varargin{5};
-                    lb = varargin{6};
-                    ub = varargin{7};
-                    iter = varargin{8};
+                    pred_lb = varargin{4};
+                    pred_ub = varargin{5};
+                    lower_a = varargin{6};
+                    upper_a = varargin{7};
+                    lb = varargin{8};
+                    ub = varargin{9};
+                    iter = varargin{10};
                     
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     % add code for checking properties
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    [nV, mV] = size(V);
+                    [nC, mC] = size(C);
+                    [nd, md] = size(d);
+                    [n1, m1] = size(pred_lb);
+                    [n2, m2] = size(pred_ub);
+                    
+                    if mV ~= mC + 1
+                        error('Inconsistency between basic matrix and constraint matrix');
+                    end
 
+                    if nC ~= nd
+                        error('Inconsistency between constraint matrix and constraint vector');
+                    end
+
+                    if md ~= 1
+                        error('constraint vector should have one column');
+                    end
+                    
+                    if m1 ~=1 || m2 ~=1 
+                        error('predicate lower- or upper-bounds vector should have one column');
+                    end
+                    
+                    if n1 ~= n2 || n1 ~= mC
+                        error('Inconsistency between number of predicate variables and predicate lower- or upper-bounds vector');
+                    end
+                    
+                    if ~iscell(lower_a) || ~iscell(upper_a) || ~iscell(lb) || ~iscell(ub)
+                       error('polyhedral constraints and bound must be cell array');
+                    end
                     obj.V = V;
                     obj.C = C;
                     obj.d = d;
+                    obj.predicate_lb = pred_lb;
+                    obj.predicate_ub = pred_ub;
                     
                     obj.lower_a = lower_a;
                     obj.upper_a = upper_a;
@@ -57,18 +92,42 @@ classdef RStar
                     len = length(lower_a);
                     obj.dim = size(lower_a{len}, 1);
                     
-                case 7
+                case 9
                     V = varargin{1};
                     C = varargin{2};
                     d = varargin{3};
-                    lower_a = varargin{4};
-                    upper_a = varargin{5};
-                    lb = varargin{6};
-                    ub = varargin{7};
+                    pred_lb = varargin{4};
+                    pred_ub = varargin{5}
+                    lower_a = varargin{6};
+                    upper_a = varargin{7};
+                    lb = varargin{8};
+                    ub = varargin{9};
                     iter = inf;
                     
-                    obj = RStar(V, C, d, lower_a, upper_a, lb, ub, iter);
+                    obj = RStar(V, C, d, pred_lb, pred_ub, lower_a, upper_a, lb, ub, iter);
                     
+                case 3
+                    % construct rstar from lower and upper bound vector
+                    lb = varargin{1};
+                    ub = varargin{2};
+                    iter = varargin{3};
+                    
+                    B = Box(lb,ub);
+                    S = B.toStar;
+                    obj.V = S.V;
+                    obj.C = zeros(1, S.nVar); % initiate an obvious constraint
+                    obj.d = zeros(1, 1);
+                    obj.predicate_lb = -ones(S.nVar, 1);
+                    obj.predicate_ub = ones(S.nVar, 1);
+                    
+                    dim = size(lb, 1);                   
+                    obj.lower_a{1} = [zeros(dim, 1) -eye(dim)]; 
+                    obj.upper_a{1} = [zeros(dim, 1) eye(dim)];
+                    obj.lb{1} = lb;
+                    obj.ub{1} = ub;
+                    
+                    obj.iter = iter;
+                    obj.dim = dim;
                 case 2
                     I = varargin{1};
                     iter = varargin{2};
@@ -84,6 +143,9 @@ classdef RStar
                             C = I.A;
                             d = I.b;
                         end
+                        m = size(C,2);
+                        pred_lb = -ones(m, 1);
+                        pred_ub = ones(m, 1);
                         I.outerApprox;
                         l = I.Internal.lb;
                         u = I.Internal.ub;
@@ -92,6 +154,8 @@ classdef RStar
                         V = I.V;
                         C = I.C;
                         d = I.d;
+                        pred_lb = I.predicate_lb;
+                        pred_ub = I.predicate_ub;
                         [l, u] = I.getRanges();
                     elseif isa(I, 'Zono')
                         dim = I.dim;
@@ -99,6 +163,9 @@ classdef RStar
                         V = [I.c I.V];
                         C = [eye(dim); -eye(dim)];
                         d = [u; -l];
+                        m = size(C,2);
+                        pred_lb = -ones(m, 1);
+                        pred_ub = ones(m, 1);
                     else
                         error('Unkown imput set');
                     end
@@ -107,11 +174,12 @@ classdef RStar
                         error('Iteration must be greater than zero');
                     end
                     
+                    
                     lower_a{1} = [zeros(dim, 1) eye(dim)];
                     upper_a{1} = [zeros(dim, 1) eye(dim)];
                     lb{1} = l;
                     ub{1} = u;
-                    obj = RStar(V, C, d, lower_a, upper_a, lb, ub, iter);
+                    obj = RStar(V, C, d, pred_lb, pred_ub, lower_a, upper_a, lb, ub, iter);
                     
                 case 1
                     I = varargin{1};
@@ -121,16 +189,55 @@ classdef RStar
                     obj.V = [];
                     obj.C = [];
                     obj.d = [];
+                    obj.predicate_lb = [];
+                    obj.predicate_ub = [];
                     obj.lower_a = {[]};
                     obj.upper_a = {[]};
-                    obj.lb = [];
-                    obj.ub = [];
+                    obj.lb = {[]};
+                    obj.ub = {[]};
                     obj.iter = inf;
                     obj.dim = 0;
                     
                 otherwise
                     error('Invalid number of input arguments (should be 0, 1, 2, 7, 8)');
             end
+        end
+        
+        % intersection with a half space: H(x) := Hx <= g
+        function R = intersectHalfSpace(obj, H, g)
+            % @H: HalfSpace matrix
+            % @g: HalfSpace vector
+            % @R: new rstar set with more constraints
+            
+            % author: Sung Woo Choi
+            % date: 12/23/2020
+            % reference: star set
+            
+            [nH, mH] = size(H);
+            [ng, mg] = size(g);
+            
+            if mg ~= 1
+                error('Halfspace vector should have one column');
+            end
+            if nH ~= ng
+                error('Inconsistent dimension between Halfspace matrix and halfspace vector');
+            end
+            if mH ~= obj.dim
+                error('Inconsistent dimension between halfspace and star set');
+            end
+            
+            m = size(obj.V, 2);
+            
+            C1 = H*obj.V(:, 2:m);
+            d1 = g - H*obj.V(:,1);
+            
+            new_C = vertcat(obj.C, C1);
+            new_d = vertcat(obj.d, d1);
+            
+            R = RStar(obj.V, new_C, new_d, obj.predicate_lb, obj.predicate_ub, obj.lower_a, obj.upper_a, obj.lb, obj.ub, obj.iter);
+            if R.isEmptySet
+                R = [];
+            end 
         end
         
         % affine abstract mapping of RStar set
@@ -157,8 +264,12 @@ classdef RStar
                 error('bias vector must be one column');
             end
             
-            if nW ~= nb
+            if nW ~= nb && nb~=0
                 error('Inconsistency between the affine mapping matrix and the bias vector');
+            end
+
+            if nb == 0
+                b = zeros(nW, 1);
             end
 
             % affine mapping of basic matrix
@@ -181,7 +292,7 @@ classdef RStar
             lb{len+1} = obj.lb_backSub(lower_a, upper_a);
             ub{len+1} = obj.ub_backSub(lower_a, upper_a);
 
-            R = RStar(V, obj.C, obj.d, lower_a, upper_a, lb, ub, obj.iter); 
+            R = RStar(V, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub, lower_a, upper_a, lb, ub, obj.iter); 
         end
 
         % lower bound back-substitution
@@ -258,8 +369,88 @@ classdef RStar
             ub = min_a * lb1 + lower_v + ...
                  max_a * ub1 + upper_v;
         end
+        
+        % check is empty set
+        function bool = isEmptySet(obj)
+            
+            % author: Sung Woo Choi
+            % date: 12/22/2020
+            % reference: star set
+            
+            options = optimoptions(@linprog, 'Display','none'); 
+            options.OptimalityTolerance = 1e-10; % set tolerance
+            nVar = size(obj.C, 2);
+            f = zeros(1, nVar);
+            [~, ~, exitflag, ~] = linprog(f, obj.C, obj.d, [], [],  obj.predicate_lb, obj.predicate_ub, options);
+            
+            if exitflag == 1
+                bool = 0;
+            elseif exitflag == -2
+                bool = 1;
+            else
+                error('Error, exitflag = %d', exitflag);
+            end            
+        end
+        
+        % get exact lower bound and upper bound vector of the state variables
+        function [lb, ub] = getExactRanges(obj)
+            
+            % author: Sung Woo Choi
+            % date: 12/22/2020
+            % reference: star set
+            
+            if ~obj.isEmptySet            
+                n = obj.dim;
+                lb = zeros(n,1);
+                ub = zeros(n,1);
+                for i=1:n
+                    % fprintf('\nGet range at index %d', i);
+                    [lb(i), ub(i)] = obj.getExactRange(i);
+                end
+            else
+                lb = [];
+                ub = [];
+            end
 
-        % get the lower and upper bound of a current layer at specific
+        end
+        
+        % get exact lower and upper bounds at specific position using glpk
+        function [xmin, xmax] = getExactRange(obj, index)
+            % @index: position of the state
+            % range: min and max values of x[index]
+            
+            % author: Sung Woo Choi
+            % date: 12/22/2020
+            % reference: star set
+            
+            if index < 1 || index > obj.dim
+                error('Invalid index');
+            end
+            nVar = size(obj.C, 2);
+            f = obj.V(index, 2:nVar + 1);
+            if all(f(:)==0)
+                xmin = obj.V(index,1);
+                xmax = obj.V(index,1);
+            else
+                [~, fval, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+                if exitflag > 0
+                    xmin = fval + obj.V(index, 1);
+                else
+                    error('Cannot find an optimal solution, exitflag = %d', exitflag);
+                end
+                
+                [~, fval, exitflag, ~] = glpk(-f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+                if exitflag > 0
+                    xmax = -fval + obj.V(index, 1);
+                else
+                    error('Cannot find an optimal solution');
+                end
+
+            end
+                        
+        end
+        
+        % get the lower and upper bounds of a current layer at specific
         % position
         function [lb,ub] = getRange(obj, i)
             if i > obj.dim
@@ -278,7 +469,7 @@ classdef RStar
             ub = obj.ub{len};
         end
         
-        % get lower and upper bound of a specific layer
+        % get lower and upper bounds of a specific layer
         function [lb,ub] = getRanges_L(obj, len)
             numL = length(obj.lower_a);
             if len > numL
@@ -290,7 +481,19 @@ classdef RStar
         
         % convert to Polyhedron
         function P = toPolyhedron(obj)
-            P1 = Polyhedron('A', [obj.C], 'b', [obj.d]);
+            if ~isempty(obj.predicate_lb) && ~isempty(obj.predicate_ub)
+                [l, u] = obj.getRanges;
+                m = size(obj.C, 2);
+                C1 = [eye(m); -eye(m)];
+                d1 = [obj.predicate_ub; -obj.predicate_lb];
+                
+                C = [obj.C; C1];
+                d = [obj.d; d1];
+            else
+                C = obj.C;
+                d = obj.d;
+            end
+            P1 = Polyhedron('A', C, 'b', d);
             X = obj.X;
             c = obj.c;
             P = X*P1 + c;
@@ -347,8 +550,8 @@ classdef RStar
         
         % intersection with other star set (half space)
         function S = Intersect(obj1, obj2)
-            C1 = obj2.C * obj1.get_V;
-            d1 = obj2.d - obj2.C * obj1.get_c;
+            C1 = obj2.C * obj1.X;
+            d1 = obj2.d - obj2.C * obj1.c;
 
             new_C = [obj1.C; C1];
             new_d = [obj1.d; d1];

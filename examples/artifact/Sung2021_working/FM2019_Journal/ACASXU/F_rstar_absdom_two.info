@@ -1,0 +1,18 @@
+Feedforward Neural Network Information
+
+Number of layers: 7
+Number of neurons: 305
+Number of inputs: 5
+Number of outputs: 5
+
+Reach Set Information
+Reachability method: rstar-absdom-two
+Number of cores used in computation: 1
+Layer 1 reach set consists of 1 sets that are computed in 0.03027 seconds
+Layer 2 reach set consists of 1 sets that are computed in 0.01025 seconds
+Layer 3 reach set consists of 1 sets that are computed in 0.01020 seconds
+Layer 4 reach set consists of 1 sets that are computed in 0.00503 seconds
+Layer 5 reach set consists of 1 sets that are computed in 0.01307 seconds
+Layer 6 reach set consists of 1 sets that are computed in 0.00420 seconds
+Output Layer reach set consists of 1 sets that are computed in 0.00085 seconds
+Total reachable set computation time: 0.07388

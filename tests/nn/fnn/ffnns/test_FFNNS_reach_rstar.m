@@ -1,13 +1,31 @@
+% RStar (relaxed star) reachability analysis test
+% Sung Woo Choi: 12/18/2020
+close all;
+clear;
+clc;
+
 %% LOAD FFNN OBJECT
 load NeuralNetwork7_3.mat;
 Layers = [];
 n = length(b);
-for i=1:n
+% for i=1:n
+%     bi = cell2mat(b(i));
+%     Wi = cell2mat(W(i));
+%     Li = LayerS(Wi, bi, 'poslin');
+%     Layers = [Layers Li];
+% end
+for i=1:n - 1
     bi = cell2mat(b(i));
     Wi = cell2mat(W(i));
     Li = LayerS(Wi, bi, 'poslin');
     Layers = [Layers Li];
 end
+bn = cell2mat(b(n));
+Wn = cell2mat(W(n));
+Ln = LayerS(Wn, bn, 'purelin');
+
+Layers = [Layers Ln];
+
 % construct FFNN boject
 F = FFNNS(Layers);
 
@@ -18,8 +36,8 @@ d = ones(6,1);
 pred_lb = [-1; -1; -1];
 pred_ub = [1; 1; 1];
 I_star = Star(V, C, d, pred_lb, pred_ub); % input set as a Star set
-I_absdom = AbsDom(I_star);
-I_rstar = RStar(I_star);
+I_absdom = AbsDom(I_star, inf);
+I_rstar = RStar(I_star, inf);
 
 %% PERFORM REACHABILITY ANALYSIS
 % reachability parameters:

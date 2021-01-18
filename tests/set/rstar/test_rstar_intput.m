@@ -1,3 +1,5 @@
+% RStar (relaxed star) input test
+% Sung Woo Choi: 12/18/2020
 
 P = ExamplePoly.randHrep('d',2);
 R1 = RStar(P, inf);

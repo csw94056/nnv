@@ -1,0 +1,57 @@
+>> reach_P3
+>> verify_P3
+
+Normalize output set
+Normalize 1^th exact star reach set
+Normalize 9^th exact star reach set
+Normalize 2^th exact star reach set
+Normalize 10^th exact star reach set
+Normalize 3^th exact star reach set
+Normalize 11^th exact star reach set
+Normalize 4^th exact star reach set
+Normalize 12^th exact star reach set
+Normalize 5^th exact star reach set
+Normalize 13^th exact star reach set
+Normalize 6^th exact star reach set
+Normalize 14^th exact star reach set
+Normalize 7^th exact star reach set
+Normalize 15^th exact star reach set
+Normalize 8^th exact star reach set
+Normalize 16^th exact star reach set
+Verifying exact star reach set...
+The 1^th star output set does not reaches the unsafe region, P3 holds
+The 9^th star output set does not reaches the unsafe region, P3 holds
+The 2^th star output set does not reaches the unsafe region, P3 holds
+The 10^th star output set does not reaches the unsafe region, P3 holds
+The 3^th star output set does not reaches the unsafe region, P3 holds
+The 11^th star output set does not reaches the unsafe region, P3 holds
+The 4^th star output set does not reaches the unsafe region, P3 holds
+The 12^th star output set does not reaches the unsafe region, P3 holds
+The 5^th star output set does not reaches the unsafe region, P3 holds
+The 13^th star output set does not reaches the unsafe region, P3 holds
+The 6^th star output set does not reaches the unsafe region, P3 holds
+The 14^th star output set does not reaches the unsafe region, P3 holds
+The 7^th star output set does not reaches the unsafe region, P3 holds
+The 15^th star output set does not reaches the unsafe region, P3 holds
+The 8^th star output set does not reaches the unsafe region, P3 holds
+The 16^th star output set does not reaches the unsafe region, P3 holds
+P3 holds on N2_9
+Finish verifying exact star reach set in 0.1587 seconds.
+Verifying over-approximate star reach set...
+The over-approximate star reach set does not reaches the unsafe region, P3 holds on N2_9
+Finish verifying over-approximate star reach set in 0.0081 seconds.
+Verifying over-approximate zonotope reach set...
+The over-approximate zonotope reach set does not reaches the unsafe region, P3 holds on N2_9
+Finish verifying over-approximate zonotope reach set in 0.0076 seconds.
+Verifying over-approximate star abstract-domain reach set...
+The over-approximate star abstract-domain reach set does not reaches the unsafe region, P3 holds on N2_9
+Finish verifying over-approximate star abstract-domain reach set in 0.0076 seconds.
+Verifying over-approximate AbsDom adstract-domain reach set...
+The over-approximate AbsDom abstract-domain reach set does not reaches the unsafe region, P3 holds on N2_9
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0080 seconds.
+Verifying over-approximate rstar abstract-domain with two predicate constraint reach set...
+The over-approximate rstar abstract-domain with two predicate constraint reach set does not reaches the unsafe region, P3 holds on N2_9
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0084 seconds.
+Verifying over-approximate rstar abstract-domain with three predicate constraint reach set...
+The over-approximate rstar abstract-domain with three predicate constraint reach set does not reaches the unsafe region, P3 holds on N2_9
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0078 seconds.>> 

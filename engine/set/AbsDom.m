@@ -72,25 +72,20 @@ classdef AbsDom
                     
                     obj = AbsDom(lower_a, upper_a, lb, ub, iter);
 
-%                 case 3
-%                     lb = varargin{1};
-%                     ub = varargin{2};
-%                     iter = varargin{3};
-%                     
-%                     if iscell(lb)
-%                         len = length(lb);
-%                         if len ~= length(ub)
-%                            error('Inconsistency between numbers of matrices of upper and lower bounds');
-%                         end
-%                         
-%                         obj.dim = size(lb{len},2);
-%                     else
-%                         [nl, ml] = size(lb);
-%                         [nu, mu] = size(ub);
-%                         
-%                         obj.dim = size(lb,2);
-%                     end
-
+                case 3
+                    % construct AbsDom from lower and upper bound vector
+                    lb = varargin{1};
+                    ub = varargin{2};
+                    iter = varargin{3};
+                    
+                    dim = size(lb, 1);
+                    obj.lower_a{1} = [zeros(dim, 1) -eye(dim)]; 
+                    obj.upper_a{1} = [zeros(dim, 1) eye(dim)];
+                    obj.lb{1} = lb;
+                    obj.ub{1} = ub;
+                    
+                    obj.iter = iter;
+                    obj.dim = dim;
                 case 2
                     I = varargin{1};
                     iter = varargin{2};
@@ -162,8 +157,12 @@ classdef AbsDom
                 error('bias vector must be one column');
             end
             
-            if nW ~= nb
+            if nW ~= nb && nb~=0
                 error('Inconsistency between the affine mapping matrix and the bias vector');
+            end
+            
+            if nb == 0
+                b = zeros(nW, 1);
             end
 
             % new lower and upper polyhedral contraints

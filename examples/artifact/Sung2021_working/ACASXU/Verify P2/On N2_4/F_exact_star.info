@@ -1,0 +1,18 @@
+Feedforward Neural Network Information
+
+Number of layers: 7
+Number of neurons: 305
+Number of inputs: 5
+Number of outputs: 5
+
+Reach Set Information
+Reachability method: exact-star
+Number of cores used in computation: 8
+Layer 1 reach set consists of 8 sets that are computed in 0.08707 seconds
+Layer 2 reach set consists of 33 sets that are computed in 0.05464 seconds
+Layer 3 reach set consists of 48 sets that are computed in 0.10786 seconds
+Layer 4 reach set consists of 98 sets that are computed in 0.24664 seconds
+Layer 5 reach set consists of 226 sets that are computed in 0.25794 seconds
+Layer 6 reach set consists of 226 sets that are computed in 0.22396 seconds
+Output Layer reach set consists of 226 sets that are computed in 0.11787 seconds
+Total reachable set computation time: 1.09598

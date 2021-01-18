@@ -1,3 +1,5 @@
+% AbsDom input test
+% Sung Woo Choi: 12/18/2020
 
 P = ExamplePoly.randHrep('d',2);
 A1 = AbsDom(P, inf);

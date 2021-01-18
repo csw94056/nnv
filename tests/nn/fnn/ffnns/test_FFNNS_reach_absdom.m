@@ -1,13 +1,21 @@
+% AbsDom (abstract domain) reachability analysis test
+% Sung Woo Choi: 12/18/2020
+
 %% LOAD FFNN OBJECT
 load NeuralNetwork7_3.mat;
 Layers = [];
 n = length(b);
-for i=1:n
+for i=1:n - 1
     bi = cell2mat(b(i));
     Wi = cell2mat(W(i));
     Li = LayerS(Wi, bi, 'poslin');
     Layers = [Layers Li];
 end
+bn = cell2mat(b(n));
+Wn = cell2mat(W(n));
+Ln = LayerS(Wn, bn, 'purelin');
+
+Layers = [Layers Ln];
 % construct FFNN boject
 F = FFNNS(Layers);
 

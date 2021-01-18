@@ -1,0 +1,18 @@
+Feedforward Neural Network Information
+
+Number of layers: 7
+Number of neurons: 305
+Number of inputs: 5
+Number of outputs: 5
+
+Reach Set Information
+Reachability method: rstar-casec-three
+Number of cores used in computation: 1
+Layer 1 reach set consists of 1 sets that are computed in 0.00560 seconds
+Layer 2 reach set consists of 1 sets that are computed in 0.00429 seconds
+Layer 3 reach set consists of 1 sets that are computed in 0.00413 seconds
+Layer 4 reach set consists of 1 sets that are computed in 0.00398 seconds
+Layer 5 reach set consists of 1 sets that are computed in 0.00749 seconds
+Layer 6 reach set consists of 1 sets that are computed in 0.00481 seconds
+Output Layer reach set consists of 1 sets that are computed in 0.00067 seconds
+Total reachable set computation time: 0.03097

@@ -510,7 +510,7 @@ classdef FFNNS < handle
                 else
                     safe = 1;
                     if ~strcmp(obj.reachMethod, 'exact-polyhedron')
-                        if strcmp(obj.reachMethod, 'approx-zono')
+                        if strcmp(obj.reachMethod, 'approx-zono') || strcmp(obj.reachMethod, 'absdom') || strcmp(obj.reachMethod, 'rstar-absdom-two') || strcmp(obj.reachMethod, 'rstar-absdom-three') || strcmp(obj.reachMethod, 'rstar-caseb-three') || strcmp(obj.reachMethod, 'rstar-casec-three')
                             R = R.toStar;
                         end
                         if isempty(R.intersectHalfSpace(obj.unsafeRegion.G, obj.unsafeRegion.g))

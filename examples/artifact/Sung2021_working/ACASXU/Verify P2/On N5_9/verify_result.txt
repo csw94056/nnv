@@ -1,0 +1,169 @@
+>> reach_P2
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 8).
+>> verify_P2
+
+Normalize output set
+Normalize 1^th exact star reach set
+Normalize 9^th exact star reach set
+Normalize 10^th exact star reach set
+Normalize 11^th exact star reach set
+Normalize 12^th exact star reach set
+Normalize 43^th exact star reach set
+Normalize 44^th exact star reach set
+Normalize 55^th exact star reach set
+Normalize 56^th exact star reach set
+Normalize 66^th exact star reach set
+Normalize 67^th exact star reach set
+Normalize 2^th exact star reach set
+Normalize 13^th exact star reach set
+Normalize 14^th exact star reach set
+Normalize 15^th exact star reach set
+Normalize 16^th exact star reach set
+Normalize 47^th exact star reach set
+Normalize 48^th exact star reach set
+Normalize 58^th exact star reach set
+Normalize 59^th exact star reach set
+Normalize 68^th exact star reach set
+Normalize 69^th exact star reach set
+Normalize 3^th exact star reach set
+Normalize 17^th exact star reach set
+Normalize 18^th exact star reach set
+Normalize 19^th exact star reach set
+Normalize 20^th exact star reach set
+Normalize 60^th exact star reach set
+Normalize 61^th exact star reach set
+Normalize 4^th exact star reach set
+Normalize 21^th exact star reach set
+Normalize 22^th exact star reach set
+Normalize 23^th exact star reach set
+Normalize 24^th exact star reach set
+Normalize 45^th exact star reach set
+Normalize 46^th exact star reach set
+Normalize 57^th exact star reach set
+Normalize 70^th exact star reach set
+Normalize 71^th exact star reach set
+Normalize 5^th exact star reach set
+Normalize 25^th exact star reach set
+Normalize 26^th exact star reach set
+Normalize 27^th exact star reach set
+Normalize 28^th exact star reach set
+Normalize 51^th exact star reach set
+Normalize 52^th exact star reach set
+Normalize 6^th exact star reach set
+Normalize 29^th exact star reach set
+Normalize 30^th exact star reach set
+Normalize 31^th exact star reach set
+Normalize 32^th exact star reach set
+Normalize 49^th exact star reach set
+Normalize 50^th exact star reach set
+Normalize 7^th exact star reach set
+Normalize 33^th exact star reach set
+Normalize 34^th exact star reach set
+Normalize 35^th exact star reach set
+Normalize 36^th exact star reach set
+Normalize 64^th exact star reach set
+Normalize 65^th exact star reach set
+Normalize 8^th exact star reach set
+Normalize 37^th exact star reach set
+Normalize 38^th exact star reach set
+Normalize 39^th exact star reach set
+Normalize 40^th exact star reach set
+Normalize 41^th exact star reach set
+Normalize 42^th exact star reach set
+Normalize 53^th exact star reach set
+Normalize 54^th exact star reach set
+Normalize 62^th exact star reach set
+Normalize 63^th exact star reach set
+Verifying exact star reach set...
+The 1^th star output set does not reaches the unsafe region, P2 holds
+The 12^th star output set does not reaches the unsafe region, P2 holds
+The 11^th star output set does not reaches the unsafe region, P2 holds
+The 10^th star output set does not reaches the unsafe region, P2 holds
+The 9^th star output set does not reaches the unsafe region, P2 holds
+The 42^th star output set does not reaches the unsafe region, P2 holds
+The 41^th star output set does not reaches the unsafe region, P2 holds
+The 57^th star output set does not reaches the unsafe region, P2 holds
+The 65^th star output set does not reaches the unsafe region, P2 holds
+The 64^th star output set does not reaches the unsafe region, P2 holds
+The 2^th star output set does not reaches the unsafe region, P2 holds
+The 16^th star output set does not reaches the unsafe region, P2 holds
+The 15^th star output set does not reaches the unsafe region, P2 holds
+The 14^th star output set does not reaches the unsafe region, P2 holds
+The 13^th star output set does not reaches the unsafe region, P2 holds
+The 44^th star output set does not reaches the unsafe region, P2 holds
+The 43^th star output set does not reaches the unsafe region, P2 holds
+The 63^th star output set does not reaches the unsafe region, P2 holds
+The 62^th star output set does not reaches the unsafe region, P2 holds
+The 3^th star output set does not reaches the unsafe region, P2 holds
+The 20^th star output set does not reaches the unsafe region, P2 holds
+The 19^th star output set does not reaches the unsafe region, P2 holds
+The 18^th star output set does not reaches the unsafe region, P2 holds
+The 17^th star output set does not reaches the unsafe region, P2 holds
+The 54^th star output set does not reaches the unsafe region, P2 holds
+The 53^th star output set does not reaches the unsafe region, P2 holds
+The 71^th star output set does not reaches the unsafe region, P2 holds
+The 70^th star output set does not reaches the unsafe region, P2 holds
+The 4^th star output set does not reaches the unsafe region, P2 holds
+The 24^th star output set does not reaches the unsafe region, P2 holds
+The 23^th star output set does not reaches the unsafe region, P2 holds
+The 22^th star output set does not reaches the unsafe region, P2 holds
+The 21^th star output set does not reaches the unsafe region, P2 holds
+The 48^th star output set does not reaches the unsafe region, P2 holds
+The 47^th star output set does not reaches the unsafe region, P2 holds
+The 59^th star output set does not reaches the unsafe region, P2 holds
+The 58^th star output set does not reaches the unsafe region, P2 holds
+The 5^th star output set does not reaches the unsafe region, P2 holds
+The 28^th star output set does not reaches the unsafe region, P2 holds
+The 27^th star output set does not reaches the unsafe region, P2 holds
+The 26^th star output set does not reaches the unsafe region, P2 holds
+The 25^th star output set does not reaches the unsafe region, P2 holds
+The 50^th star output set does not reaches the unsafe region, P2 holds
+The 49^th star output set does not reaches the unsafe region, P2 holds
+The 61^th star output set does not reaches the unsafe region, P2 holds
+The 60^th star output set does not reaches the unsafe region, P2 holds
+The 6^th star output set does not reaches the unsafe region, P2 holds
+The 32^th star output set does not reaches the unsafe region, P2 holds
+The 31^th star output set does not reaches the unsafe region, P2 holds
+The 30^th star output set does not reaches the unsafe region, P2 holds
+The 29^th star output set does not reaches the unsafe region, P2 holds
+The 46^th star output set does not reaches the unsafe region, P2 holds
+The 45^th star output set does not reaches the unsafe region, P2 holds
+The 7^th star output set does not reaches the unsafe region, P2 holds
+The 36^th star output set does not reaches the unsafe region, P2 holds
+The 35^th star output set does not reaches the unsafe region, P2 holds
+The 34^th star output set does not reaches the unsafe region, P2 holds
+The 33^th star output set does not reaches the unsafe region, P2 holds
+The 56^th star output set does not reaches the unsafe region, P2 holds
+The 55^th star output set does not reaches the unsafe region, P2 holds
+The 67^th star output set does not reaches the unsafe region, P2 holds
+The 66^th star output set does not reaches the unsafe region, P2 holds
+The 8^th star output set does not reaches the unsafe region, P2 holds
+The 40^th star output set does not reaches the unsafe region, P2 holds
+The 39^th star output set does not reaches the unsafe region, P2 holds
+The 38^th star output set does not reaches the unsafe region, P2 holds
+The 37^th star output set does not reaches the unsafe region, P2 holds
+The 52^th star output set does not reaches the unsafe region, P2 holds
+The 51^th star output set does not reaches the unsafe region, P2 holds
+The 69^th star output set does not reaches the unsafe region, P2 holds
+The 68^th star output set does not reaches the unsafe region, P2 holds
+P2 holds on N5_9
+Finish verifying exact star reach set in 0.5188 seconds.
+Verifying over-approximate star reach set...
+The over-approximate star reach set does not reaches the unsafe region, P2 holds on N5_9
+Finish verifying over-approximate star reach set in 0.0168 seconds.
+Verifying over-approximate zonotope reach set...
+The over-approximate zonotope reach set does not reaches the unsafe region, P2 holds on N5_9
+Finish verifying over-approximate zonotope reach set in 0.0115 seconds.
+Verifying over-approximate star abstract-domain reach set...
+The over-approximate star abstract-domain reach set does not reaches the unsafe region, P2 holds on N5_9
+Finish verifying over-approximate star abstract-domain reach set in 0.0123 seconds.
+Verifying over-approximate AbsDom adstract-domain reach set...
+The over-approximate AbsDom abstract-domain reach set does not reaches the unsafe region, P2 holds on N5_9
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0206 seconds.
+Verifying over-approximate rstar abstract-domain with two predicate constraint reach set...
+The over-approximate rstar abstract-domain with two predicate constraint reach set does not reaches the unsafe region, P2 holds on N5_9
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0131 seconds.
+Verifying over-approximate rstar abstract-domain with three predicate constraint reach set...
+The over-approximate rstar abstract-domain with three predicate constraint reach set does not reaches the unsafe region, P2 holds on N5_9
+Finish verifying over-approximate AbsDom abstract-domain reach set in 0.0100 seconds.>> 
