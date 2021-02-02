@@ -1990,10 +1990,10 @@ classdef PosLin
     end
     
     
-    methods(Static) % reachability analysis using abstract-domain
+    methods(Static) % reachability analysis using abstract-domain based on eran
         
         % step over-approximate reachability analysis using abstract-domain
-        % we use r set to represent abstract-domain with
+        % we use absdom set to represent abstract-domain
         function A = stepReachAbstractDomain_absdom(varargin)
             % @I: absdom-input set
             % @index: index of neuron performing stepReach

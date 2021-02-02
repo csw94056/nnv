@@ -1,4 +1,4 @@
-classdef TanSig
+ classdef TanSig
     % TanSig class contains method for reachability analysis for Layer with
     % Tanh activation function (Matlab called TanSig)
     % author: Dung Tran
