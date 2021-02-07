@@ -1883,7 +1883,7 @@ methods(Static) % main reach method
         elseif strcmp(method, 'rstar-absdom-two') % over-approximate analysis using abstract-domain with 2 star constraints
             R = LogSig.reach_rstar_absdom_with_two_pred_const(I);
         elseif strcmp(method, 'rstar-absdom-four') % over-approximate analysis using abstract-domain with 4 star constraints
-            R = LogSig.reach_rstar_absdom_with_four_pred_const(I);
+%             R = LogSig.reach_rstar_absdom_with_four_pred_const(I);
         else
             error('Unknown or unsupported reachability method for layer with LogSig activation function');
         end

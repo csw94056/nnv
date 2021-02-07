@@ -119,8 +119,8 @@
             % @index: index of the neuron
             % @l: l = min(x[index]), lower bound at neuron x[index] 
             % @u: u = min(x[index]), upper bound at neuron x[index]
-            % @y_l: = logsig(l); output of logsig at lower bound
-            % @y_u: = logsig(u); output of logsig at upper bound
+            % @y_l: = tansig(l); output of tansig at lower bound
+            % @y_u: = tansig(u); output of tansig at upper bound
             % @dy_l: derivative of LogSig at the lower bound
             % @dy_u: derivative of LogSig at the upper bound
             
@@ -374,8 +374,8 @@
 %             % @index: index of the neuron
 %             % @l: l = min(x[index]), lower bound at neuron x[index] 
 %             % @u: u = min(x[index]), upper bound at neuron x[index]
-%             % @y_l: = logsig(l); output of logsig at lower bound
-%             % @y_u: = logsig(u); output of logsig at upper bound
+%             % @y_l: = tansig(l); output of tansig at lower bound
+%             % @y_u: = tansig(u); output of tansig at upper bound
 %             % @dy_l: derivative of LogSig at the lower bound
 %             % @dy_u: derivative of LogSig at the upper bound
 %             
@@ -1071,7 +1071,7 @@
     
     methods(Static) % reachability using abstract domain
         
-        function S = stepTanSig_absdom(I, index, l, u, y_l, y_u, dy_l, dy_u)
+        function S = stepTanSig_abstract_domain(I, index, l, u, y_l, y_u, dy_l, dy_u)
             % @I: input star set
             % @index: index of the neuron
             % @l: l = min(x[index]), lower bound at neuron x[index] 
@@ -1192,7 +1192,7 @@
         
         
         
-        function S = reach_absdom_approx(I)
+        function S = reach_abstract_domain_approx(I)
         % @I: star input set
         % @Z: Star output set
 
@@ -1222,7 +1222,7 @@
             end
 
         % dealing with multiple inputs in parallel
-        function S = reach_absdom_approx_multipleInputs(varargin)
+        function S = reach_abstract_domain_approx_multipleInputs(varargin)
             % author: Dung Tran
             % date: 3/27/2020
 
@@ -1242,13 +1242,13 @@
             if isempty(parallel)
 
                 for i=1:p
-                    S =[S TanSig.reach_absdom_approx(I(i))];
+                    S =[S TanSig.reach_abstract_domain_approx(I(i))];
                 end
 
             elseif strcmp(parallel, 'parallel')
 
                 parfor i=1:p
-                    S =[S, TanSig.reach_absdom_approx(I(i))];
+                    S =[S, TanSig.reach_abstract_domain_approx(I(i))];
                 end
 
             else
@@ -1260,6 +1260,344 @@
     
     end
     
+
+methods(Static) % over-approximate reachability analysis using abstract-domain (absdom) based on eran
+    
+    % step over-approximate reachability analysis using abstract-domain
+    % we use absdom set to represent abstract-domain
+    function A = stepLogSig_absdom(I, index, l, u, y_l, y_u, dy_l, dy_u)
+        % @I: absdom-input set
+        % @index: index of neuron performing stepReach
+        % @l: l = min(x[index]), lower bound at neuron x[index] 
+        % @u: u = min(x[index]), upper bound at neuron x[index]
+        % @y_l: = tansig(l); output of tansig at lower bound
+        % @y_u: = tansig(u); output of tansig at upper bound
+        % @dy_l: derivative of LogSig at the lower bound
+        % @dy_u: derivative of LogSig at the upper bound
+        
+        % @A: absdom output set
+
+        % author: Sung Woo Choi
+        % date: 01/29/2021
+
+        % reference: An Abstract Domain for Certifying Neural Networks,
+        % Gagandeep Singh, POPL 2019
+        
+        if ~isa(I, 'AbsDom')
+                error('Input is not a AbsDom');
+        end
+            
+        lower_a = I.lower_a;
+        upper_a = I.upper_a;
+        lb = I.lb;
+        ub = I.ub;
+        len = length(lower_a);
+        if l == u
+            L = zeros(1, I.dim + 1);
+            L(index+1) = y_l;
+            lower_a{len}(index,:) = L;
+
+            U = zeros(1, I.dim + 1);
+            U(index+1) = y_l;
+            upper_a{len}(index,:) = U;
+
+            lb{len}(index) = y_l;
+            ub{len}(index) = y_u;
+
+            A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+        else
+            lamda = (y_u - y_l)/(u - l);
+            dlamda = min(dy_l , dy_u);
+            if l > 0
+                % constraint 1: y[index] >= y(l) + lamda * (x[index] - l)
+                L = zeros(1, I.dim + 1);
+                L(1) = y_l - lamda*l;
+                L(index+1) = lamda;
+                lower_a{len}(index,:) = L;
+            else
+                % constraint 1: y[index] >= y(l) + lamda' * (x[index] - l)
+                L = zeros(1, I.dim + 1);
+                L(1) = y_l - dlamda*l;
+                L(index+1) = dlamda;
+                lower_a{len}(index,:) = L;
+            end
+            
+            if u <=0
+                % constraint 2: y[index] <= y(u) + lamda * (x[index] - u)
+                U = zeros(1, I.dim + 1);
+                U(1) = y_u - lamda*u;
+                U(index+1) = lamda;
+                upper_a{len}(index,:) = U;
+            else
+                % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
+                U = zeros(1, I.dim + 1);
+                U(1) = y_u - dlamda*u;
+                U(index+1) = dlamda;
+                upper_a{len}(index,:) = U;
+            end
+            
+            lb{len}(index) = y_l;
+            ub{len}(index) = y_u;
+            
+            A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+        end
+    end
+    
+    function A = reach_absdom_approx(I)
+        % @I: absdom imput set
+        % %A: absdom output set
+        
+        % author: Sung Woo Choi
+        % date: 01/29/2021
+        
+        % reference: An abstract domain for certifying neural networks. Proceedings of the ACM on Programming Languages,
+        % Gagandeep Singh, POPL, 2019
+        
+        if ~isa(I, 'AbsDom')
+            error('Input is not a AbsDom');
+        end
+            
+        if isempty(I)
+            A = [];
+        else
+            lower_a = I.lower_a;
+            upper_a = I.upper_a;
+            lb = I.lb;
+            ub = I.ub;
+            len = length(lower_a);
+
+            l = lb{len};
+            u = ub{len};
+            y_l = tansig(l);
+            y_u = tansig(u);
+            dy_l = tansig('dn', l);
+            dy_u = tansig('dn', u);
+
+            % create new matrices for lower and upper constraints and bounds.
+            lower_a{len+1} = zeros(I.dim, I.dim + 1);
+            upper_a{len+1} = zeros(I.dim, I.dim + 1);
+            lb{len+1} = zeros(I.dim, 1);
+            ub{len+1} = zeros(I.dim, 1);
+            A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
+
+            for i=1:I.dim
+                A = LogSig.stepLogSig_absdom(A, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+            end
+        end
+    end
+end
+
+methods(Static) % over-approximate reachability analysis using abstract-domain (absdom) based on eran
+    
+    % step over-approximate reachability analysis using abstract-domain
+    % we use absdom set to represent abstract-domain
+    function R = stepTanSig_absdom_twoConstraints_rstar(I, index, l, u, y_l, y_u, dy_l, dy_u)
+        % @I: rstar-input set
+        % @index: index of neuron performing stepReach
+        % @l: l = min(x[index]), lower bound at neuron x[index] 
+        % @u: u = min(x[index]), upper bound at neuron x[index]
+        % @y_l: = tansig(l); output of tansig at lower bound
+        % @y_u: = tansig(u); output of tansig at upper bound
+        % @dy_l: derivative of LogSig at the lower bound
+        % @dy_u: derivative of LogSig at the upper bound
+        
+        % @A: rstar output set
+
+        % author: Sung Woo Choi
+        % date: 01/29/2021
+
+        % reference: An Abstract Domain for Certifying Neural Networks,
+        % Gagandeep Singh, POPL 2019
+        
+        if ~isa(I, 'RStar')
+            error('Input is not a RStar');
+        end
+            
+        lower_a = I.lower_a;
+        upper_a = I.upper_a;
+        lb = I.lb;
+        ub = I.ub;
+        len = length(lower_a);
+        if l == u
+            new_V = I.V;
+            new_V(index,:) = 0;
+            new_V(index,1) = y_l;
+            
+            L = zeros(1, I.dim + 1);
+            L(index+1) = y_l;
+            lower_a{len}(index,:) = L;
+
+            U = zeros(1, I.dim + 1);
+            U(index+1) = y_l;
+            upper_a{len}(index,:) = U;
+
+            lb{len}(index) = y_l;
+            ub{len}(index) = y_u;
+
+            R = RStar(new_V, I.C, I.d, I.predicate_lb, I.predicate_ub, lower_a, upper_a, lb, ub, I.iter);
+        else
+            new_V = [I.V zeros(I.dim, 1)];
+            new_V(index, :) = 0;
+            new_V(index, end) = 1;
+            
+            C0 = [I.C zeros(size(I.C,1),1)];
+            d0 = I.d;
+                
+            lamda = (y_u - y_l)/(u - l);
+            if l >= 0
+                % constraint 1: y[index] >= y(l) + lamda * (x[index] - l)
+                L = zeros(1, I.dim + 1);
+                L(1) = y_l - lamda*l;
+                L(index+1) = lamda;
+                lower_a{len}(index,:) = L;
+                
+                C1 = [lamda*I.X(index,:) -1];
+                d1 = -y_l - lamda*(I.c(index) - l);
+                
+                % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
+                U = zeros(1, I.dim + 1);
+                U(1) = y_u - dy_u*u;
+                U(index+1) = dy_u;
+                upper_a{len}(index,:) = U;
+                
+                C2 = [-dy_u*I.X(index,:) 1];
+                d2 = y_u + dy_u*(I.c(index) - u);
+            elseif u <= 0
+                % constraint 1: y[index] >= y(l) + lamda' * (x[index] - l)
+                L = zeros(1, I.dim + 1);
+                L(1) = y_l - dy_l*l;
+                L(index+1) = dy_l;
+                lower_a{len}(index,:) = L;
+                
+                C1 = [dy_l*I.X(index,:) -1];
+                d1 = -y_l - dy_l*(I.c(index) - l);
+                
+                % constraint 2: y[index] <= y(u) + lamda * (x[index] - u)
+                U = zeros(1, I.dim + 1);
+                U(1) = y_u - lamda*u;
+                U(index+1) = lamda;
+                upper_a{len}(index,:) = U;
+                
+                C2 = [-lamda*I.X(index,:) 1];
+                d2 = y_u + lamda*(I.c(index) - u);
+            else
+                dlamda = min(dy_l , dy_u);
+                % constraint 1: y[index] >= y(l) + lamda' * (x[index] - l)
+                L = zeros(1, I.dim + 1);
+                L(1) = y_l - dlamda*l;
+                L(index+1) = dlamda;
+                lower_a{len}(index,:) = L;
+                
+                C1 = [dlamda*I.X(index,:) -1];
+                d1 = -y_l - dlamda*(I.c(index) - l);
+                
+                % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
+                U = zeros(1, I.dim + 1);
+                U(1) = y_u - dlamda*u;
+                U(index+1) = dlamda;
+                upper_a{len}(index,:) = U;
+                
+                C2 = [-dlamda*I.X(index,:) 1];
+                d2 = y_u + dlamda*(I.c(index) - u);
+            end
+          
+%             dlamda = min(dy_l , dy_u);
+%             if l > 0
+%                 % constraint 1: y[index] >= y(l) + lamda * (x[index] - l)
+%                 L = zeros(1, I.dim + 1);
+%                 L(1) = y_l - lamda*l;
+%                 L(index+1) = lamda;
+%                 lower_a{len}(index,:) = L;
+%                 
+%                 C1 = [lamda*I.X(index,:) -1];
+%                 d1 = -y_l - lamda*(I.c(index) - l);
+%             else
+%                 % constraint 1: y[index] >= y(l) + lamda' * (x[index] - l)
+%                 L = zeros(1, I.dim + 1);
+%                 L(1) = y_l - dlamda*l;
+%                 L(index+1) = dlamda;
+%                 lower_a{len}(index,:) = L;
+%                 
+%                 C1 = [dy_l*I.X(index,:) -1];
+%                 d1 = -y_l - dy_l*(I.c(index) - l);
+%             end
+%             
+%             if u <=0
+%                 % constraint 2: y[index] <= y(u) + lamda * (x[index] - u)
+%                 U = zeros(1, I.dim + 1);
+%                 U(1) = y_u - lamda*u;
+%                 U(index+1) = lamda;
+%                 upper_a{len}(index,:) = U;
+%                 
+%                 C2 = [-lamda*I.X(index,:) 1];
+%                 d2 = y_u + lamda*(I.c(index) - u);
+%             else
+%                 % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
+%                 U = zeros(1, I.dim + 1);
+%                 U(1) = y_u - dlamda*u;
+%                 U(index+1) = dlamda;
+%                 upper_a{len}(index,:) = U;
+%                 
+%                 C2 = [-dlamda*I.X(index,:) 1];
+%                 d2 = y_u + dlamda*(I.c(index) - u);
+%             end
+
+            new_pred_lb = [I.predicate_lb; y_l];
+            new_pred_ub = [I.predicate_ub; y_u];
+                    
+            lb{len}(index) = y_l;
+            ub{len}(index) = y_u;
+            
+            new_C = [C0; C1; C2];
+            new_d = [d0; d1; d2];
+            
+            R = RStar(new_V, new_C, new_d, new_pred_lb, new_pred_ub, lower_a, upper_a, lb, ub, I.iter);
+        end
+    end
+    
+    function R = reach_rstar_absdom_with_two_pred_const(I)
+        % @I: RStar imput set
+        % %A: RStar output set
+        
+        % author: Sung Woo Choi
+        % date: 01/29/2021
+        
+        % reference: An abstract domain for certifying neural networks. Proceedings of the ACM on Programming Languages,
+        % Gagandeep Singh, POPL, 2019
+        
+        if ~isa(I, 'RStar')
+            error('Input is not a RStar');
+        end
+            
+        if isempty(I)
+            R = [];
+        else
+            lower_a = I.lower_a;
+            upper_a = I.upper_a;
+            lb = I.lb;
+            ub = I.ub;
+            len = length(lower_a);
+
+            l = lb{len};
+            u = ub{len};
+            y_l = tansig(l);
+            y_u = tansig(u);
+            dy_l = tansig('dn', l);
+            dy_u = tansig('dn', u);
+
+            % create new matrices for lower and upper constraints and bounds.
+            lower_a{len+1} = zeros(I.dim, I.dim + 1);
+            upper_a{len+1} = zeros(I.dim, I.dim + 1);
+            lb{len+1} = zeros(I.dim, 1);
+            ub{len+1} = zeros(I.dim, 1);
+            R = RStar(I.V, I.C, I.d, I.predicate_lb, I.predicate_ub, lower_a, upper_a, lb, ub, I.iter);
+
+            for i=1:I.dim
+                R = LogSig.stepTanSig_absdom_twoConstraints_rstar(R, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+            end
+        end
+    end
+end
 
 methods(Static) % main reach method
 
@@ -1325,17 +1663,15 @@ methods(Static) % main reach method
 
 
         if strcmp(method, 'approx-star') % exact analysis using star
-
             R = TanSig.reach_star_approx(I, method, relaxFactor, dis_opt, lp_solver);
-
         elseif strcmp(method, 'approx-zono')  % over-approximate analysis using zonotope
-
             R = TanSig.reach_zono_approx(I);
-
         elseif strcmp(method, 'abs-dom')  % over-approximate analysis using abstract-domain
-
+            R = TanSig.reach_abstract_domain_approx(I);
+        elseif strcmp(method, 'absdom') % over-approximate analysis using abstract-domain based on eran
             R = TanSig.reach_absdom_approx(I);
-
+        elseif strcmp(method, 'rstar-absdom-two') % over-approximate analysis using abstract-domain with 2 star constraints
+            R = TanSig.reach_rstar_absdom_with_two_pred_const(I);
         else
             error('Unknown or unsupported reachability method for layer with LogSig activation function');
         end
