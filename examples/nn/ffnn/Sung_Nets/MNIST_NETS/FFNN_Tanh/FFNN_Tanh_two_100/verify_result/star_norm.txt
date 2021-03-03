@@ -1,0 +1,60 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         44           4            2             3244.4    
+
+total time star norm (eps=0.005): 3244.398669 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01         16           4            30            3647.3    
+
+total time star norm (eps=0.010): 3647.257818 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015          5           4            41            4005.9    
+
+total time star norm (eps=0.015): 4005.931678 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02          1           4            45            4366.9    
+
+total time star norm (eps=0.020): 4366.928305 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025          0           4            46            4972.1    
+
+total time star norm (eps=0.025): 4972.071507
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03          0           6            44            5498.4    
+ 

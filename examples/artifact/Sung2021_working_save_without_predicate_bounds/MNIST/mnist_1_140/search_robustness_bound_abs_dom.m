@@ -1,4 +1,4 @@
- load mnist_model.mat;
+load mnist_model.mat;
 load one_digits.mat;
 
 Layers = [];

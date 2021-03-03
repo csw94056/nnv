@@ -22,4 +22,4 @@ unknown = [sum(rb1 == 2); sum(rb2 == 2)];
 
 T = table(epsilon, safe, unsafe, unknown, verify_time)
 
-save(/results/verify_tan_3L.mat, 'T', 'r1', 'rb1', 'cE1', 'cands1', 'vt1',  'r2', 'rb2', 'cE2' 'cands2', 'vt2');
+%save(/results/verify_tan_3L.mat, 'T', 'r1', 'rb1', 'cE1', 'cands1', 'vt1',  'r2', 'rb2', 'cE2' 'cands2', 'vt2');

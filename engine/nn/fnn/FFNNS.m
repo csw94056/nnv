@@ -2013,27 +2013,47 @@ classdef FFNNS < handle
             cands = []; 
             cE = [];
             
-            if ~isempty(in_image.state_lb)
-                y_lb = obj.evaluate(in_image.state_lb);
+            if isa(in_image, 'Star')
+                state_lb = in_image.state_lb;
+                state_ub = in_image.state_ub;
+            elseif isa(in_image, 'AbsDom') || isa(in_image, 'RStar')
+                state_lb = in_image.lb{1};
+                state_ub = in_image.ub{1};
+            end
+            
+            if ~isempty(state_lb)
+                y_lb = obj.evaluate(state_lb);
                 [~,max_id] = max(y_lb);
                 if max_id ~= correct_id
                     robust = 0;
-                    cE = in_image.state_lb;
+                    cE = state_lb;
                 end
 
-                y_ub = obj.evaluate(in_image.state_ub);
+                y_ub = obj.evaluate(state_ub);
                 [~,max_id] = max(y_ub);
                 if max_id ~= correct_id
                     robust = 0;
-                    cE = in_image.state_ub;
+                    cE = state_ub;
                 end
             end
             
             if robust == 2
                 
                 obj.reach(in_image, obj.reachMethod, obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
-                R = obj.outputSet; 
-                [lb, ub] = R.estimateRanges;
+                R = obj.outputSet;
+                if isa(R, 'AbsDom')
+                    [lb, ub] = R.getRanges;
+                    R = R.toStar;
+                elseif isa(R, 'RStar')
+                    if strcmp(obj.reachMethod, 'rstar-absdom-two')
+                        [lb, ub] = R.getRanges;
+                        R = R.toStar;
+                    else
+                        error('Only rstar-absdom-two is supported')
+                    end
+                else
+                    [lb, ub] = R.estimateRanges;
+                end
                 max_val = lb(correct_id);
                 max_cd = find(ub > max_val); % max point candidates
                 max_cd(max_cd == correct_id) = []; % delete the max_id

@@ -96,7 +96,12 @@ classdef AbsDom
                         u = I.Internal.ub;
                     elseif isa(I, 'Star')
                         dim = I.dim;
-                        [l, u] = I.getRanges();
+                        if ~isempty(I.state_lb) && ~isempty(I.state_ub)
+                            l = I.state_lb;
+                            u = I.state_ub;
+                        else
+                            [l, u] = I.getRanges();
+                        end
                     elseif isa(I, 'Zono')
                         dim = I.dim;
                         [l, u] = I.getRanges();
@@ -116,7 +121,14 @@ classdef AbsDom
                 
                 case 1
                     I = varargin{1};
-                    obj = AbsDom(I, inf);
+                    n = length(I);
+                    if n > 1
+                        for i = 1:n
+                            obj(i) = AbsDom(I(i), inf);
+                        end
+                    else
+                        obj = AbsDom(I, inf);
+                    end
                     
                 case 0
                     % create empty AbsDom seet (for preallocaation an array

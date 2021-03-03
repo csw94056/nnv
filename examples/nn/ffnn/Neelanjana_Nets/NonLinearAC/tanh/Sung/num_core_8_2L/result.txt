@@ -1,0 +1,394 @@
+>> verify_2L
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 8).
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+T1 =
+
+  1×5 table
+
+    epsilon1    safe1    unsafe1    unknown1    verify_time1
+    ________    _____    _______    ________    ____________
+
+      0.5        15         0          35          24530    
+
+total time star: 24529.928231 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T2 =
+
+  1×5 table
+
+    epsilon2    safe2    unsafe2    unknown2    verify_time2
+    ________    _____    _______    ________    ____________
+
+      0.5         0         0          50          5.3141   
+
+total time absdom: 5.314144 
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+T3 =
+
+  1×5 table
+
+    epsilon3    safe3    unsafe3    unknown3    verify_time3
+    ________    _____    _______    ________    ____________
+
+      0.5        15         0          35          107.1    
+
+total time rstar: 107.097747 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T4 =
+
+  1×5 table
+
+    epsilon4    safe4    unsafe4    unknown4    verify_time4
+    ________    _____    _______    ________    ____________
+
+      0.05        5        45          0           476.2    
+
+total time star: 476.197528 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T5 =
+
+  1×5 table
+
+    epsilon5    safe5    unsafe5    unknown5    verify_time5
+    ________    _____    _______    ________    ____________
+
+      0.05        5        45          0          0.31145   
+
+total time absdom: 0.311449 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T6 =
+
+  1×5 table
+
+    epsilon6    safe6    unsafe6    unknown6    verify_time6
+    ________    _____    _______    ________    ____________
+
+      0.05        5        45          0           5.4424   
+
+total time rstar: 5.442440 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T7 =
+
+  1×5 table
+
+    epsilon7    safe7    unsafe7    unknown7    verify_time7
+    ________    _____    _______    ________    ____________
+
+      0.02        5        45          0           463.5    
+
+total time star: 463.499640 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T8 =
+
+  1×5 table
+
+    epsilon8    safe8    unsafe8    unknown8    verify_time8
+    ________    _____    _______    ________    ____________
+
+      0.02        5        45          0          0.31539   
+
+total time absdom: 0.315392 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T9 =
+
+  1×5 table
+
+    epsilon9    safe9    unsafe9    unknown9    verify_time9
+    ________    _____    _______    ________    ____________
+
+      0.02        5        45          0           5.1195   
+
+total time rstar: 5.119544 
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationError using Star/isEmptySet (line 298)
+Error, exitflag = 0
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2067)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2192)
+                    parfor i=1:N
+
+Error in verify_2L (line 146)
+[r10, rb10, cE10, cands10, vt10] = net.evaluateRBN(S_eps_12(1:N), labels(1:N), reachMethod, numCores, 0, 0, 'glpk');
+ 
+IdleTimeout has been reached.
+Parallel pool using the 'local' profile is shutting down.
+>> verify_2L
+Starting parallel pool (parpool) using the 'local' profile ...
+Connected to the parallel pool (number of workers: 8).
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verificationSoftmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+T11 =
+
+  1×5 table
+
+    epsilon11    safe11    unsafe11    unknown11    verify_time11
+    _________    ______    ________    _________    _____________
+
+       1.2         0          0           50           8.9353    
+
+total time absdom: 8.935256 
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verification
+Softmax reachability is neglected in verificationError using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in RStar/is_p1_larger_than_p2 (line 593)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2067)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2192)
+                    parfor i=1:N
+
+Error in verify_2L (line 173)
+[r12, rb12, cE12, cands12, vt12] = net.evaluateRBN(RS_eps_12(1:N), labels(1:N), reachMethod, numCores, 0, 0, 'glpk');
+ 
+>> 

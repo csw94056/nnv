@@ -1,0 +1,61 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         41           4            5             0.8353    
+
+total time absdom norm (eps=0.005): 0.835304 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01          8           4            38            1.118     
+
+total time absdom norm (eps=0.010): 1.117999 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015          1           4            45            1.1756    
+
+total time absdom norm (eps=0.015): 1.175608 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02          0           4            46            1.2468    
+
+total time absdom norm (eps=0.020): 1.246849 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025          0           4            46            1.1602    
+
+total time absdom norm (eps=0.025): 1.160180 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03          0           6            44            1.1733    
+
+total time absdom norm (eps=0.030): 1.173258 >> 

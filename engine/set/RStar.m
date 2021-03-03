@@ -111,9 +111,8 @@ classdef RStar
                     lb = varargin{1};
                     ub = varargin{2};
                     iter = varargin{3};
-                    
-                    B = Box(lb,ub);
-                    S = B.toStar;
+
+                    S = Star(lb, ub);
                     obj.V = S.V;
                     obj.C = zeros(1, S.nVar); % initiate an obvious constraint
                     obj.d = zeros(1, 1);
@@ -183,7 +182,14 @@ classdef RStar
                     
                 case 1
                     I = varargin{1};
-                    obj = RStar(I, inf);
+                    n = length(I);
+                    if n > 1
+                        for i = 1:n
+                            obj(i) = RStar(I(i), inf);
+                        end
+                    else
+                        obj = RStar(I, inf);
+                    end
                     
                 case 0
                     obj.V = [];
@@ -560,5 +566,6 @@ classdef RStar
                 S = [];
             end
         end
+
     end
 end

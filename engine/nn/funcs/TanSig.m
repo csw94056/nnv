@@ -121,8 +121,8 @@
             % @u: u = min(x[index]), upper bound at neuron x[index]
             % @y_l: = tansig(l); output of tansig at lower bound
             % @y_u: = tansig(u); output of tansig at upper bound
-            % @dy_l: derivative of LogSig at the lower bound
-            % @dy_u: derivative of LogSig at the upper bound
+            % @dy_l: derivative of TanSig at the lower bound
+            % @dy_u: derivative of TanSig at the upper bound
             
             % @S: output star set
             
@@ -376,8 +376,8 @@
 %             % @u: u = min(x[index]), upper bound at neuron x[index]
 %             % @y_l: = tansig(l); output of tansig at lower bound
 %             % @y_u: = tansig(u); output of tansig at upper bound
-%             % @dy_l: derivative of LogSig at the lower bound
-%             % @dy_u: derivative of LogSig at the upper bound
+%             % @dy_l: derivative of TanSig at the lower bound
+%             % @dy_u: derivative of TanSig at the upper bound
 %             
 %             % @S: output star set
 %             
@@ -1265,15 +1265,15 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
     
     % step over-approximate reachability analysis using abstract-domain
     % we use absdom set to represent abstract-domain
-    function A = stepLogSig_absdom(I, index, l, u, y_l, y_u, dy_l, dy_u)
+    function A = stepTanSig_absdom(I, index, l, u, y_l, y_u, dy_l, dy_u)
         % @I: absdom-input set
         % @index: index of neuron performing stepReach
         % @l: l = min(x[index]), lower bound at neuron x[index] 
         % @u: u = min(x[index]), upper bound at neuron x[index]
         % @y_l: = tansig(l); output of tansig at lower bound
         % @y_u: = tansig(u); output of tansig at upper bound
-        % @dy_l: derivative of LogSig at the lower bound
-        % @dy_u: derivative of LogSig at the upper bound
+        % @dy_l: derivative of TanSig at the lower bound
+        % @dy_u: derivative of TanSig at the upper bound
         
         % @A: absdom output set
 
@@ -1381,7 +1381,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
 
             for i=1:I.dim
-                A = LogSig.stepLogSig_absdom(A, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+                A = TanSig.stepTanSig_absdom(A, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
             end
         end
     end
@@ -1398,8 +1398,8 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
         % @u: u = min(x[index]), upper bound at neuron x[index]
         % @y_l: = tansig(l); output of tansig at lower bound
         % @y_u: = tansig(u); output of tansig at upper bound
-        % @dy_l: derivative of LogSig at the lower bound
-        % @dy_u: derivative of LogSig at the upper bound
+        % @dy_l: derivative of TanSig at the lower bound
+        % @dy_u: derivative of TanSig at the upper bound
         
         % @A: rstar output set
 
@@ -1593,7 +1593,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             R = RStar(I.V, I.C, I.d, I.predicate_lb, I.predicate_ub, lower_a, upper_a, lb, ub, I.iter);
 
             for i=1:I.dim
-                R = LogSig.stepTanSig_absdom_twoConstraints_rstar(R, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+                R = TanSig.stepTanSig_absdom_twoConstraints_rstar(R, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
             end
         end
     end
@@ -1673,7 +1673,7 @@ methods(Static) % main reach method
         elseif strcmp(method, 'rstar-absdom-two') % over-approximate analysis using abstract-domain with 2 star constraints
             R = TanSig.reach_rstar_absdom_with_two_pred_const(I);
         else
-            error('Unknown or unsupported reachability method for layer with LogSig activation function');
+            error('Unknown or unsupported reachability method for layer with TanSig activation function');
         end
 
     end

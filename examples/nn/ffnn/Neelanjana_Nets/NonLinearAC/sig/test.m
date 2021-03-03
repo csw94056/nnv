@@ -14,6 +14,6 @@ verifyPRM.lp_solver = 'linprog';
 
 
 % verify the network with eps = 5
-[r1, rb1, cE1, cands1, vt1] = net.evaluateRBN(verifyPRM);
+% [r1, rb1, cE1, cands1, vt1] = net.evaluateRBN(verifyPRM);
 
 
