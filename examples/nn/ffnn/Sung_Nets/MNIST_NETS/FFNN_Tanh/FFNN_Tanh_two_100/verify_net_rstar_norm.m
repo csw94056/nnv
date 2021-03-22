@@ -2,12 +2,20 @@ close all;
 clear;
 clc;
 
-load inputRStar_norm005.mat;
-load inputRStar_norm010.mat;
-load inputRStar_norm015.mat;
-load inputRStar_norm020.mat;
-load inputRStar_norm025.mat;
-load inputRStar_norm030.mat;
+load normalized/inputRStar_norm001.mat RS_eps_norm_001
+load normalized/inputRStar_norm002.mat RS_eps_norm_002 
+load normalized/inputRStar_norm003.mat RS_eps_norm_003 
+load normalized/inputRStar_norm004.mat RS_eps_norm_004 
+load normalized/inputRStar_norm005.mat RS_eps_norm_005 
+load normalized/inputRStar_norm006.mat RS_eps_norm_006 
+load normalized/inputRStar_norm007.mat RS_eps_norm_007 
+load normalized/inputRStar_norm008.mat RS_eps_norm_008 
+load normalized/inputRStar_norm009.mat RS_eps_norm_009
+load normalized/inputRStar_norm010.mat RS_eps_norm_010 
+load normalized/inputRStar_norm015.mat RS_eps_norm_015 
+load normalized/inputRStar_norm020.mat RS_eps_norm_020
+load normalized/inputRStar_norm025.mat RS_eps_norm_025 
+load normalized/inputRStar_norm030.mat RS_eps_norm_030
 
 load MNIST_tanh_100_100_normalized_DenseNet.mat net;
 L1 = LayerS(net.Layers(3).Weights, net.Layers(3).Bias, 'tansig');
@@ -31,6 +39,50 @@ N = 50;
 numCores = 1;
 reachMethod = 'rstar-absdom-two';
 
+[r001, rb001, cE001, cands001, vt001] = nnv_net.evaluateRBN(RS_eps_norm_001(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon001 = [0.001];
+verify_time001 = [sum(vt001)];
+safe001 = [sum(rb001==1)];
+unsafe001 = [sum(rb001 == 0)];
+unknown001 = [sum(rb001 == 2)];
+T001 = table(epsilon001, safe001, unsafe001, unknown001, verify_time001)
+fprintf('total time rstar norm (eps=0.001): %f ',verify_time001);
+save("tanh_rstar_eps_001_verify_norm.mat", 'T001', 'r001', 'rb001', 'cE001', 'cands001', 'vt001');
+
+
+[r002, rb002, cE002, cands002, vt002] = nnv_net.evaluateRBN(RS_eps_norm_002(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon002 = [0.002];
+verify_time002 = [sum(vt002)];
+safe002 = [sum(rb002==1)];
+unsafe002 = [sum(rb002 == 0)];
+unknown002 = [sum(rb002 == 2)];
+T002 = table(epsilon002, safe002, unsafe002, unknown002, verify_time002)
+fprintf('total time rstar norm (eps=0.002): %f ',verify_time002);
+save("tanh_rstar_eps_002_verify_norm.mat", 'T002', 'r002', 'rb002', 'cE002', 'cands002', 'vt002');
+
+
+[r003, rb003, cE003, cands003, vt003] = nnv_net.evaluateRBN(RS_eps_norm_003(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon003 = [0.003];
+verify_time003 = [sum(vt003)];
+safe003 = [sum(rb003==1)];
+unsafe003 = [sum(rb003 == 0)];
+unknown003 = [sum(rb003 == 2)];
+T003 = table(epsilon003, safe003, unsafe003, unknown003, verify_time003)
+fprintf('total time rstar norm (eps=0.003): %f ',verify_time003);
+save("tanh_rstar_eps_003_verify_norm.mat", 'T003', 'r003', 'rb003', 'cE003', 'cands003', 'vt003');
+
+
+[r004, rb004, cE004, cands004, vt004] = nnv_net.evaluateRBN(RS_eps_norm_004(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon004 = [0.004];
+verify_time004 = [sum(vt004)];
+safe004 = [sum(rb004==1)];
+unsafe004 = [sum(rb004 == 0)];
+unknown004 = [sum(rb004 == 2)];
+T004 = table(epsilon004, safe004, unsafe004, unknown004, verify_time004)
+fprintf('total time rstar norm (eps=0.004): %f ',verify_time004);
+save("tanh_rstar_eps_004_verify_norm.mat", 'T004', 'r004', 'rb004', 'cE004', 'cands004', 'vt004');
+
+
 [r005, rb005, cE005, cands005, vt005] = nnv_net.evaluateRBN(RS_eps_norm_005(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
 epsilon005 = [0.005];
 verify_time005 = [sum(vt005)];
@@ -40,6 +92,50 @@ unknown005 = [sum(rb005 == 2)];
 T005 = table(epsilon005, safe005, unsafe005, unknown005, verify_time005)
 fprintf('total time rstar norm (eps=0.005): %f ',verify_time005);
 save("tanh_rstar_eps_005_verify_norm.mat", 'T005', 'r005', 'rb005', 'cE005', 'cands005', 'vt005');
+
+
+[r006, rb006, cE006, cands006, vt006] = nnv_net.evaluateRBN(RS_eps_norm_006(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon006 = [0.006];
+verify_time006 = [sum(vt006)];
+safe006 = [sum(rb006==1)];
+unsafe006 = [sum(rb006 == 0)];
+unknown006 = [sum(rb006 == 2)];
+T006 = table(epsilon006, safe006, unsafe006, unknown006, verify_time006)
+fprintf('total time rstar norm (eps=0.006): %f ',verify_time006);
+save("tanh_rstar_eps_006_verify_norm.mat", 'T006', 'r006', 'rb006', 'cE006', 'cands006', 'vt006');
+
+
+[r007, rb007, cE007, cands007, vt007] = nnv_net.evaluateRBN(RS_eps_norm_007(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon007 = [0.007];
+verify_time007 = [sum(vt007)];
+safe007 = [sum(rb007 == 1)];
+unsafe007 = [sum(rb007 == 0)];
+unknown007 = [sum(rb007 == 2)];
+T007 = table(epsilon007, safe007, unsafe007, unknown007, verify_time007)
+fprintf('total time rstar norm (eps=0.007): %f ',verify_time007);
+save("tanh_rstar_eps_007_verify_norm.mat", 'T007', 'r007', 'rb007', 'cE007', 'cands007', 'vt007');
+
+
+[r008, rb008, cE008, cands008, vt008] = nnv_net.evaluateRBN(RS_eps_norm_008(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon008 = [0.008];
+verify_time008 = [sum(vt008)];
+safe008 = [sum(rb008==1)];
+unsafe008 = [sum(rb008 == 0)];
+unknown008 = [sum(rb008 == 2)];
+T008 = table(epsilon008, safe008, unsafe008, unknown008, verify_time008)
+fprintf('total time rstar norm (eps=0.008): %f ',verify_time008);
+save("tanh_rstar_eps_008_verif_normy.mat", 'T008', 'r008', 'rb008', 'cE008', 'cands008', 'vt008');
+
+
+[r009, rb009, cE009, cands009, vt009] = nnv_net.evaluateRBN(RS_eps_norm_009(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon009 = [0.009];
+verify_time009 = [sum(vt009)];
+safe009 = [sum(rb009 == 1)];
+unsafe009 = [sum(rb009 == 0)];
+unknown009 = [sum(rb009 == 2)];
+T009 = table(epsilon009, safe009, unsafe009, unknown009, verify_time009)
+fprintf('total time rstar norm (eps=0.009): %f ',verify_time009);
+save("tanh_rstar_eps_009_verify_norm.mat", 'T009', 'r009', 'rb009', 'cE009', 'cands009', 'vt009');
 
 [r010, rb010, cE010, cands010, vt010] = nnv_net.evaluateRBN(RS_eps_norm_010(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
 epsilon010 = [0.010];

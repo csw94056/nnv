@@ -1,0 +1,72 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         48           2            0             13.995    
+
+total time rstar (eps=0.005): 13.994995 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01         48           2            0             17.135    
+
+total time rstar (eps=0.010): 17.135024 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015         48           2            0             16.683    
+
+total time rstar (eps=0.015): 16.683019 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02         48           2            0             17.182    
+
+total time rstar (eps=0.020): 17.181560 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025         48           2            0             17.146    
+
+total time rstar (eps=0.025): 17.145968 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03         48           2            0             16.56     
+
+total time rstar (eps=0.030): 16.559993
+
+T1 = Empty Set
+T2 = Empty Set
+T3 = Empty Set
+T4 = Empty Set
+T5 = Empty Set
+T6 = Empty Set
+T7 = Empty Set
+T8 = Empty Set
+T9 = Empty Set
+T10 = Empty Set

@@ -1,0 +1,253 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         44           6            0             5.2008    
+
+total time rstar (eps=0.005): 5.200844 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01         44           6            0             5.3838    
+
+total time rstar (eps=0.010): 5.383770 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015         44           6            0             5.5729    
+
+total time rstar (eps=0.015): 5.572924 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02         44           6            0             5.3697    
+
+total time rstar (eps=0.020): 5.369742 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025         44           6            0             5.3691    
+
+total time rstar (eps=0.025): 5.369116 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03         44           6            0             5.4329    
+
+total time rstar (eps=0.030): 5.432926 
+T1 =
+
+  1×5 table
+
+    epsilon1    safe1    unsafe1    unknown1    verify_time1
+    ________    _____    _______    ________    ____________
+
+      0.1        43         6          1           5.4178   
+
+total time rstar (eps=0.1): 5.417791 
+T2 =
+
+  1×5 table
+
+    epsilon2    safe2    unsafe2    unknown2    verify_time2
+    ________    _____    _______    ________    ____________
+
+      0.2        43         6          1           5.4046   
+
+total time rstar (eps=0.2): 5.417791 Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+
+Error in verify_net_rstar (line 218)
+[r3, rb3, cE3, cands3, vt3] = nnv_net.evaluateRBN(RS_eps_3(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+ 
+>> [r4, rb4, cE4, cands4, vt4] = nnv_net.evaluateRBN(RS_eps_4(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon4 = [0.4];
+verify_time4 = [sum(vt4)];
+safe4 = [sum(rb4==1)];
+unsafe4 = [sum(rb4 == 0)];
+unknown4 = [sum(rb4 == 2)];
+T4 = table(epsilon1, safe4, unsafe4, unknown4, verify_time4)
+fprintf('total time rstar (eps=0.4): %f ',verify_time4);
+save("tanh_rstar_eps_4_verify.mat", 'T4', 'r4', 'rb4', 'cE4', 'cands4', 'vt4');
+
+Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+ 
+>> [r5, rb5, cE5, cands5, vt5] = nnv_net.evaluateRBN(RS_eps_5(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon5 = [0.5];
+verify_time5 = [sum(vt5)];
+safe5 = [sum(rb5==1)];
+unsafe5 = [sum(rb5 == 0)];
+unknown5 = [sum(rb5 == 2)];
+T5 = table(epsilon5, safe5, unsafe5, unknown5, verify_time5)
+fprintf('total time rstar (eps=0.5): %f ',verify_time1);
+save("tanh_rstar_eps_5_verify.mat", 'T5', 'r5', 'rb5', 'cE5', 'cands5', 'vt5');
+
+T5 =
+
+  1×5 table
+
+    epsilon5    safe5    unsafe5    unknown5    verify_time5
+    ________    _____    _______    ________    ____________
+
+      0.5        36         6          8           5.2204   
+
+total time rstar (eps=0.5): 5.417791 >> 
+ 
+>> [r6, rb6, cE6, cands6, vt6] = nnv_net.evaluateRBN(RS_eps_6(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon6 = [0.6];
+verify_time6 = [sum(vt6)];
+safe6 = [sum(rb6==1)];
+unsafe6 = [sum(rb6 == 0)];
+unknown6 = [sum(rb6 == 2)];
+T6 = table(epsilon6, safe6, unsafe6, unknown6, verify_time6)
+fprintf('total time rstar (eps=0.6): %f ',verify_time6);
+save("tanh_rstar_eps_6_verify.mat", 'T6', 'r6', 'rb6', 'cE6', 'cands6', 'vt6');
+Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+ 
+>> [r7, rb7, cE7, cands7, vt7] = nnv_net.evaluateRBN(RS_eps_7(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon7 = [0.7];
+verify_time7 = [sum(vt7)];
+safe7 = [sum(rb7==1)];
+unsafe7 = [sum(rb7 == 0)];
+unknown7 = [sum(rb7 == 2)];
+T7 = table(epsilon7, safe7, unsafe7, unknown7, verify_time7)
+fprintf('total time rstar (eps=0.7): %f ',verify_time7);
+save("tanh_rstar_eps_7_verify.mat", 'T7', 'r7', 'rb7', 'cE7', 'cands7', 'vt7');
+Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+ 
+>> [r8, rb8, cE8, cands8, vt8] = nnv_net.evaluateRBN(RS_eps_8(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon8 = [0.8];
+verify_time8 = [sum(vt8)];
+safe8 = [sum(rb8==1)];
+unsafe8 = [sum(rb8 == 0)];
+unknown8 = [sum(rb8 == 2)];
+T8 = table(epsilon8, safe8, unsafe8, unknown8, verify_time8)
+fprintf('total time rstar (eps=0.8): %f ',verify_time8);
+save("tanh_rstar_eps_8_verify.mat", 'T8', 'r8', 'rb8', 'cE8', 'cands8', 'vt8');
+Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+ 
+>> 
+
+>> [r9, rb9, cE9, cands9, vt9] = nnv_net.evaluateRBN(RS_eps_9(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon9 = [0.9];
+verify_time9 = [sum(vt9)];
+safe9 = [sum(rb9==1)];
+unsafe9 = [sum(rb9 == 0)];
+unknown9 = [sum(rb9 == 2)];
+T9 = table(epsilon9, safe9, unsafe9, unknown9, verify_time9)
+fprintf('total time rstar (eps=0.9): %f ',verify_time9);
+save("tanh_rstar_eps_9_verify.mat", 'T9', 'r9', 'rb9', 'cE9', 'cands9', 'vt9');
+Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+ 
+>> [r10, rb10, cE10, cands10, vt10] = nnv_net.evaluateRBN(RS_eps_10(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon10 = [1.0];
+verify_time10 = [sum(vt10)];
+safe10 = [sum(rb10==1)];
+unsafe10 = [sum(rb10 == 0)];
+unknown10 = [sum(rb10 == 2)];
+T10 = table(epsilon10, safe10, unsafe10, unknown10, verify_time10)
+fprintf('total time rstar (eps=0.10): %f ',verify_time10);
+save("tanh_rstar_eps_10_verify.mat", 'T10', 'r10', 'rb10', 'cE10', 'cands10', 'vt10');
+Error using Star/isEmptySet (line 298)
+Error, exitflag = -9
+
+Error in Star/is_p1_larger_than_p2 (line 1464)
+            if S.isEmptySet
+
+Error in FFNNS/verifyRBN (line 2068)
+                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+
+Error in FFNNS/evaluateRBN (line 2205)
+                        [rb(i),cE{i}, cands{i}, vt(i)] = obj.verifyRBN(in_images(i), correct_ids(i), obj.reachMethod,
+                        obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
+ 
+>> 

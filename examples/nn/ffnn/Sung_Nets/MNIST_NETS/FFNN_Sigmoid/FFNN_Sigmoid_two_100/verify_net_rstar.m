@@ -9,7 +9,7 @@ load inputRStar020.mat;
 load inputRStar025.mat;
 load inputRStar030.mat;
 
-load MNIST_tanh_100_100_DenseNet.mat net
+load MNIST_sigmoid_100_100_DenseNet.mat net
 L1 = LayerS(net.Layers(3).Weights, net.Layers(3).Bias, 'logsig');
 L2 = LayerS(net.Layers(5).Weights, net.Layers(5).Bias, 'logsig');
 L3 = LayerS(net.Layers(7).Weights, net.Layers(7).Bias, 'purelin');

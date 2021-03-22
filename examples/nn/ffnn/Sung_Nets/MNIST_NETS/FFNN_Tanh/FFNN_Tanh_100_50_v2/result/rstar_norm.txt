@@ -1,0 +1,110 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         44           6            0             5.7503    
+
+total time rstar (eps=0.005): 5.750342 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01         44           6            0             6.4495    
+
+total time rstar (eps=0.010): 6.449514 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015         44           6            0             6.7379    
+
+total time rstar (eps=0.015): 6.737865 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02         44           6            0             6.5452    
+
+total time rstar (eps=0.020): 6.545203 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025         44           6            0             6.4497    
+
+total time rstar (eps=0.025): 6.449744 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03         44           6            0             6.7068    
+
+total time rstar (eps=0.030): 6.706803 
+T1 =
+
+  1×5 table
+
+    epsilon1    safe1    unsafe1    unknown1    verify_time1
+    ________    _____    _______    ________    ____________
+
+      0.1        43         6          1           6.0139   
+
+total time rstar (eps=0.1): 6.013887 
+T2 =
+
+  1×5 table
+
+    epsilon2    safe2    unsafe2    unknown2    verify_time2
+    ________    _____    _______    ________    ____________
+
+      0.2        43         6          1           5.3987   
+
+T3 = Empty Set
+T4 = Empty Set
+
+
+T5 =
+
+  1×5 table
+
+    epsilon5    safe5    unsafe5    unknown5    verify_time5
+    ________    _____    _______    ________    ____________
+
+      0.5        36         6          8           5.0723   
+
+total time rstar (eps=0.5): 6.013887
+
+T6 = Empty Set
+T7 = Empty Set
+
+
+T8 =
+
+  1×5 table
+
+    epsilon8    safe8    unsafe8    unknown8    verify_time8
+    ________    _____    _______    ________    ____________
+
+      0.8        43         6          1           4.9019   
+
+T9 = Empty Set
+T10 = Empty Set

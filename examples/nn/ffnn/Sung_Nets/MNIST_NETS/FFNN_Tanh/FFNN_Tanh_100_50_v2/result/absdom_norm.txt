@@ -1,0 +1,141 @@
+
+T001 =
+
+  1×5 table
+
+    epsilon001    safe001    unsafe001    unknown001    verify_time001
+    __________    _______    _________    __________    ______________
+
+      0.001         45           5            0             1.0438    
+
+total time absdom norm (eps=0.001): 1.043838 
+T002 =
+
+  1×5 table
+
+    epsilon002    safe002    unsafe002    unknown002    verify_time002
+    __________    _______    _________    __________    ______________
+
+      0.002         45           5            0            0.97417    
+
+total time absdom norm (eps=0.002): 0.974170 
+T003 =
+
+  1×5 table
+
+    epsilon003    safe003    unsafe003    unknown003    verify_time003
+    __________    _______    _________    __________    ______________
+
+      0.003         43           5            2             1.7927    
+
+total time absdom norm (eps=0.003): 1.792746 
+T004 =
+
+  1×5 table
+
+    epsilon004    safe004    unsafe004    unknown004    verify_time004
+    __________    _______    _________    __________    ______________
+
+      0.004         40           5            5             1.1362    
+
+total time absdom norm (eps=0.004): 1.136224 
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         38           5            7             1.0419    
+
+total time absdom norm (eps=0.005): 1.041946 
+T006 =
+
+  1×5 table
+
+    epsilon006    safe006    unsafe006    unknown006    verify_time006
+    __________    _______    _________    __________    ______________
+
+      0.006         34           5            11            1.1959    
+
+total time absdom norm (eps=0.006): 1.195876 
+T007 =
+
+  1×5 table
+
+    epsilon007    safe007    unsafe007    unknown007    verify_time007
+    __________    _______    _________    __________    ______________
+
+      0.007         25           5            20            1.3332    
+
+total time absdom norm (eps=0.007): 1.333212 
+T008 =
+
+  1×5 table
+
+    epsilon008    safe008    unsafe008    unknown008    verify_time008
+    __________    _______    _________    __________    ______________
+
+      0.008         19           5            26            1.226     
+
+total time absdom norm (eps=0.008): 1.226043 
+T009 =
+
+  1×5 table
+
+    epsilon009    safe009    unsafe009    unknown009    verify_time009
+    __________    _______    _________    __________    ______________
+
+      0.009         12           5            33            1.2044    
+
+total time absdom norm (eps=0.009): 1.204389 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01          7           5            38            1.2191    
+
+total time absdom norm (eps=0.010): 1.219086 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015          0           5            45            1.3085    
+
+total time absdom norm (eps=0.015): 1.308550 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02          0           6            44            1.3833    
+
+total time absdom norm (eps=0.020): 1.383306 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025          0           6            44            1.3055    
+
+total time absdom norm (eps=0.025): 1.305537 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03          0           9            41            1.2123    
+
+total time absdom norm (eps=0.030): 1.212313 >> 

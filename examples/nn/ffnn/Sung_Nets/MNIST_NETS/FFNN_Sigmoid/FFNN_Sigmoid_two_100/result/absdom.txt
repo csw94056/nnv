@@ -6,9 +6,9 @@ T005 =
     epsilon005    safe005    unsafe005    unknown005    verify_time005
     __________    _______    _________    __________    ______________
 
-      0.005         44           6            0            0.81313    
+      0.005         44           6            0            0.92106    
 
-total time absdom (eps=0.005): 0.813131 
+total time absdom (eps=0.005): 0.921064 
 T010 =
 
   1×5 table
@@ -16,9 +16,9 @@ T010 =
     epsilon010    safe010    unsafe010    unknown010    verify_time010
     __________    _______    _________    __________    ______________
 
-       0.01         44           6            0            0.83344    
+       0.01         44           6            0            0.89886    
 
-total time absdom (eps=0.010): 0.833440 
+total time absdom (eps=0.010): 0.898857 
 T015 =
 
   1×5 table
@@ -26,9 +26,9 @@ T015 =
     epsilon015    safe015    unsafe015    unknown015    verify_time015
     __________    _______    _________    __________    ______________
 
-      0.015         44           6            0            0.85319    
+      0.015         44           6            0            0.87018    
 
-total time absdom (eps=0.015): 0.853185 
+total time absdom (eps=0.015): 0.870182 
 T020 =
 
   1×5 table
@@ -36,9 +36,9 @@ T020 =
     epsilon020    safe020    unsafe020    unknown020    verify_time020
     __________    _______    _________    __________    ______________
 
-       0.02         44           6            0            0.86203    
+       0.02         44           6            0            0.96979    
 
-total time absdom (eps=0.020): 0.862026 
+total time absdom (eps=0.020): 0.969792 
 T025 =
 
   1×5 table
@@ -46,9 +46,9 @@ T025 =
     epsilon025    safe025    unsafe025    unknown025    verify_time025
     __________    _______    _________    __________    ______________
 
-      0.025         44           6            0            0.81767    
+      0.025         44           6            0            0.95485    
 
-total time absdom (eps=0.025): 0.817669 
+total time absdom (eps=0.025): 0.954849 
 T030 =
 
   1×5 table
@@ -56,6 +56,6 @@ T030 =
     epsilon030    safe030    unsafe030    unknown030    verify_time030
     __________    _______    _________    __________    ______________
 
-       0.03         44           6            0            0.81977    
+       0.03         44           6            0            0.89235    
 
-total time absdom (eps=0.030): 0.819772 >> 
+total time absdom (eps=0.030): 0.892351 >> 

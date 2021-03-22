@@ -1,0 +1,128 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         49           1            0             66.768    
+
+total time star (eps=0.005): 66.767542 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01         49           1            0             67.056    
+
+total time star (eps=0.010): 67.055725 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015         49           1            0             66.582    
+
+total time star (eps=0.015): 66.582149 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02         49           1            0             66.593    
+
+total time star (eps=0.020): 66.592870 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025         49           1            0             65.984    
+
+total time star (eps=0.025): 65.984270 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03         49           1            0             69.148    
+
+total time star (eps=0.030): 69.147754 >> 
+
+T1 =
+
+  1×5 table
+
+    epsilon1    safe1    unsafe1    unknown1    verify_time1
+    ________    _____    _______    ________    ____________
+
+      0.1        49         1          0           71.382   
+
+total time star (eps=0.1): 71.381734 
+T2 =
+
+  1×5 table
+
+    epsilon2    safe2    unsafe2    unknown2    verify_time2
+    ________    _____    _______    ________    ____________
+
+      0.2        49         1          0           75.55    
+
+total time star (eps=0.2): 75.550356 
+T3 =
+
+  1×5 table
+
+    epsilon3    safe3    unsafe3    unknown3    verify_time3
+    ________    _____    _______    ________    ____________
+
+      0.3        49         1          0           82.497   
+
+total time star (eps=0.3): 82.496502 
+T4 =
+
+  1×5 table
+
+    epsilon1    safe4    unsafe4    unknown4    verify_time4
+    ________    _____    _______    ________    ____________
+
+      0.4        48         1          1           89.53    
+
+total time star (eps=0.4): 89.530284 
+
+T5 = Time out
+
+T6 =
+
+  1×5 table
+
+    epsilon1    safe4    unsafe4    unknown4    verify_time4
+    ________    _____    _______    ________    ____________
+
+      0.6        45         1          4           103.24
+
+total time star (eps=0.4): 103.244611
+
+T7 = Time out
+
+T8 =
+
+  1×5 table
+
+    epsilon8    safe8    unsafe8    unknown8    verify_time8
+    ________    _____    _______    ________    ____________
+
+      0.8        41         1          8           132.01   
+
+total time star (eps=0.8): 132.008034 

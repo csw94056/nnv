@@ -6,9 +6,9 @@ T005 =
     epsilon005    safe005    unsafe005    unknown005    verify_time005
     __________    _______    _________    __________    ______________
 
-      0.005         44           6            0             81.155    
+      0.005         44           6            0             89.234    
 
-total time star (eps=0.005): 81.155426 
+total time star (eps=0.005): 89.234018 
 T010 =
 
   1×5 table
@@ -16,9 +16,9 @@ T010 =
     epsilon010    safe010    unsafe010    unknown010    verify_time010
     __________    _______    _________    __________    ______________
 
-       0.01         44           6            0             85.531    
+       0.01         44           6            0             83.201    
 
-total time star (eps=0.010): 85.530675 
+total time star (eps=0.010): 83.201203 
 T015 =
 
   1×5 table
@@ -26,9 +26,9 @@ T015 =
     epsilon015    safe015    unsafe015    unknown015    verify_time015
     __________    _______    _________    __________    ______________
 
-      0.015         44           6            0             84.922    
+      0.015         44           6            0             78.805    
 
-total time star (eps=0.015): 84.922094 
+total time star (eps=0.015): 78.804651 
 T020 =
 
   1×5 table
@@ -36,9 +36,9 @@ T020 =
     epsilon020    safe020    unsafe020    unknown020    verify_time020
     __________    _______    _________    __________    ______________
 
-       0.02         44           6            0             86.445    
+       0.02         44           6            0             81.316    
 
-total time star (eps=0.020): 86.445360 
+total time star (eps=0.020): 81.316335 
 T025 =
 
   1×5 table
@@ -46,9 +46,9 @@ T025 =
     epsilon025    safe025    unsafe025    unknown025    verify_time025
     __________    _______    _________    __________    ______________
 
-      0.025         44           6            0             87.188    
+      0.025         44           6            0             81.123    
 
-total time star (eps=0.025): 87.188024 
+total time star (eps=0.025): 81.122902 
 T030 =
 
   1×5 table
@@ -56,6 +56,6 @@ T030 =
     epsilon030    safe030    unsafe030    unknown030    verify_time030
     __________    _______    _________    __________    ______________
 
-       0.03         44           6            0             87.283    
+       0.03         44           6            0             81.369    
 
-total time star (eps=0.030): 87.283360 >> 
+total time star (eps=0.030): 81.369046 

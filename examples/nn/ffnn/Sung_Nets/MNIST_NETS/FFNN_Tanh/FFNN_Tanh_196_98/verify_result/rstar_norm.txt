@@ -1,0 +1,82 @@
+
+T001 =
+
+  1×5 table
+
+    epsilon001    safe001    unsafe001    unknown001    verify_time001
+    __________    _______    _________    __________    ______________
+
+      0.001         46           4            0             29.673    
+
+total time rstar norm (eps=0.001): 29.673379 
+T002 =
+
+  1×5 table
+
+    epsilon002    safe002    unsafe002    unknown002    verify_time002
+    __________    _______    _________    __________    ______________
+
+      0.002         46           4            0             30.742    
+
+total time rstar norm (eps=0.002): 30.742168 
+T003 =
+
+  1×5 table
+
+    epsilon003    safe003    unsafe003    unknown003    verify_time003
+    __________    _______    _________    __________    ______________
+
+      0.003         44           4            2             32.277    
+
+total time rstar norm (eps=0.003): 32.277403 
+T004 =
+
+  1×5 table
+
+    epsilon004    safe004    unsafe004    unknown004    verify_time004
+    __________    _______    _________    __________    ______________
+
+      0.004         44           4            2             32.873    
+
+total time rstar norm (eps=0.004): 32.872845 
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         41           4            5             31.363    
+
+total time rstar norm (eps=0.005): 31.362889 
+
+T006 = Empty Set
+T007 = Empty Set
+T008 = Empty Set
+
+
+T009 =
+
+  1×5 table
+
+    epsilon009    safe009    unsafe009    unknown009    verify_time009
+    __________    _______    _________    __________    ______________
+
+      0.009          9           4            37            39.543    
+
+total time rstar norm (eps=0.009): 39.542532 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01          6           4            40            40.253    
+
+total time rstar norm (eps=0.010): 40.252772
+
+T015 = Empty Set
+T020 = Empty Set
+T025 = Empty Set
+T030 = Empty Set

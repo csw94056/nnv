@@ -1,0 +1,161 @@
+
+T005 =
+
+  1×5 table
+
+    epsilon005    safe005    unsafe005    unknown005    verify_time005
+    __________    _______    _________    __________    ______________
+
+      0.005         44           1            5             0.7462    
+
+total time absdom (eps=0.005): 0.746199 
+T010 =
+
+  1×5 table
+
+    epsilon010    safe010    unsafe010    unknown010    verify_time010
+    __________    _______    _________    __________    ______________
+
+       0.01         44           1            5            0.73322    
+
+total time absdom (eps=0.010): 0.733217 
+T015 =
+
+  1×5 table
+
+    epsilon015    safe015    unsafe015    unknown015    verify_time015
+    __________    _______    _________    __________    ______________
+
+      0.015         44           1            5            0.72933    
+
+total time absdom (eps=0.015): 0.729335 
+T020 =
+
+  1×5 table
+
+    epsilon020    safe020    unsafe020    unknown020    verify_time020
+    __________    _______    _________    __________    ______________
+
+       0.02         45           1            4            0.70526    
+
+total time absdom (eps=0.020): 0.705261 
+T025 =
+
+  1×5 table
+
+    epsilon025    safe025    unsafe025    unknown025    verify_time025
+    __________    _______    _________    __________    ______________
+
+      0.025         44           1            5            0.75517    
+
+total time absdom (eps=0.025): 0.755173 
+T030 =
+
+  1×5 table
+
+    epsilon030    safe030    unsafe030    unknown030    verify_time030
+    __________    _______    _________    __________    ______________
+
+       0.03         45           1            4            0.76087    
+
+total time absdom (eps=0.030): 0.760869 
+T1 =
+
+  1×5 table
+
+    epsilon1    safe1    unsafe1    unknown1    verify_time1
+    ________    _____    _______    ________    ____________
+
+      0.1        47         1          2          0.70567   
+
+total time absdom (eps=0.1): 0.705674 
+T2 =
+
+  1×5 table
+
+    epsilon2    safe2    unsafe2    unknown2    verify_time2
+    ________    _____    _______    ________    ____________
+
+      0.2        47         1          2          0.68988   
+
+total time absdom (eps=0.2): 0.689880 
+T3 =
+
+  1×5 table
+
+    epsilon3    safe3    unsafe3    unknown3    verify_time3
+    ________    _____    _______    ________    ____________
+
+      0.3        48         1          1          0.72475   
+
+total time absdom (eps=0.3): 0.724750 
+T4 =
+
+  1×5 table
+
+    epsilon1    safe4    unsafe4    unknown4    verify_time4
+    ________    _____    _______    ________    ____________
+
+      0.1        47         1          2          0.72888   
+
+total time absdom (eps=0.4): 0.728883 
+T5 =
+
+  1×5 table
+
+    epsilon5    safe5    unsafe5    unknown5    verify_time5
+    ________    _____    _______    ________    ____________
+
+      0.5        46         1          3           0.8304   
+
+total time absdom (eps=0.5): 0.830396 
+T6 =
+
+  1×5 table
+
+    epsilon6    safe6    unsafe6    unknown6    verify_time6
+    ________    _____    _______    ________    ____________
+
+      0.6        42         1          7          0.81646   
+
+total time absdom (eps=0.6): 0.816458 
+T7 =
+
+  1×5 table
+
+    epsilon7    safe7    unsafe7    unknown7    verify_time7
+    ________    _____    _______    ________    ____________
+
+      0.7        39         1          10         0.79655   
+
+total time absdom (eps=0.7): 0.796548 
+T8 =
+
+  1×5 table
+
+    epsilon8    safe8    unsafe8    unknown8    verify_time8
+    ________    _____    _______    ________    ____________
+
+      0.8        37         1          12         0.81754   
+
+total time absdom (eps=0.8): 0.817536 
+T9 =
+
+  1×5 table
+
+    epsilon9    safe9    unsafe9    unknown9    verify_time9
+    ________    _____    _______    ________    ____________
+
+      0.9        33         1          16          0.8345   
+
+total time absdom (eps=0.9): 0.834497 
+T10 =
+
+  1×5 table
+
+    epsilon10    safe10    unsafe10    unknown10    verify_time10
+    _________    ______    ________    _________    _____________
+
+        1          26         1           23           0.99832   
+
+total time absdom (eps=0.10): 0.998320 >> 

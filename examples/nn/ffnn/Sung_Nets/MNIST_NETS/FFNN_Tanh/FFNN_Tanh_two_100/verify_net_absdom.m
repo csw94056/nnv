@@ -2,12 +2,24 @@ close all;
 clear;
 clc;
 
-load inputAbsDom005.mat;
-load inputAbsDom010.mat;
-load inputAbsDom015.mat;
-load inputAbsDom020.mat;
-load inputAbsDom025.mat;
-load inputAbsDom030.mat;
+load not_normalized/inputAbsDom005.mat A_eps_005 
+load not_normalized/inputAbsDom010.mat A_eps_010 
+load not_normalized/inputAbsDom015.mat A_eps_015 
+load not_normalized/inputAbsDom020.mat A_eps_020  
+load not_normalized/inputAbsDom025.mat A_eps_025 
+load not_normalized/inputAbsDom030.mat A_eps_030
+
+load not_normalized/inputAbsDom1.mat A_eps_1
+load not_normalized/inputAbsDom2.mat A_eps_2
+load not_normalized/inputAbsDom3.mat A_eps_3
+load not_normalized/inputAbsDom4.mat A_eps_4
+load not_normalized/inputAbsDom5.mat A_eps_5
+load not_normalized/inputAbsDom6.mat A_eps_6
+load not_normalized/inputAbsDom7.mat A_eps_7
+load not_normalized/inputAbsDom8.mat A_eps_8
+load not_normalized/inputAbsDom9.mat A_eps_9
+load not_normalized/inputAbsDom10.mat A_eps_10
+
 
 load MNIST_tanh_100_100_DenseNet.mat net;
 L1 = LayerS(net.Layers(3).Weights, net.Layers(3).Bias, 'tansig');
@@ -90,4 +102,108 @@ unknown030 = [sum(rb030 == 2)];
 T030 = table(epsilon030, safe030, unsafe030, unknown030, verify_time030)
 fprintf('total time absdom (eps=0.030): %f ',verify_time030);
 save("tanh_absdom_eps_030_verify.mat", 'T030', 'r030', 'rb030', 'cE030', 'cands030', 'vt030');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+[r1, rb1, cE1, cands1, vt1] = nnv_net.evaluateRBN(A_eps_1(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon1 = [0.1];
+verify_time1 = [sum(vt1)];
+safe1 = [sum(rb1==1)];
+unsafe1 = [sum(rb1 == 0)];
+unknown1 = [sum(rb1 == 2)];
+T1 = table(epsilon1, safe1, unsafe1, unknown1, verify_time1)
+fprintf('total time absdom (eps=0.1): %f ',verify_time1);
+save("tanh_absdom_eps_1_verify.mat", 'T1', 'r1', 'rb1', 'cE1', 'cands1', 'vt1');
+
+[r2, rb2, cE2, cands2, vt2] = nnv_net.evaluateRBN(A_eps_2(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon2 = [0.2];
+verify_time2 = [sum(vt2)];
+safe2 = [sum(rb2==1)];
+unsafe2 = [sum(rb2 == 0)];
+unknown2 = [sum(rb2 == 2)];
+T2 = table(epsilon2, safe2, unsafe2, unknown2, verify_time2)
+fprintf('total time absdom (eps=0.2): %f ',verify_time2);
+save("tanh_absdom_eps_2_verify.mat", 'T2', 'r2', 'rb2', 'cE2', 'cands2', 'vt2');
+
+[r3, rb3, cE3, cands3, vt3] = nnv_net.evaluateRBN(A_eps_3(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon3 = [0.3];
+verify_time3 = [sum(vt3)];
+safe3 = [sum(rb3==1)];
+unsafe3 = [sum(rb3 == 0)];
+unknown3 = [sum(rb3 == 2)];
+T3 = table(epsilon3, safe3, unsafe3, unknown3, verify_time3)
+fprintf('total time absdom (eps=0.3): %f ',verify_time3);
+save("tanh_absdom_eps_3_verify.mat", 'T3', 'r3', 'rb3', 'cE3', 'cands3', 'vt3');
+
+[r4, rb4, cE4, cands4, vt4] = nnv_net.evaluateRBN(A_eps_4(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon4 = [0.4];
+verify_time4 = [sum(vt4)];
+safe4 = [sum(rb4==1)];
+unsafe4 = [sum(rb4 == 0)];
+unknown4 = [sum(rb4 == 2)];
+T4 = table(epsilon1, safe4, unsafe4, unknown4, verify_time4)
+fprintf('total time absdom (eps=0.4): %f ',verify_time4);
+save("tanh_absdom_eps_4_verify.mat", 'T4', 'r4', 'rb4', 'cE4', 'cands4', 'vt4');
+
+[r5, rb5, cE5, cands5, vt5] = nnv_net.evaluateRBN(A_eps_5(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon5 = [0.5];
+verify_time5 = [sum(vt5)];
+safe5 = [sum(rb5==1)];
+unsafe5 = [sum(rb5 == 0)];
+unknown5 = [sum(rb5 == 2)];
+T5 = table(epsilon5, safe5, unsafe5, unknown5, verify_time5)
+fprintf('total time absdom (eps=0.5): %f ',verify_time5);
+save("tanh_absdom_eps_5_verify.mat", 'T5', 'r5', 'rb5', 'cE5', 'cands5', 'vt5');
+
+[r6, rb6, cE6, cands6, vt6] = nnv_net.evaluateRBN(A_eps_6(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon6 = [0.6];
+verify_time6 = [sum(vt6)];
+safe6 = [sum(rb6==1)];
+unsafe6 = [sum(rb6 == 0)];
+unknown6 = [sum(rb6 == 2)];
+T6 = table(epsilon6, safe6, unsafe6, unknown6, verify_time6)
+fprintf('total time absdom (eps=0.6): %f ',verify_time6);
+save("tanh_absdom_eps_6_verify.mat", 'T6', 'r6', 'rb6', 'cE6', 'cands6', 'vt6');
+
+[r7, rb7, cE7, cands7, vt7] = nnv_net.evaluateRBN(A_eps_7(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon7 = [0.7];
+verify_time7 = [sum(vt7)];
+safe7 = [sum(rb7==1)];
+unsafe7 = [sum(rb7 == 0)];
+unknown7 = [sum(rb7 == 2)];
+T7 = table(epsilon7, safe7, unsafe7, unknown7, verify_time7)
+fprintf('total time absdom (eps=0.7): %f ',verify_time7);
+save("tanh_absdom_eps_7_verify.mat", 'T7', 'r7', 'rb7', 'cE7', 'cands7', 'vt7');
+
+[r8, rb8, cE8, cands8, vt8] = nnv_net.evaluateRBN(A_eps_8(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon8 = [0.8];
+verify_time8 = [sum(vt8)];
+safe8 = [sum(rb8==1)];
+unsafe8 = [sum(rb8 == 0)];
+unknown8 = [sum(rb8 == 2)];
+T8 = table(epsilon8, safe8, unsafe8, unknown8, verify_time8)
+fprintf('total time absdom (eps=0.8): %f ',verify_time8);
+save("tanh_absdom_eps_8_verify.mat", 'T8', 'r8', 'rb8', 'cE8', 'cands8', 'vt8');
+
+[r9, rb9, cE9, cands9, vt9] = nnv_net.evaluateRBN(A_eps_9(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon9 = [0.9];
+verify_time9 = [sum(vt9)];
+safe9 = [sum(rb9==1)];
+unsafe9 = [sum(rb9 == 0)];
+unknown9 = [sum(rb9 == 2)];
+T9 = table(epsilon9, safe9, unsafe9, unknown9, verify_time9)
+fprintf('total time absdom (eps=0.9): %f ',verify_time9);
+save("tanh_absdom_eps_9_verify.mat", 'T9', 'r9', 'rb9', 'cE9', 'cands9', 'vt9');
+
+[r10, rb10, cE10, cands10, vt10] = nnv_net.evaluateRBN(A_eps_10(1:N), labels(1:N)+1, reachMethod, numCores, 0, 0, 'glpk');
+epsilon10 = [1.0];
+verify_time10 = [sum(vt10)];
+safe10 = [sum(rb10==1)];
+unsafe10 = [sum(rb10 == 0)];
+unknown10 = [sum(rb10 == 2)];
+T10 = table(epsilon10, safe10, unsafe10, unknown10, verify_time10)
+fprintf('total time absdom (eps=0.10): %f ',verify_time10);
+save("tanh_absdom_eps_10_verify.mat", 'T10', 'r10', 'rb10', 'cE10', 'cands10', 'vt10');
+
+
 
