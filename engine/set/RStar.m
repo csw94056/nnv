@@ -114,8 +114,8 @@ classdef RStar
 
                     S = Star(lb, ub);
                     obj.V = S.V;
-                    obj.C = zeros(1, S.nVar); % initiate an obvious constraint
-                    obj.d = zeros(1, 1);
+                    obj.C = S.C;    %zeros(1, S.nVar); % initiate an obvious constraint
+                    obj.d = S.d;    %zeros(1, 1);
                     obj.predicate_lb = -ones(S.nVar, 1);
                     obj.predicate_ub = ones(S.nVar, 1);
                     
