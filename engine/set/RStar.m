@@ -512,7 +512,7 @@ classdef RStar
         
         % convert to Star
         function S = toStar(obj)
-            S = Star(obj.V, obj.C, obj.d);
+            S = Star(obj.V, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
         end
         
         % get basic matrix

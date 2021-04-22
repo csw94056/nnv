@@ -165,6 +165,7 @@ classdef LogSig
             % update: 4/2/2020
             
             %[l, u] = I.Z.getRange(index);
+            % Sung Woo change for temp check
             [l, u] = I.getRange(index);
             y_l = logsig(l);
             y_u = logsig(u);
@@ -1244,8 +1245,9 @@ methods(Static) % over-approximate reachability analysis using abstract domain
             error('Input set is not a Star');
         end
 
-        [l, u] = I.estimateRanges;  
-
+        %[l, u] = I.estimateRanges;  
+        [l, u] = I.getRanges;
+        
         y_l = logsig(l);
         y_u = logsig(u);
         dy_l = logsig('dn', l);
@@ -1479,18 +1481,19 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             C0 = [I.C zeros(size(I.C,1),1)];
             d0 = I.d;
                 
-            lamda = (y_u - y_l)/(u - l);
             if l >= 0
-                % constraint 1: y[index] >= y(l) + lamda * (x[index] - l)
+                lambda = (y_u - y_l)/(u - l);
+                
+                % constraint 1: y[index] >= y(l) + lambda * (x[index] - l)
                 L = zeros(1, I.dim + 1);
-                L(1) = y_l - lamda*l;
-                L(index+1) = lamda;
+                L(1) = y_l - lambda*l;
+                L(index+1) = lambda;
                 lower_a{len}(index,:) = L;
                 
-                C1 = [lamda*I.X(index,:) -1];
-                d1 = -y_l - lamda*(I.c(index) - l);
+                C1 = [lambda*I.X(index,:) -1];
+                d1 = -y_l - lambda*(I.c(index) - l);
                 
-                % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
+                % constraint 2: y[index] <= y(u) + y'(u) * (x[index] - u)                
                 U = zeros(1, I.dim + 1);
                 U(1) = y_u - dy_u*u;
                 U(index+1) = dy_u;
@@ -1499,7 +1502,9 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
                 C2 = [-dy_u*I.X(index,:) 1];
                 d2 = y_u + dy_u*(I.c(index) - u);
             elseif u <= 0
-                % constraint 1: y[index] >= y(l) + lamda' * (x[index] - l)
+                lambda = (y_u - y_l)/(u - l);
+                
+                % constraint 1: y[index] >= y(l) + y'(l) * (x[index] - l)               
                 L = zeros(1, I.dim + 1);
                 L(1) = y_l - dy_l*l;
                 L(index+1) = dy_l;
@@ -1508,33 +1513,43 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
                 C1 = [dy_l*I.X(index,:) -1];
                 d1 = -y_l - dy_l*(I.c(index) - l);
                 
-                % constraint 2: y[index] <= y(u) + lamda * (x[index] - u)
+                % constraint 2: y[index] <= y(l) + lambda * (x[index] - l)
                 U = zeros(1, I.dim + 1);
-                U(1) = y_u - lamda*u;
-                U(index+1) = lamda;
+                U(1) = y_l - lambda*l;
+                U(index+1) = lambda;
                 upper_a{len}(index,:) = U;
                 
-                C2 = [-lamda*I.X(index,:) 1];
-                d2 = y_u + lamda*(I.c(index) - u);
+                C2 = [-lambda*I.X(index,:) 1];
+                d2 = y_l + lambda*(I.c(index) - l);
+                
+                
+%                 % constraint 2: y[index] <= y(u) + lambda * (x[index] - u)
+%                 U = zeros(1, I.dim + 1);
+%                 U(1) = y_u - lamda*u;
+%                 U(index+1) = lambda;
+%                 upper_a{len}(index,:) = U;
+%                 
+%                 C2 = [-lambda*I.X(index,:) 1];
+%                 d2 = y_u + lambda*(I.c(index) - u);
             else
-                dlamda = min(dy_l , dy_u);
-                % constraint 1: y[index] >= y(l) + lamda' * (x[index] - l)
+                dlambda = min(dy_l , dy_u);
+                % constraint 1: y[index] >= y(l) + lambda' * (x[index] - l)
                 L = zeros(1, I.dim + 1);
-                L(1) = y_l - dlamda*l;
-                L(index+1) = dlamda;
+                L(1) = y_l - dlambda*l;
+                L(index+1) = dlambda;
                 lower_a{len}(index,:) = L;
                 
-                C1 = [dlamda*I.X(index,:) -1];
-                d1 = -y_l - dlamda*(I.c(index) - l);
+                C1 = [dlambda*I.X(index,:) -1];
+                d1 = -y_l - dlambda*(I.c(index) - l);
                 
-                % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
+                % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)               
                 U = zeros(1, I.dim + 1);
-                U(1) = y_u - dlamda*u;
-                U(index+1) = dlamda;
+                U(1) = y_u - dlambda*u;
+                U(index+1) = dlambda;
                 upper_a{len}(index,:) = U;
                 
-                C2 = [-dlamda*I.X(index,:) 1];
-                d2 = y_u + dlamda*(I.c(index) - u);
+                C2 = [-dlambda*I.X(index,:) 1];
+                d2 = y_u + dlambda*(I.c(index) - u);
             end
           
 %             dlamda = min(dy_l , dy_u);
@@ -1614,8 +1629,16 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             ub = I.ub;
             len = length(lower_a);
 
+%             [l_e, u_e] = I.getExactRanges;
             l = lb{len};
             u = ub{len};
+%             if(l_e ~= l)
+%                 fprintf('different lower bound %e \n', l_e-l);
+%             end
+%             if(u_e ~= u)
+%                 fprintf('different upper bound %e \n', u_e-u);
+%             end
+            
             y_l = logsig(l);
             y_u = logsig(u);
             dy_l = logsig('dn', l);

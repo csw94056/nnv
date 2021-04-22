@@ -285,6 +285,7 @@ classdef Star
             % update: 6/16/2020
             % update: 7/15/2020 The isEmptySet method in Polyhedron object
             % has bug
+            % Sung: use glpk 04/21/2021
             
             options = optimoptions(@linprog, 'Display','none'); 
             options.OptimalityTolerance = 1e-10; % set tolerance
@@ -300,7 +301,15 @@ classdef Star
             
 %             P = Polyhedron('A', obj.C, 'b', obj.d, 'lb', obj.predicate_lb, 'ub', obj.predicate_ub);
 %             bool = P.isEmptySet;
-            
+
+%             [~, ~, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+%             if exitflag == 1 || exitflag == 2 || exitflag == 5 || exitflag == 6
+%                 bool = 0;
+%             elseif exitflag == 3 || exitflag == 4
+%                 bool = 1;
+%             else
+%                 error('Error, exitflag = %d', exitflag);
+%             end
         end
         
         % check if a star set is a subset of other
