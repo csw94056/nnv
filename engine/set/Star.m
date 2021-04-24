@@ -304,9 +304,9 @@ classdef Star
 
 %             [~, ~, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
 %             if exitflag == 1 || exitflag == 2 || exitflag == 5 || exitflag == 6
-%                 bool = 0;
+%                 bool = 0
 %             elseif exitflag == 3 || exitflag == 4
-%                 bool = 1;
+%                 bool = 1
 %             else
 %                 error('Error, exitflag = %d', exitflag);
 %             end

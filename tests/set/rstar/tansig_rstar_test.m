@@ -3,45 +3,66 @@ clear;
 clc;
 format long;
 
-input_dim = 4;
-output_dim = 3;
+input_dim = 2;
+output_dim = 2;
 % n is number of neurons per hidden layers
 n = 2;
-% h+2 is number of hidden layers
-h = 3;
+% h is number of hidden layers
+h = 4;
 
 W{1} = -1 + 2*rand(n,input_dim);
 b{1} = -1 + 2*rand(n, 1);
-for i = 2:4
+for i = 2:h
     W{i} = -1 + 2*rand(n,n);
     b{i} = -1 + 2*rand(n,1);
 end
 W{i+1} = -1 + 2*rand(output_dim, n);
 b{i+1} = -1 + 2*rand(output_dim, 1);
 
-% save Wb2_tansig.mat W b;
-% load Wb2_tansig.mat
+save Wb_tansig.mat W b;
+% load Wb_tansig.mat
 steps = length(W);
 % steps = 5;
 
+lb = -ones(input_dim, 1);
+ub = ones(input_dim, 1);
 
-P = Polyhedron('lb', -ones(input_dim, 1), 'ub', ones(input_dim, 1));
+% p{1} = (lb + ub) * 0.5;
+% p{2} = lb;
+% p{3} = ub;
+% p{4} = [ub(1); lb(1)];
+% p{5} = [lb(1); ub(2)];
+
+k = 1;
+for n = lb(1):ub(1)/5.0:(ub(1)-lb(1))/2.0
+    for m = lb(2):ub(2)/5.0:(ub(2)-lb(2))/2.0
+        p{k} = [n; m];
+        k = k+1;
+    end
+end
+
+P = Polyhedron('lb', lb, 'ub', ub);
 A = AbsDom(P, inf);
 R2 = RStar(P,inf);
 S = Star(P);
 S.predicate_lb = -ones(input_dim, 1);
 S.predicate_ub = ones(input_dim, 1);
 Sa = S;
-% figure;
-% nexttile;
-% plot(A, 'r');
-% hold on;
-% plot(Sa, 'b');
-% hold on;
-% plot(R2, 'y');
-% hold on
-% plot(S, 'c');          % Star approx
-% title('input');
+
+figure;
+nexttile;
+plot(A, 'r');
+hold on;
+plot(Sa, 'b');
+hold on;
+plot(R2, 'y');
+hold on
+plot(S, 'c');          % Star approx
+hold on;
+for i = 1:length(p)
+    plot(p{i}(1),p{i}(2), '*', 'color', 'black');
+end
+title('input');
 
 % %legend('AbsDom','Star approx', 'RStar 2');
 % legend('AbsDom', 'Star AbsDom', 'RStar 2', 'Star approx');
@@ -51,62 +72,121 @@ for i = 1:steps
     Sa = Sa.affineMap(W{i}, b{i});
     R2 = R2.affineMap(W{i}, b{i});
     S = S.affineMap(W{i}, b{i});
-%     nexttile;
-%     plot(A, 'r');
-%     hold on;
-%     plot(Sa, 'b');
-%     hold on;
-%     plot(R2, 'y');
-%     hold on;
-%     plot(S, 'c');
-%     title('affine map');
+    nexttile;
+    plot(A, 'r');
+    hold on;
+    plot(Sa, 'b');
+    hold on;
+    plot(R2, 'y');
+    hold on;
+    plot(S, 'c');
+    hold on;
+    for j = 1:length(p)
+        p{j} = point_affineMap(p{j}, W{i}, b{i});
+        if length(p{j}) == 3
+            plot3(p{j}(1),p{j}(2),p{j}(3), '*', 'color', 'black');
+            xlabel('x1');
+            ylabel('x2');
+            zlabel('x3');
+        else
+            plot(p{j}(1),p{j}(2), '*', 'color', 'black');
+            xlabel('x1');
+            ylabel('x2');
+        end
+    end
+%     hold off;
+    title(sprintf('Affine Map (%d)', i));
+    
+    if i == steps
+        break;
+    end
     
     A = TanSig.reach_absdom_approx(A);
     Sa = TanSig.reach_abstract_domain_approx(Sa);
     R2 = TanSig.reach_rstar_absdom_with_two_pred_const(R2);
     S = TanSig.multiStepTanSig_NoSplit(S);
-
-    
-%     nexttile;
-%     plot(A, 'r');
-%     hold on;
-%     plot(Sa, 'b');
-%     hold on;
-%     plot(R2, 'y');
-%     hold on;
-%     plot(S, 'c');
-%     title('Activation Function');
+    nexttile;
+    plot(A, 'r');
+    hold on;
+    plot(Sa, 'b');
+    hold on;
+    plot(R2, 'y');
+    hold on;
+    plot(S, 'c');
+    hold on;
+    for j = 1:length(p)
+        p{j} = point_reach(p{j});
+        if length(p{j}) == 3
+            plot3(p{j}(1),p{j}(2),p{j}(3), '*', 'color', 'black');
+            xlabel('x1');
+            ylabel('x2');
+            zlabel('x3');
+        else
+            plot(p{j}(1),p{j}(2), '*', 'color', 'black');
+            xlabel('x1');
+            ylabel('x2');
+        end
+    end
+%     hold off;
+    title(sprintf('Activation Function (%d)', i));
 end
+    
+figure('Name','Reachability Result');
+nexttile;
+plot(A, 'r');
+hold on;
+title('AbsDom');
+nexttile;
+plot(Sa, 'b');
+title('Star AbsDom');
+nexttile;
+plot(R2, 'y');
+title('RStar 2');
+nexttile;
+plot(S, 'c');
+title('Star approx');
+nexttile;
+hold on;
+for j = 1:length(p)
+    if length(p{j}) == 3
+        plot3(p{j}(1),p{j}(2),p{j}(3), '*', 'color', 'black');
+        xlabel('x1');
+        ylabel('x2');
+        zlabel('x3');
+    else
+        plot(p{j}(1),p{j}(2), '*', 'color', 'black');
+        xlabel('x1');
+        ylabel('x2');
+    end
+end
+% hold off;
+title('dot plots');
 
-% figure;
-% nexttile;
-% plot(A, 'r');
-% hold on;
-% title('AbsDom');
-% nexttile;
-% plot(Sa, 'b');
-% title('Star AbsDom');
-% nexttile;
-% plot(R2, 'y');
-% title('RStar 2');
-% nexttile;
-% plot(S, 'c');
-% title('Star approx');
+nexttile;
+plot(A, 'r');
+hold on;
+plot(Sa, 'b');
+hold on;
+plot(R2, 'y');
+hold on;
+plot(S, 'c');
+hold on;
+for j = 1:length(p)
+    if length(p{j}) == 3
+        plot3(p{j}(1),p{j}(2),p{j}(3), '*', 'color', 'black');
+        xlabel('x1');
+        ylabel('x2');
+        zlabel('x3');
+    else
+        plot(p{j}(1),p{j}(2), '*', 'color', 'black');
+        xlabel('x1');
+        ylabel('x2');
+    end
+end
+% hold off;
+title('All');
 
-% nexttile;
-% title('All');
-% plot(A, 'r');
-% hold on;
-% plot(Sa, 'b');
-% hold on;
-% plot(R2, 'y');
-% hold on;
-% plot(S, 'c');
-% % nexttile;
-% % plot(R3, 'g');
-% % title('RStar 3');
-
-fprintf('Absdom bounds;');
+fprintf('\nAbsdom bounds');
 [l, u] = A.getRanges
 fprintf('RStar Exact bounds');
 [l, u] = R2.getExactRanges
@@ -117,19 +197,14 @@ fprintf('Star absdom approx bounds');
 fprintf('Star approx bounds');
 [l, u] = S.getRanges
 
+function r = point_affineMap(p, W, b)
+    r = W*p + b;
+end
 
-% figure;
-% nexttile;
-% plot(A, 'r');
-% hold on;
-% title('AbsDom');
-% nexttile;
-% plot(Sa, 'b');
-% title('Star AbsDom');
-% nexttile;
-% plot(R2, 'y');
-% title('RStar 2');
-% nexttile;
-% plot(S, 'c');
-% title('Star approx');
+function r = point_reach(p)
+    r = tansig(p);
+end
 
+function r = point_layerReach(p, W, b)
+    r = tansig(W*p + b);
+end
