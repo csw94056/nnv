@@ -35,49 +35,52 @@ validY = categorical(validY); % Change the data to categorical
 testY = categorical(testY); % Change the data to categorical
 
 
-layers = [ 
-    % 'none' — Do not normalize the input data.
-    sequenceInputLayer(784, 'Name', 'input', 'Normalization','none')
-	flattenLayer('Name', 'flatten')
-	
-	fullyConnectedLayer(100,'WeightsInitializer', 'glorot', 'Name', 'dense_1')
-	tanhLayer('Name', 'tanh_1')
-	
-	fullyConnectedLayer(50,'WeightsInitializer', 'glorot', 'Name', 'dense_2')
-	tanhLayer('Name', 'tanh_2')
-    
-	fullyConnectedLayer(10, 'Name', 'dense_3')
-    softmaxLayer('Name', 'softmax')
-    classificationLayer('Name', 'calssOutput')];
+% layers = [ 
+%     % 'none' — Do not normalize the input data.
+%     sequenceInputLayer(784, 'Name', 'input', 'Normalization','none')
+% 	flattenLayer('Name', 'flatten')
+% 	
+% 	fullyConnectedLayer(100,'WeightsInitializer', 'glorot', 'Name', 'dense_1')
+% 	tanhLayer('Name', 'tanh_1')
+% 	
+% 	fullyConnectedLayer(50,'WeightsInitializer', 'glorot', 'Name', 'dense_2')
+% 	tanhLayer('Name', 'tanh_2')
+%     
+% 	fullyConnectedLayer(10, 'Name', 'dense_3')
+%     softmaxLayer('Name', 'softmax')
+%     classificationLayer('Name', 'calssOutput')];
+% 
+% lgraph = layerGraph(layers);
+% figure
+% plot(lgraph)
+% 
+% 
+% options = trainingOptions('adam', ...
+%     'InitialLearnRate', 0.01, ...
+%     'LearnRateSchedule', 'piecewise', ...
+%     'LearnRateDropFactor', 0.1, ...
+%     'LearnRateDropPeriod', 200, ...
+%     'MaxEpochs', 400, ...
+%     'MiniBatchSize', 128, ...
+%     'Verbose', 1, ...
+%     'Shuffle', 'every-epoch', ...
+%     'Plots','training-progress', ...
+%     'ValidationData',{validX,validY}, ...
+%     'ValidationFrequency', 1)
+%     
+% net = trainNetwork(trainX,trainY,layers,options);
 
-lgraph = layerGraph(layers);
-figure
-plot(lgraph)
 
+% predY = classify(net,testX)';
+% confusion_matrix = confusionmat(testY, predY)
+% accuracy = sum(predY == testY)/length(testY)
 
-options = trainingOptions('adam', ...
-    'InitialLearnRate', 0.01, ...
-    'LearnRateSchedule', 'piecewise', ...
-    'LearnRateDropFactor', 0.1, ...
-    'LearnRateDropPeriod', 200, ...
-    'MaxEpochs', 400, ...
-    'MiniBatchSize', 128, ...
-    'Verbose', 1, ...
-    'Shuffle', 'every-epoch', ...
-    'Plots','training-progress', ...
-    'ValidationData',{validX,validY}, ...
-    'ValidationFrequency', 1)
-    
-net = trainNetwork(trainX,trainY,layers,options);
-
-
+% save MNIST_tanh_100_50_DenseNet.mat net;
+load MNIST_tanh_100_50_DenseNet.mat net;
 predY = classify(net,testX)';
-confusion_matrix = confusionmat(testY, predY)
 accuracy = sum(predY == testY)/length(testY)
 
-save MNIST_tanh_100_50_DenseNet.mat net;
-
-N = 50; % get 50 images and its labels from the imdsValidation
+N = 70; % get 70 images and its labels from the imdsValidation
 IM_data = zeros(784, N);
 IM_labels = zeros(N, 1);
 
@@ -93,11 +96,11 @@ for i=1:10000
     end
 end
 
-% Plot 50 smaples of images
+% Plot 70 smaples of images
 figure                                          % initialize figure
 colormap(gray)                                  % set to grayscale
-for i = 1:50                                    % preview first 50 samples
-    subplot(10,5,i)                              % plot them in 6 x 6 grid
+for i = 1:70                                    % preview first 50 samples
+    subplot(10,7,i)                              % plot them in 6 x 6 grid
     digit = reshape(IM_data(:, i), [28,28]);     % row = 28 x 28 image
     imagesc(digit)                              % show the image
     title(IM_labels(i))                   % show the label

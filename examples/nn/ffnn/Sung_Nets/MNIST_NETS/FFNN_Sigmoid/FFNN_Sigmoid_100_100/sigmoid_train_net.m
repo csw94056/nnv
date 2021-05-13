@@ -13,15 +13,15 @@ trainY_full = loadMNISTLabels('../../train-labels.idx1-ubyte');
 testX = loadMNISTImages('../../t10k-images.idx3-ubyte', normalize);
 testY = loadMNISTLabels('../../t10k-labels.idx1-ubyte');
 
-% Plot 36 smaples of images
-figure                                          % initialize figure
-colormap(gray)                                  % set to grayscale
-for i = 1:36                                    % preview first 36 samples
-    subplot(6,6,i)                              % plot them in 6 x 6 grid
-    digit = reshape(trainX_full(:, i), [28,28]);     % row = 28 x 28 image
-    imagesc(digit)                              % show the image
-    title(num2str(trainY_full(i)))                   % show the label
-end
+% % Plot 36 smaples of images
+% figure                                          % initialize figure
+% colormap(gray)                                  % set to grayscale
+% for i = 1:36                                    % preview first 36 samples
+%     subplot(6,6,i)                              % plot them in 6 x 6 grid
+%     digit = reshape(trainX_full(:, i), [28,28]);     % row = 28 x 28 image
+%     imagesc(digit)                              % show the image
+%     title(num2str(trainY_full(i)))                   % show the label
+% end
 
 trainX = trainX_full(:,1:50001);
 trainY = trainY_full(1:50001,:)';
@@ -77,7 +77,10 @@ accuracy = sum(predY == testY)/length(testY)
 
 save MNIST_sigmoid_100_100_DenseNet.mat net;
 
-N = 50; % get 50 images and its labels from the imdsValidation
+% load MNIST_sigmoid_100_100_DenseNet.mat net;
+% predY = classify(net,testX)';
+
+N = 100; % get 50 images and its labels from the imdsValidation
 IM_data = zeros(784, N);
 IM_labels = zeros(N, 1);
 
@@ -91,6 +94,16 @@ for i=1:10000
         IM_labels(n) = str2num(char(testY(n)));
         n = n + 1;
     end
+end
+
+% Plot 100 smaples of images
+figure                                          % initialize figure
+colormap(gray)                                  % set to grayscale
+for i = 1:100                                    % preview first 150 samples
+    subplot(10,10,i)                              % plot them in 6 x 6 grid
+    digit = reshape(IM_data(:, i), [28,28]);     % row = 28 x 28 image
+    imagesc(digit)                              % show the image
+    title(IM_labels(i))                   % show the label
 end
 
 save sigmoid_100_100_images.mat IM_data IM_labels
