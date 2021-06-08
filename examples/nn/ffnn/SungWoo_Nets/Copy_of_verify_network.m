@@ -5,8 +5,11 @@ clc;
 %%
 % network trained with images: [0 1] -> normalized, 
 %                              [0 255] ->  not_normalized
-dataset_ = 'MNIST';
-net_ = 'sigmoid_100_50';
+% dataset_ = 'MNIST';
+% net_ = 'MNIST_FNNsmall_sigmoid';
+dataset_ = 'CIFAR10';
+net_ = 'CIFAR10_FNNsmall_tanh';
+n_ = 'FNNsmall';
 normalized = 0;
 
 
@@ -14,32 +17,42 @@ norm_ = '';
 if normalized
     norm_ = '_normalized'
 end
-net_dir = sprintf('%s/nets/%s/MNIST_%s%s_DenseNet.mat', dataset_,net_, net_, norm_)
+
+net_dir = sprintf('%s/nets/%s/%s.mat', dataset_,n_,net_)
 % image_dir = sprintf('data/%s.csv',net_);
 % image_dir = sprintf('data/%s_100images.csv',net_);
-image_dir = sprintf('%s/data/%s%s_raw.csv',dataset_,net_, norm_)
+% image_dir = sprintf('%s/data/%s%s_raw.csv',dataset_,net_, norm_)
+image_dir = sprintf('%s/data/%s_raw.csv', dataset_,net_)
+
 
 normalized = 1;
 %% load network
 load(net_dir);
-if strcmp(net.Layers(4).Type,'Sigmoid')
-    act_fn = 'logsig';
-elseif strcmp(net.Layers(4).Type,'Tanh')
-    act_fn = 'tansig';
-end
-L1 = LayerS(net.Layers(3).Weights, net.Layers(3).Bias, act_fn);
-L2 = LayerS(net.Layers(5).Weights, net.Layers(5).Bias, act_fn);
-L3 = LayerS(net.Layers(7).Weights, net.Layers(7).Bias, 'purelin');
-nnv_net = FFNNS([L1 L2 L3]);
+nnv_net = net2nnv_net(net);
+
+% classes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+% net = importONNXNetwork('train/FNNbig/ffnnTANH__Point_6_500.onnx','OutputLayerType','classification','Classes',classes);
+% % net = importONNXNetwork('train/FNNbig/ffnnTANH__PGDK_w_0.1_6_500.onnx','OutputLayerType','classification','Classes',classes);
+% act_fn = 'tansig';
+% L1 = LayerS(reshape(net.Layers(6).Weights, [784,500])', reshape(net.Layers(6).Bias, [1 500])', act_fn);
+% L2 = LayerS(reshape(net.Layers(9).Weights, [500,500])', reshape(net.Layers(9).Bias, [1 500])', act_fn);
+% L3 = LayerS(reshape(net.Layers(12).Weights, [500,500])', reshape(net.Layers(12).Bias, [1 500])', act_fn);
+% L4 = LayerS(reshape(net.Layers(15).Weights, [500,500])', reshape(net.Layers(15).Bias, [1 500])', act_fn);
+% L5 = LayerS(reshape(net.Layers(18).Weights, [500,500])', reshape(net.Layers(18).Bias, [1 500])', act_fn);
+% L6 = LayerS(reshape(net.Layers(21).Weights, [500,500])', reshape(net.Layers(21).Bias, [1 500])', act_fn);
+% L7 = LayerS(reshape(net.Layers(24).Weights, [500,10])', reshape(net.Layers(24).Bias, [1 10])', act_fn);
+% nnv_net = FFNNS([L1 L2 L3 L4 L5 L6 L7]);
 
 %% load images
 csv_data = csvread(image_dir);
 IM_labels = csv_data(:,1);
 IM_data = csv_data(:,2:end)';
 
-reachMethod = 'approx-star';
-% reachMethod = 'rstar-absdom-two';
+% reachMethod = 'approx-star';
+reachMethod = 'rstar-absdom-two';
 % reachMethod = 'absdom';
+
+% reachMethod = 'abs-dom';
 % reachMethod = 'approx-zono';
 
 relaxFactor = [0];
@@ -49,11 +62,16 @@ lp_solver = 'linprog' % 'linprog'
 
 %eps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 % eps = [0.010, 0.012, 0.014, 0.016, 0.018, 0.020, 0.022, 0.024, 0.026, 0.028, 0.030];
-eps = [0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02];
+% eps = [0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02];
+
+eps = [0.004,0.006,0.008,0.010,0.012,0.014];
+
+% eps = [0.010, 0.012, 0.014, 0.016, 0.018, 0.0200];%, 0.022, 0.024, 0.026, 0.028, 0.030];
 % eps = [0.001, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.0020]
+% eps = [0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.011, 0.012, 0.013, 0.014, 0.015];
 % eps = [0.01, 0.02, 0.03, 0.04, 0.05];
-% eps = 0.01;
-% eps = 0.001;
+% eps = 0.02;
+% eps = 0.005
 
 N = size(IM_data, 2);
 K = length(relaxFactor);
@@ -66,32 +84,221 @@ vt = cell(K, M); % detail verification time
 cands = cell(K,M); % counterexample
 total_vt = zeros(K, M); % total verification time
 
+
 % Tanh_100_100_eps030 = [1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25, ...
 %     27,28,29,30,31,32,33,34,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,53] % tanh_100_100_eps030
 % Tanh_100_100_eps020 = [1,2,4,5,6,7,10,11,13,14,15,16,17,18,20,22,23,24,25, ...
 %     27,28,29,30,31,33,36,37,38,40,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,59,61,65,68,69,70] % tanh_100_100_eps020
 % Tanh_100_50_eps020 = [1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,20,22,23,24,25,27,28,29,30,...
 %     31,32,33,35,36,37,38,40,41,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57];
+% Sigmoid_100_50_eps020 = [1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,18,19,20,22,23,24,25,26,27,28,29,...
+%     31,33,34,35,36,37,38,40,41,42,43,44,46,48,49,50,51,52,53,54,55,56,57,58];
 
+% MNIST_FNNsmall_tanh_original = [1,2,4,5,6,7,10,11,13,14,15,16,17,18,20,22,23,24,25, 27,28,29,30,31,33,36,37,38,40,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,59,61,65,68,69,70, ...
+%     80,81,82,83,84,85,86,87,88,89,90,91,92,94,95,96,98,99,100,101,102,103,104,105,106,107,108,109,110,111,113,114,115,117,118,120,121,123,124,125,127,128,129,130,131,132,133,134,135,136];
+% RS_MNIST_FNNmed_tanh = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,...
+%     26,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,....
+%     53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,....
+%     78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102];
+% Z_MNIST_FNNmed_tanh = [2,36,55,61,69,71,72,80,83,86,89,104,118,132,133,142,148,162,163,184,187,189,198,201,202,209,223,224,237,238,239,247,249,...
+%     259,263,286,294,297,299,307,317,328,335,344,352,376,385,397,403,411,424,438,441,443,452,453,462,463,464,476,478,494,495,501,504,513,...
+%     514,519,542,550,557,560,574,575,577,591,593,603,613,624,626,627,634,644,649,652,657,658,666,677,678,681,687,695,702,712,720,732,737,738];
+
+
+% RS_tanh_med_150 = [2,11,26,29,31,33,52,55,70,72,83,86,103,128,129,130,133,137,...
+%     148,149,162,163,166,184,187,189,193,195,201,202,209,217,237,243,247,259,...
+%     271,272,278,286,295,297,298,310,312,328,344,348,352,357,376,381,383,385,...
+%     403,408,425,438,441,443,450,451,452,460,462,463,475,476,478,494,501,514,...
+%     519,526,527,528,547,553,574,582,591,593,603,695,702,720,732,733,738,743,...
+%     752,763,767,781,783,786,793,795,797,800]; %     %RS_tanh_med_150
+% 
+% S = [1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,20,21,22,23,24,25,26,27,...
+%      28,29,30,31,32,33,34,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,52,...
+%      53,54,55,56,57,58,59,60,61,65,68,69,70,71,72,73,74,75,76,77,78,80,81,82,...
+%      83,84,86,87,89,90,91,92,94,95,96,98,99,100,101,102,103,104,106,107,108,...
+%      109,110,111,114,115,116]; %MNIST_FNNsmall_sigmoid
+
+% S = [1,2,5,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,26,27,28,29,31,...
+%     33,35,36,37,43,44,45,46,48,49,50,51,52,53,54,55,56,57,59,60,61,64,65,68,...
+%     69,70,71,72,73,76,77,78,80,83,84,85,86,87,88,89,91,92,94,96,99,100,101,102,...
+%     103,104,106,107,109,110,111,113,114,115,120,121,123,124,125,127,128,...
+%     129,130,131,132,133,134,135,137,138,139]; %MNIST_FNNmed_sigmoid
+
+% S = [1,2,3,4,5,6,8,10,11,12,16,17,18,20,23,24,25,26,27,...
+%     28,29,31,33,34,35,37,38,40,42,44,45,46,48,49,50,51,54,55,...
+%     57,58,59,60,61,65,68,69,70,71,72,73,76,77,82,83,84,...
+%     85,86,87,88,89,90,91,92,94,96,100,101,102,103,104,106,108,...
+%     110,114,115,121,123,127,128,129,130,131,132,133,138,139,140,...
+%     141,142,143,144,145,148,149,151,153,154,155,156,157]; %MINST_FNNbig_sigmoid
+
+%S = [1,2,4,5,6,7,10,11,13,14,15,16,17,18,20,22,23,24,25, 27,28,29,30,31,33,36,37,38,40,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,59,61,65,68,69,70, ...
+%    80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,98,99,100,101,102,103,104,105,106,107,108,109,110,111,113,114,115,117,118,120,121,123,124,125,127,128,129,130,131,132,133,134,135,136,137];
+%   MNIST_FNNsmall_tanh
+
+% disp_opt = 'display';
 % S = [];
 % j = 1;
 % eps(j)
-% images = attack_images(IM_data, eps(j), reachMethod, normalized); 
-% labels = IM_labels+1;
-% for s = 1:N
-%     [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(images(s), labels(s), reachMethod, numCores, relaxFactor , disp_opt, lp_solver);
+% for s = 1:N %N
+%     s
+%     images = attack_images(IM_data(:,s), eps(j), reachMethod, normalized); 
+%     labels = IM_labels(s)+1;
+%     [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(images, labels, reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
 %     if  rb==1 && j == 1
-%         s;
+%         fprintf('safe: %d\n', s);
 %         S = [S s];
+%     elseif rb ==2
+%         fprintf('unsafe: %d\n', s);
+%     end
+%     
+%     if length(S) == 1
+%         break;
 %     end
 % end
-% 
-% 
-% IM = [IM_labels(S) IM_data(:,S)'];
-% writematrix(IM,'MNIST/data/sigmoid_100_50_eps020.csv');
+% S
 
-% S = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,...
-%     31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50];
+%     %RS_tanh_med_150
+
+
+
+% IM = [IM_labels(S) IM_data(:,S)'];
+% writematrix(IM,'MNIST/data/MNIST_FNNbig_tanh.csv');
+% 
+
+S = [];
+j = 1;
+eps(j)
+
+% images = attack_images(IM_data(:,1:300), eps(j), reachMethod, normalized); 
+% labels = IM_labels;
+% for s = 1:N%N
+%     s
+%  
+%     [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(images(s), labels(s), reachMethod, numCores, relaxFactor , disp_opt, lp_solver);
+%     if  rb==1 && j == 1
+%         fprintf('safe: %d\n', s);
+%         S = [S s];
+%     elseif rb ==2
+%         fprintf('unsafe: %d\n', s);
+%     end
+%     
+%     if length(S) == 150
+%         break;
+%     end
+% end
+% S
+
+
+% images1 = attack_images(IM_data(:,1:100), eps(j), reachMethod, normalized); 
+% labels1 = IM_labels(1:100)+1;
+% dir = sprintf('%s1.mat',net_);
+% save(dir,'images1','labels1');
+% 
+% images2 = attack_images(IM_data(:,101:200), eps(j), reachMethod, normalized); 
+% labels2 = IM_labels(101:200)+1;
+% dir = sprintf('%s2.mat',net_);
+% save(dir,'images2','labels2');
+% 
+% images3 = attack_images(IM_data(:,201:300), eps(j), reachMethod, normalized); 
+% labels3 = IM_labels(201:300)+1;
+% dir = sprintf('%s3.mat',net_);
+% save(dir,'images3','labels3');
+
+% load CIFAR10_FNNsmall_tanh1.mat
+% images = images1;
+% labels = labels1-1;
+% N = length(labels);
+ 
+% for s = 1:N
+%     s
+%     images = attack_images(IM_data(:,s), eps(j), reachMethod, normalized); 
+%     labels = IM_labels(s);
+%     
+%     [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(images, labels, reachMethod, numCores, relaxFactor , disp_opt, lp_solver);
+%     if  rb==1 && j == 1
+%         fprintf('safe: %d\n', s);
+%         S = [S s];
+%     elseif rb ==2
+%         fprintf('unsafe: %d\n', s);
+%     end
+%     
+%     if length(S) == 150
+%         break;
+%     end
+% end
+% S
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            CIFAR10 FNNsmall tanh
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+All = [3,6,12,15,19,20,30,35,55,82,93,100,103,108,113,117,131,137,155,162,167,...
+    174,176,180,187,190,194,199,203,218,222,236,256,266,290,293,297,298,299,...
+    301,302,312,332,334,335,339,340,348,365,372,380,387,391,393,407,420,436,...
+    448,456,473,478,482,487,490,491,494,496,512,517,520,535,537,543,546,551,...
+    557,572,573,577,579,591,594,603,610,611,613,618,633,658,661,662,663,664,...
+    668,671,682,694,697,701,706,712,714,722,733,744,748,751,753,757,760,775,...
+    778,783,786,795,801,804,813,816,824,841,843,854,859,865,880,881,886,889,...
+    921,922,935,943,944,947,952,954,956,960,962,964,965,968,978,986,993,995,...
+    1000,1004,1011];
+% S = All(1:100);
+% S = [3,6,12,20,30,55,82,93,100,103,108,113,117,137,162,...
+%     174,176,180,187,190,199,203,218,256,266,290,297,298,...
+%     301,302,312,332,334,335,339,340,365,372,380,393,407,420,...
+%     448,456,473,478,482,487,490,494,496,512,517,520,535,537,543,546,551,...
+%     572,577,579,591,594,603,610,611,613,618,633,658,661,662,663,664,...
+%     668,671,682,697,701,706,712,714,722,733,744];
+% Star = [3,6,12,20,30,55,82,93,100,103,108,113,117,137,162,174,176,180,187,...
+%     190,199,203,218,256,266,290,297,298,301,302,312,332,334,335,339,340,365,...
+%     372,380,393,407,420,448,456,473,478,482,487,490,494,496,512,517,520,535,...
+%     537,543,546,551,577,579,591,594,603,610,611,633,658,661,662,663,664,668,...
+%     671,682,697,701,706,712,714,722,733,744,748,751,753,757,760,775,783,786,...
+%     795,801,804,813,816,843,854,865,880]; %CIFAR10_FNNsmall_tanh
+% Extra_star = [748,751,753,757,760,775,783,786,795,801,804,813,816,843,854,...
+%     865,880,881,886,889,921];
+
+S = [3,6,12,30,55,82,93,100,103,108,113,117,137,162,176,180,187,...
+    190,199,203,218,256,266,290,297,298,301,302,312,332,334,335,339,340,365,...
+    372,380,393,407,420,448,456,473,478,482,487,490,494,496,512,517,520,535,...
+    537,543,546,551,577,579,591,603,610,611,633,658,661,662,663,664,668,...
+    671,682,697,701,706,712,714,722,733,744,748,751,753,757,760,775,783,786,...
+    795,801,804,813,816,843,854,865,880,881,886,889]; %CIFAR10_FNNsmall_tanh
+
+% S = [881,886,889,921];
+IM = [IM_labels(S) IM_data(:,S)'];
+writematrix(IM,'CIFAR10/data/CIFAR10_FNNsmall_tanh.csv');
+
+% for i=1:K
+%     for j=1:M
+%         eps(j)
+%         images = attack_images(IM_data(:,S), eps(j), reachMethod, normalized); 
+%         labels = IM_labels(S)+1;
+%         t = tic;
+%         [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images, labels, reachMethod, numCores, relaxFactor , disp_opt, lp_solver);
+%         total_vt(i,j) = toc(t);
+%     end
+% end
+
+disp_opt = 'display';
+numCores = 16
+start = 1
+for j=1:M
+    fprintf('\tepsilon: %f\n',eps(j)');
+    for k = start:length(S)
+        k
+        image = attack_images(IM_data(:,S(k)), eps(j), reachMethod, normalized); 
+        label = IM_labels(S(k)) + 1;
+        fprintf('S(k): %d\n',S(k));
+%         [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images(k), labels(k), reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+        [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(image, label, reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+    end
+    start = 1;
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% RS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,...
+%     26,27,28,29,30,31,32,33,35,36,37,38,40,41,42,43,44,45,46,47,48,49,50,51,....
+%     53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,....
+%     78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102];
+
 
 
 % IM = [IM_labels(S) IM_data(:,S)'];
@@ -111,58 +318,102 @@ total_vt = zeros(K, M); % total verification time
 % %         S = [S s];
 % %     end
 %     if rb ~= 1
-%         s
+%         s;
 %         fprintf('S(s): %d',S(s));
-%         Ta = table(eps(j), safe, unsafe, unknown, vt)
+%         Ta = table(eps(j), safe, unsafe, unknown, vt);
 %     end
 % end
 % S
 
-% IM = [IM_labels(S) IM_data(:,S)'];
-% writematrix(IM,'sigmoid_100_100_new.csv');
 
-% S = [1,2,4,5,6,7,10,11,13,14,15,16,17,18,20,22,23,24,25, ...
-%     26,27,28,29,30,31,33,35,36,37,38,40,42,43,44,45,46,48,49,50,51,52,53,54,55,56,57,59,61,65,68] % tanh_100_100_eps020
+
+
+% % S = [3,6,12,30,55,93,100,108,117,137,167,176,190,199,203,218,290,297,...
+% %      298,332,339,340,365,380,393,407,416,448,473,478,487,490,...
+% %      496,517,520,537,543,551,579,603,648,658,662,663,664,...
+% %      668,671,682,694,697,701,712,714,722,744,751,757,760,775,786,795,804,...
+% %      816,854,865,880,881,886,889,921,922,935,947,952,954,960,968,...
+% %      986,993,...
+% %      995,1004,1011,1030,1068,1074,1077,1078,1081,1091,1093,1097,1104,1105,...
+% %      1112,1115,1119,1120,1126,1136,1137
+% %      ]; CIFAR10_FNNsmall_tanh_0.01
+% % %         ,995,1004,1011,1030,1068,1074,1077,1078,1081,1091,1093,1097,1104,1105,...
+% % %      1112,1115,1119,1120,1126,1136,1137,1112,1115,1119,1120,1126,1136,1137,1140,...
+% % %      1143,1144,1155,1159,1161,1163,1168,1172,1196,1202,1233,1238,1266,1273,1274,...
+% % %      1283,1296,1304,1312,1315,1318];
+% % 
+% % IM = [IM_labels(S) IM_data(:,S)'];
+% % writematrix(IM,'CIFAR10/data/CIFAR10_FNNsmall_tanh.csv');
+% % 
+% % % disp_opt = 'display';
+% % numCores = 16
+% % start = 45
+% % for j=9:M
+% %     fprintf('\tepsilon: %f\n',eps(j)');
+% %     for k = start:length(S)
+% %         k
+% %         image = attack_images(IM_data(:,S(k)), eps(j), reachMethod, normalized); 
+% %         label = IM_labels(S(k));
+% %         fprintf('S(k): %d\n',S(k));
+% % %         [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images(k), labels(k), reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+% %         [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(image, label, reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+% %     end
+% %     start = 1;
+% % end
+
+
+% disp_opt = 'display';
+% for j=1:M
+%     eps(j)
+%     images = attack_images(IM_data(:,S), eps(j), reachMethod, normalized); 
+%     labels = IM_labels(S);
+%     for k = 1:length(S)
+%         k
+%         fprintf('S(k): %d\n',S(k));
+% %         [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images(k), labels(k), reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+%         [r, rb, cE, cands, vt] = nnv_net.evaluateRBN(images(k), labels(k), reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+%     end
+% end
+
 % for i=1:length(S)
 %     for j=1:M
-%         images = attack_images(IM_data(S), eps(j), reachMethod, normalized); 
-%         labels = IM_labels+1;
+%         images = attack_images(IM_data(S(i)), eps(j), reachMethod, normalized); 
+%         labels = IM_labels(S(i))+1;
 %         t = tic;
 %         [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images(S(i)), labels(S(i)), reachMethod, numCores, relaxFactor , disp_opt, lp_solver);
 %         total_vt(i,j) = toc(t);
 %     end
 % end
-
+% 
 % N = 50;
 
 
 
-% 70, 71, 72, 73, 75, 76, 77, 78, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
-% 90
-
 % IM = [IM_labels(S) IM_data(:,S)'];
 % writematrix(IM,'tan_100_50_020.csv');
 
-S = [1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,18,19,20,22,23,24,25,26,27,28,29,...
-    31,33,34,35,36,37,38,40,41,42,43,44,46,48,49,50,51,52,53,54,55,56,57,58];
 
-for k = 1:length(S)
-    k
-    fprintf('S(k): %d\n',S(k));
-    i=1;
-        for j=1:M
-            eps(j)
-            images = attack_images(IM_data, eps(j), reachMethod, normalized); 
-            labels = IM_labels+1;
-            t = tic;
-            [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images(S(k)), labels(S(k)), reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
-            total_vt(i,j) = toc(t);
-        end
+
+
+
+% for k = 1:length(S)
+%     k
+%     fprintf('S(k): %d\n',S(k));
+%         for j=1:M
+%             eps(j)
+%             images = attack_images(IM_data(:,S(k)), eps(j), reachMethod, normalized); 
+%             labels = IM_labels(S(k))+1;
+%             t = tic;
+%             [r(i,j), rb{i,j}, cE{i,j}, cands{i,j}, vt{i,j}] = nnv_net.evaluateRBN(images, labels, reachMethod, numCores, relaxFactor , disp_opt, lp_solver)
+%             total_vt(i,j) = toc(t);
+%         end
+%     
+% end
+
+
     
-end
-% 
-% IM = [IM_labels(S) IM_data(:,S)'];
-% writematrix(IM,'MNIST/data/sigmoid_100_50_eps020.csv');
+
+
 
 T = table;
 %rf = [];
@@ -209,7 +460,7 @@ function images = attack_images(in_images, epsilon, reachMethod, normalized)
     
     
     N = size(in_images, 2);
-    for n = 1:N
+    parfor n = 1:N
         image = in_images(:, n);
         if normalized
             image = image/255.0;
@@ -219,7 +470,7 @@ function images = attack_images(in_images, epsilon, reachMethod, normalized)
         ub(ub > max_px) = max_px;
         lb(lb < 0.0) = 0.0;
         
-        if strcmp(reachMethod,'approx-star')
+        if strcmp(reachMethod,'approx-star') || strcmp(reachMethod, 'abs-dom')
             images(n) = Star(lb, ub);
         elseif strcmp(reachMethod,'rstar-absdom-two')
             images(n) = RStar(lb, ub, inf);
@@ -233,3 +484,34 @@ function images = attack_images(in_images, epsilon, reachMethod, normalized)
         end
     end
 end
+
+function nnv_net = net2nnv_net(net)
+    if strcmp(net.Layers(4).Type,'Sigmoid')
+    act_fn = 'logsig';
+    elseif strcmp(net.Layers(4).Type,'Tanh')
+        act_fn = 'tansig';
+    end
+
+    L = [];
+    for i = 3:2:length(net.Layers)-4
+        L1 = LayerS(net.Layers(i).Weights, net.Layers(i).Bias, act_fn);
+        L = [L L1]; 
+    end
+    L2 = LayerS(net.Layers(i+2).Weights, net.Layers(i+2).Bias, 'purelin');
+    nnv_net = FFNNS([L L2]);
+    nnv_net.lp_solver = 'linprog';
+end
+
+
+
+% classes = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+% net = importONNXNetwork('train/FNNbig/ffnnTANH__Point_6_500.onnx','OutputLayerType','classification','Classes',classes);
+% act_fn = 'tansig';
+% L1 = LayerS(reshape(net.Layers(6).Weights, [784,500])', reshape(net.Layers(6).Bias, [1 500])', act_fn);
+% L2 = LayerS(reshape(net.Layers(9).Weights, [500,500])', reshape(net.Layers(9).Bias, [1 500])', act_fn);
+% L3 = LayerS(reshape(net.Layers(12).Weights, [500,500])', reshape(net.Layers(12).Bias, [1 500])', act_fn);
+% L4 = LayerS(reshape(net.Layers(15).Weights, [500,500])', reshape(net.Layers(15).Bias, [1 500])', act_fn);
+% L5 = LayerS(reshape(net.Layers(18).Weights, [500,500])', reshape(net.Layers(18).Bias, [1 500])', act_fn);
+% L6 = LayerS(reshape(net.Layers(21).Weights, [500,500])', reshape(net.Layers(21).Bias, [1 500])', act_fn);
+% L7 = LayerS(reshape(net.Layers(24).Weights, [500,10])', reshape(net.Layers(24).Bias, [1 10])', act_fn);
+% nnv_net = FFNNS([L1 L2 L3 L4 L5 L6 L7]);

@@ -7,7 +7,9 @@ format long;
 % network trained with images: [0 1] -> normalized, 
 %                              [0 255] ->  not_normalized
 dataset_ = 'MNIST';
-net_ = 'sigmoid_100_50';
+% net_ = 'sigmoid_100_50';
+net_ = 'MNIST_FNNsmall_tanh';
+n_ = 'FNNsmall';
 normalized = 0;
 
 
@@ -15,24 +17,21 @@ norm_ = '';
 if normalized
     norm_ = '_normalized'
 end
-net_dir = sprintf('%s/nets/%s/MNIST_%s%s_DenseNet.mat', dataset_,net_, net_, norm_);
+
+net_dir = sprintf('%s/nets/%s/%s.mat', dataset_,n_,net_)
+% net_dir = sprintf('%s/nets/%s/MNIST_%s%s_DenseNet.mat', dataset_,net_, net_, norm_);
 % image_dir = sprintf('MNIST/data/%s%s.csv',net_,norm_);
 % image_dir = sprintf('MNIST/data/%s_raw.csv',net_);
-image_dir = sprintf('MNIST/data/%s%s_eps020.csv', net_, norm_)
+% image_dir = sprintf('MNIST/data/%s%s_eps020.csv', net_, norm_)
+
+image_dir = sprintf('%s/data/%s.csv', dataset_,net_)
+% image_dir = sprintf('%s/data/%s_raw.csv', dataset_,net_)
+% image_dir = sprintf('%s/data/%s_zono.csv', dataset_,net_)
 
 normalized = 1;
 %% load network
 load(net_dir);
-if strcmp(net.Layers(4).Type,'Sigmoid')
-    act_fn = 'logsig';
-elseif strcmp(net.Layers(4).Type,'Tanh')
-    act_fn = 'tansig';
-end
-L1 = LayerS(net.Layers(3).Weights, net.Layers(3).Bias, act_fn);
-L2 = LayerS(net.Layers(5).Weights, net.Layers(5).Bias, act_fn);
-L3 = LayerS(net.Layers(7).Weights, net.Layers(7).Bias, 'purelin');
-nnv_net = FFNNS([L1 L2 L3]);
-nnv_net.lp_solver = 'linprog';
+nnv_net = net2nnv_net(net);
 
 %% load images
 csv_data = csvread(image_dir);
@@ -40,9 +39,10 @@ IM_labels = csv_data(:,1);
 IM_data = csv_data(:,2:end)';
 
 % reachMethod = 'approx-star';
-reachMethod = 'abs-dom';    %Star abstract domain (LP)
+
+% reachMethod = 'abs-dom';    %Star abstract domain (LP)
 % reachMethod = 'rstar-absdom-two';
-% reachMethod = 'absdom';
+reachMethod = 'absdom';
 % reachMethod = 'approx-zono';
 
 
@@ -53,9 +53,16 @@ lp_solver = 'linprog' % 'linprog'
 
 %eps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 % eps = [0.010, 0.012, 0.014, 0.016, 0.018, 0.020, 0.022, 0.024, 0.026, 0.028, 0.030];
+
 eps = [0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02];
+
+% eps = [0.001, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016, 0.0017, 0.0018, 0.0019, 0.002];
 % eps = [0.011, 0.013, 0.015, 0.017, 0.019];
 % eps = 0.01;
+% eps = 0.0000000000000001;
+% eps = [0.005, 0.006, 0.007, 0.008, 0.009, 0.010, 0.011, 0.012,0.013,0.014,0.015];
+% eps = [0.005, 0.006];
+% eps = 0.005
 
 N = size(IM_data, 2);
 K = length(relaxFactor);
@@ -165,4 +172,21 @@ function images = attack_images(in_images, epsilon, reachMethod, normalized)
            error('unsupported reachMethod for evaluateRBN')
         end
     end
+end
+
+function nnv_net = net2nnv_net(net)
+    if strcmp(net.Layers(4).Type,'Sigmoid')
+    act_fn = 'logsig';
+    elseif strcmp(net.Layers(4).Type,'Tanh')
+        act_fn = 'tansig';
+    end
+
+    L = [];
+    for i = 3:2:length(net.Layers)-4
+        L1 = LayerS(net.Layers(i).Weights, net.Layers(i).Bias, act_fn);
+        L = [L L1]; 
+    end
+    L2 = LayerS(net.Layers(i+2).Weights, net.Layers(i+2).Bias, 'purelin');
+    nnv_net = FFNNS([L L2]);
+    nnv_net.lp_solver = 'linprog';
 end

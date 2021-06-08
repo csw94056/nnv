@@ -23,8 +23,8 @@ testY = loadMNISTLabels('../../MNIST/dataset/t10k-labels.idx1-ubyte');
 %     title(num2str(trainY_full(i)))                   % show the label
 % end
 
-trainX = trainX_full(:,1:50001);
-trainY = trainY_full(1:50001,:)';
+trainX = trainX_full(:,1:50000);
+trainY = trainY_full(1:50000,:)';
 
 validX = trainX_full(:,50001:60000);
 validY = trainY_full(50001:60000,:)';
