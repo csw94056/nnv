@@ -363,5 +363,10 @@ classdef AbsDom
             P = obj.toPolyhedron;
             plot(P, 'color', c_rand);
         end
+        
+        function bool = isEmptySet(obj)
+            S = obj.toStar;
+            bool = S.isEmptySet;
+        end
     end
 end

@@ -2019,6 +2019,8 @@ classdef FFNNS < handle
             elseif isa(in_image, 'AbsDom') || isa(in_image, 'RStar')
                 state_lb = in_image.lb{1};
                 state_ub = in_image.ub{1};
+            elseif isa(in_image, 'Zono')
+                [state_lb, state_ub] = in_image.getRanges;
             end
             
             if ~isempty(state_lb)
@@ -2038,46 +2040,66 @@ classdef FFNNS < handle
             end
             
             if robust == 2
-                
+                empty_set = 0;
                 obj.reach(in_image, obj.reachMethod, obj.numCores, obj.relaxFactor, obj.dis_opt, obj.lp_solver);
                 R = obj.outputSet;
-                if isa(R, 'AbsDom')
+                if isa(R, 'AbsDom') || isa(R, 'Zono')
                     [lb, ub] = R.getRanges;
                     R = R.toStar;
                 elseif isa(R, 'RStar')
                     if strcmp(obj.reachMethod, 'rstar-absdom-two')
                         [lb, ub] = R.getRanges;
-                        R = R.toStar;
+                        empty_set = R.isEmptySet;
                     else
                         error('Only rstar-absdom-two is supported')
                     end
                 else
                     [lb, ub] = R.estimateRanges;
                 end
+               
                 max_val = lb(correct_id);
                 max_cd = find(ub > max_val); % max point candidates
                 max_cd(max_cd == correct_id) = []; % delete the max_id
 
                 if isempty(max_cd)
                     robust = 1;
-                else            
+                elseif ~empty_set
+                    if isa(R, 'RStar')
+                        S = Star(lb, ub);
+                        n = length(max_cd);
+                        count = 0;
+                        for i=1:n
 
-                    n = length(max_cd);
-                    count = 0;
-                    for i=1:n
-                        
-                        if R.is_p1_larger_than_p2(max_cd(i), correct_id)
-                            cands = max_cd(i);
-                            break;
-                        else
-                            count = count + 1;
+                            if S.is_p1_larger_than_p2(max_cd(i), correct_id)
+                                cands = max_cd(i);
+                                break;
+                            else
+                                count = count + 1;
+                            end
+                        end
+
+                        if count == n
+                            robust = 1;
                         end
                     end
+                    
+                    if robust ~= 1
+                        n = length(max_cd);
+                        count = 0;
+                        for i=1:n
 
-                    if count == n
-                        robust = 1;
+                            if R.is_p1_larger_than_p2(max_cd(i), correct_id)
+                                cands = max_cd(i);
+                                break;
+                            else
+                                count = count + 1;
+                            end
+                        end
+
+                        if count == n
+                            robust = 1;
+                        end
                     end
-
                 end
    
             end

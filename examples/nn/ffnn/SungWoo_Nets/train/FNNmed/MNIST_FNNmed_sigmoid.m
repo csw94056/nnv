@@ -35,63 +35,64 @@ validY = categorical(validY); % Change the data to categorical
 testY = categorical(testY); % Change the data to categorical
 
 
-layers = [ 
-    % 'none' — Do not normalize the input data.
-    sequenceInputLayer(784, 'Name', 'input', 'Normalization','none')
-	flattenLayer('Name', 'flatten')
-	
-	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_1')
-	sigmoidLayer('Name', 'sigmoid_1')
-	
-	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_2')
-	sigmoidLayer('Name', 'sigmoid_2')
-    
-    fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_3')
-	sigmoidLayer('Name', 'sigmoid_3')
-	
-	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_4')
-	sigmoidLayer('Name', 'sigmoid_4')
-    
-    fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_5')
-	sigmoidLayer('Name', 'sigmoid_5')
-	
-	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_6')
-	sigmoidLayer('Name', 'sigmoid_6')
-    
-	fullyConnectedLayer(10,'WeightsInitializer', 'glorot', 'Name', 'dense_7')
-    softmaxLayer('Name', 'softmax')
-    classificationLayer('Name', 'calssOutput')];
+% layers = [ 
+%     % 'none' — Do not normalize the input data.
+%     sequenceInputLayer(784, 'Name', 'input', 'Normalization','none')
+% 	flattenLayer('Name', 'flatten')
+% 	
+% 	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_1')
+% 	sigmoidLayer('Name', 'sigmoid_1')
+% 	
+% 	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_2')
+% 	sigmoidLayer('Name', 'sigmoid_2')
+%     
+%     fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_3')
+% 	sigmoidLayer('Name', 'sigmoid_3')
+% 	
+% 	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_4')
+% 	sigmoidLayer('Name', 'sigmoid_4')
+%     
+%     fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_5')
+% 	sigmoidLayer('Name', 'sigmoid_5')
+% 	
+% 	fullyConnectedLayer(150,'WeightsInitializer', 'glorot', 'Name', 'dense_6')
+% 	sigmoidLayer('Name', 'sigmoid_6')
+%     
+% 	fullyConnectedLayer(10,'WeightsInitializer', 'glorot', 'Name', 'dense_7')
+%     softmaxLayer('Name', 'softmax')
+%     classificationLayer('Name', 'calssOutput')];
+% 
+% lgraph = layerGraph(layers);
+% figure
+% plot(lgraph)
+% 
+% 
+% options = trainingOptions('adam', ...
+%     'InitialLearnRate', 0.01, ...
+%     'LearnRateSchedule', 'piecewise', ...
+%     'LearnRateDropFactor', 0.1, ...
+%     'LearnRateDropPeriod', 300, ...
+%     'MaxEpochs', 400, ...
+%     'MiniBatchSize', 128, ...
+%     'Verbose', 1, ...
+%     'Shuffle', 'every-epoch', ...
+%     'Plots','training-progress', ...
+%     'ValidationData',{validX,validY}, ...
+%     'ValidationFrequency', 1)
+%     
+% net = trainNetwork(trainX,trainY,layers,options);
 
-lgraph = layerGraph(layers);
-figure
-plot(lgraph)
 
+% predY = classify(net,testX)';
+% confusion_matrix = confusionmat(testY, predY)
+% accuracy = sum(predY == testY)/length(testY)
+% 
+% save ../../MNIST/nets/FNNmed/MNIST_FNNmed_sigmoid.mat net;
 
-options = trainingOptions('adam', ...
-    'InitialLearnRate', 0.01, ...
-    'LearnRateSchedule', 'piecewise', ...
-    'LearnRateDropFactor', 0.1, ...
-    'LearnRateDropPeriod', 300, ...
-    'MaxEpochs', 400, ...
-    'MiniBatchSize', 128, ...
-    'Verbose', 1, ...
-    'Shuffle', 'every-epoch', ...
-    'Plots','training-progress', ...
-    'ValidationData',{validX,validY}, ...
-    'ValidationFrequency', 1)
-    
-net = trainNetwork(trainX,trainY,layers,options);
-
-
-predY = classify(net,testX)';
+load ../../MNIST/nets/FNNmed/MNIST_FNNmed_sigmoid.mat;
+predY = classify(net,testX/255)';
 confusion_matrix = confusionmat(testY, predY)
 accuracy = sum(predY == testY)/length(testY)
-
-save ../../MNIST/nets/FNNmed/MNIST_FNNmed_sigmoid.mat net;
-
-% load ../../MNIST/nets/FNNmed/MNIST_FNNmed_sigmoid.mat;
-% predY = classify(net,testX)';
-% accuracy = sum(predY == testY)/length(testY)
 
 N = 1000; % get 50 images and its labels from the imdsValidation
 IM_data = zeros(784, N);

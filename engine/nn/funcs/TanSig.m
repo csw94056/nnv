@@ -3,22 +3,22 @@
     % Tanh activation function (Matlab called TanSig)
     % author: Dung Tran
     % date: 1/3/2019
-    
+
     properties
     end
-    
+
     methods(Static) % evaluate method and over-approximate reachability analysis with stars
-    
+
         % evaluation
         function y = evaluate(x)
             y = tansig(x);
-        end      
-        
+        end
+
         % main method
         function S = reach_star_approx(varargin)
             % author: Dung Tran
             % date: 3/19/2020
-            
+
             % update: 7/15/2020: add display option
             %         7/16/2020: add lp_solver option
             switch nargin
@@ -51,14 +51,14 @@
                     method = varargin{2};
                     relaxFactor = varargin{3};
                     dis_opt = varargin{4}; % display option
-                    lp_solver = varargin{5}; 
+                    lp_solver = varargin{5};
                 otherwise
                     error('Invalid number of input arguments, should be 1, 2, 3, 4, or 5');
             end
-            
+
             if ~isa(I, 'Star')
                 error('Input set is not a star set');
-            end            
+            end
             if strcmp(method, 'approx-star-no-split') || strcmp(method, 'approx-star')
                 if relaxFactor == 0
                     S = TanSig.multiStepTanSig_NoSplit(I, dis_opt, lp_solver);
@@ -70,32 +70,32 @@
             else
                 error('Unknown reachability method');
             end
-            
+
         end
-        
-        
+
+
 %         % reachability method with star
 %         function S = reach_star_approx_no_split(I)
 %             % @I: the input star set
 %             % @S: a star set output
-%             
+%
 %             % author: Dung Tran
 %             % date: 3/19/2020
 %             % update:4/3/2020
-%   
+%
 %             n = I.dim;
 %             S = I;
 %             for i=1:n
-%                 S = TanSig.stepTanSig_NoSplit(S, i); 
+%                 S = TanSig.stepTanSig_NoSplit(S, i);
 %             end
-%             
+%
 %         end
-        
+
         % reachability method with star
         function S = reach_star_approx_split(I)
             % @I: the input star set
             % @S: an array of star set output
-            
+
             % author: Dung Tran
             % date: 3/19/2020
             % update: 4/3/2020
@@ -112,24 +112,24 @@
             end
 
         end
-        
+
         % stepTanSig
         function S = stepTanSig_Split(I, index)
             % @I: input star set
             % @index: index of the neuron
-            % @l: l = min(x[index]), lower bound at neuron x[index] 
+            % @l: l = min(x[index]), lower bound at neuron x[index]
             % @u: u = min(x[index]), upper bound at neuron x[index]
             % @y_l: = tansig(l); output of tansig at lower bound
             % @y_u: = tansig(u); output of tansig at upper bound
             % @dy_l: derivative of TanSig at the lower bound
             % @dy_u: derivative of TanSig at the upper bound
-            
+
             % @S: output star set
-            
+
             % author: Dung Tran
-            % date: 3/19/2020            
+            % date: 3/19/2020
             % update: 4/3/2020
-            
+
             %[l, u] = I.Z.getRange(index);
             % Sung Woo change for temp check
             [l, u] = I.getRange(index);
@@ -139,7 +139,7 @@
             dy_u = tansig('dn', u);
 
             if l == u
-                
+
                 new_V = I.V;
                 new_V(index, 1:I.nVar+1) = 0;
                 new_V(index, 1) = y_l;
@@ -153,19 +153,19 @@
                     new_Z = [];
                 end
                 S = Star(new_V, I.C, I.d, I.predicate_lb, I.predicate_ub, new_Z);
-                
+
             elseif l >= 0
                 % y is convex when x >= 0
                 % constraint 1: y <= y'(l) * (x - l) + y(l)
-                % constarint 2: y <= y'(u) * (x - u) + y(u) 
+                % constarint 2: y <= y'(u) * (x - u) + y(u)
                 % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
-                
-                
+
+
                 n = I.nVar + 1;
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 1: y <= y'(l) * (x - l) + y(l)
                 C1 = [-dy_l*I.V(index, 2:n) 1];
-                d1 = dy_l * I.V(index, 1) - dy_l*l + y_l; 
+                d1 = dy_l * I.V(index, 1) - dy_l*l + y_l;
                 % constraint 2: y <= y'(u) * (x - u) + y(u)
                 C2 = [-dy_u*I.V(index, 2:n) 1];
                 d2 = dy_u * I.V(index, 1) - dy_u*u + y_u;
@@ -173,7 +173,7 @@
                 a = (y_u - y_l)/(u - l);
                 C3 = [a*I.V(index, 2:n) -1];
                 d3 = a*l - y_l - a*I.V(index, 1);
-                
+
                 m = size(I.C, 1);
                 C0 = [I.C zeros(m, 1)];
                 d0 = I.d;
@@ -181,21 +181,21 @@
                 new_d = [d0; d1; d2; d3];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
-                
+                new_V(index, n+1) = 1;
+
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; y_l]; 
+                new_predicate_lb = [I.predicate_lb; y_l];
                 new_predicate_ub = [I.predicate_ub; y_u];
-                
+
                 % update outer-zonotope
                 if ~isempty(I.Z)
                     c = I.Z.c;
-                    V = I.Z.V;                
+                    V = I.Z.V;
                     lamda = min(dy_l, dy_u);
                     mu1 = 0.5*(y_u + y_l - lamda *(u + l));
                     mu2 = 0.5*(y_u - y_l - lamda *(u - l));
                     c(index) = lamda * c(index) + mu1;
-                    V(index, :) = lamda * V(index, :); 
+                    V(index, :) = lamda * V(index, :);
                     I1 = zeros(I.dim, 1);
                     I1(index) = mu2;
                     V = [V I1];
@@ -203,21 +203,21 @@
                 else
                     new_Z = [];
                 end
-                
+
                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-                
-                
+
+
             elseif u <= 0
                 % y is concave when x <= 0
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 % constraint 2: y >= y'(u) * (x - u) + y(u)
                 % constraint 3: y <= (y(u) - y(l)) * (x -l) / (u - l) + y(l);
-                
+
                 n = I.nVar + 1;
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 C1 = [dy_l*I.V(index, 2:n) -1];
-                d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l; 
+                d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l;
                 % constraint 2: y >= y'(u) * (x - u) + y(u)
                 C2 = [dy_u*I.V(index, 2:n) -1];
                 d2 = -dy_u * I.V(index, 1) + dy_u*u - y_u;
@@ -225,7 +225,7 @@
                 a = (y_u - y_l)/(u - l);
                 C3 = [-a*I.V(index, 2:n) 1];
                 d3 = -a*l + y_l + a*I.V(index, 1);
-                
+
                 m = size(I.C, 1);
                 C0 = [I.C zeros(m, 1)];
                 d0 = I.d;
@@ -233,21 +233,21 @@
                 new_d = [d0; d1; d2; d3];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
-                
+                new_V(index, n+1) = 1;
+
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; y_l]; 
+                new_predicate_lb = [I.predicate_lb; y_l];
                 new_predicate_ub = [I.predicate_ub; y_u];
-                
+
                 % update outer-zonotope
                 if ~isempty(I.Z)
                     c = I.Z.c;
-                    V = I.Z.V;                
+                    V = I.Z.V;
                     lamda = min(dy_l, dy_u);
                     mu1 = 0.5*(y_u + y_l - lamda *(u + l));
                     mu2 = 0.5*(y_u - y_l - lamda *(u - l));
                     c(index) = lamda * c(index) + mu1;
-                    V(index, :) = lamda * V(index, :); 
+                    V(index, :) = lamda * V(index, :);
                     I1 = zeros(I.dim, 1);
                     I1(index) = mu2;
                     V = [V I1];
@@ -255,27 +255,27 @@
                 else
                     new_Z = [];
                 end
-                
+
                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-                
-                
+
+
             elseif l <0 && u >0
                 % y is concave for x in [l, 0] and convex for x
                 % in [0, u]
-                % split can be done here 
-                
+                % split can be done here
+
                 % case 1: x in [l, 0]
                 % y'(0) = 1, y(0) = 0
                 % y is concave when x <= 0
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 % constraint 2: y >= y'(0) * (x) + y(0)
                 % constraint 3: y <= (y(0) - y(l)) * (x -l) / (0 - l) + y(l);
-                
+
                 n = I.nVar + 1;
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 C1 = [dy_l*I.V(index, 2:n) -1];
-                d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l; 
+                d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l;
                 % constraint 2: y >= y'(0) * (x - 0) + y(0) = x
                 C2 = [I.V(index, 2:n) -1];
                 d2 = -I.V(index, 1);
@@ -283,7 +283,7 @@
                 a = (0 - y_l)/(0 - l);
                 C3 = [-a*I.V(index, 2:n) 1];
                 d3 = -a*l + y_l + a*I.V(index, 1);
-                
+
                 m = size(I.C, 1);
                 C0 = [I.C zeros(m, 1)];
                 d0 = I.d;
@@ -291,21 +291,21 @@
                 new_d = [d0; d1; d2; d3];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
-                
+                new_V(index, n+1) = 1;
+
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; y_l]; 
+                new_predicate_lb = [I.predicate_lb; y_l];
                 new_predicate_ub = [I.predicate_ub; 0.0];
-                
+
                 % update outer-zonotope
                 if ~isempty(I.Z)
                     c = I.Z.c;
-                    V = I.Z.V;                
+                    V = I.Z.V;
                     lamda = min(dy_l, 1);
                     mu1 = 0.5*(0 + y_l - lamda *(0 + l));
                     mu2 = 0.5*(0 - y_l - lamda *(0 - l));
                     c(index) = lamda * c(index) + mu1;
-                    V(index, :) = lamda * V(index, :); 
+                    V(index, :) = lamda * V(index, :);
                     I1 = zeros(I.dim, 1);
                     I1(index) = mu2;
                     V = [V I1];
@@ -313,19 +313,19 @@
                 else
                     new_Z = [];
                 end
-                
+
                 S1 = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-                
-                % case 2: x in [0, u] 
+
+                % case 2: x in [0, u]
                 % y is convex when x >= 0
                 % constraint 1: y <= y'(0) * (x - 0) + y(0) = x
-                % constarint 2: y <= y'(u) * (x - u) + y(u) 
+                % constarint 2: y <= y'(u) * (x - u) + y(u)
                 % constraint 3: y >= (y(u) - y(0)) * (x - 0) / (u - 0) + y(0);
-                
-                % over-approximation constraints 
+
+                % over-approximation constraints
                 % constraint 1: y <= y'(0) * (x - 0) + y(0) = x
                 C1 = [-I.V(index, 2:n) 1];
-                d1 = I.V(index, 1); 
+                d1 = I.V(index, 1);
                 % constraint 2: y <= y'(u) * (x - u) + y(u)
                 C2 = [-dy_u*I.V(index, 2:n) 1];
                 d2 = dy_u * I.V(index, 1) - dy_u*u + y_u;
@@ -333,26 +333,26 @@
                 a = (y_u - 0)/u;
                 C3 = [a*I.V(index, 2:n) -1];
                 d3 = -a*I.V(index, 1);
-                
+
                 new_C = [C0; C1; C2; C3];
                 new_d = [d0; d1; d2; d3];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
-                
+                new_V(index, n+1) = 1;
+
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; 0.0]; 
+                new_predicate_lb = [I.predicate_lb; 0.0];
                 new_predicate_ub = [I.predicate_ub; y_u];
-                
+
                 % update outer-zonotope
                 if ~isempty(I.Z)
                     c = I.Z.c;
-                    V = I.Z.V;                
+                    V = I.Z.V;
                     lamda = min(dy_u, 1);
                     mu1 = 0.5*(y_u + 0 - lamda *(u + 0));
                     mu2 = 0.5*(y_u - 0 - lamda *(u - 0));
                     c(index) = lamda * c(index) + mu1;
-                    V(index, :) = lamda * V(index, :); 
+                    V(index, :) = lamda * V(index, :);
                     I1 = zeros(I.dim, 1);
                     I1(index) = mu2;
                     V = [V I1];
@@ -360,32 +360,32 @@
                 else
                     new_Z = [];
                 end
-                
-                
+
+
                 S2 = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-                
+
                 S = [S1 S2];
             end
 
         end
-        
+
 %         % stepTanSig
 %         function S = stepTanSig_NoSplit(I, index)
 %             % @I: input star set
 %             % @index: index of the neuron
-%             % @l: l = min(x[index]), lower bound at neuron x[index] 
+%             % @l: l = min(x[index]), lower bound at neuron x[index]
 %             % @u: u = min(x[index]), upper bound at neuron x[index]
 %             % @y_l: = tansig(l); output of tansig at lower bound
 %             % @y_u: = tansig(u); output of tansig at upper bound
 %             % @dy_l: derivative of TanSig at the lower bound
 %             % @dy_u: derivative of TanSig at the upper bound
-%             
+%
 %             % @S: output star set
-%             
+%
 %             % author: Dung Tran
 %             % date: 3/19/2020
 %             % update: 4/3/2020
-%             
+%
 %             %[l, u] = I.Z.getRange(index);
 %             %[l, u] = I.getRange(index);
 %             [l, u] = I.estimateRange(index);
@@ -393,7 +393,7 @@
 %             y_u = tansig(u);
 %             dy_l = tansig('dn', l);
 %             dy_u = tansig('dn', u);
-%             
+%
 %             if l == u
 %                 new_V = I.V;
 %                 new_V(index, 1:I.nVar+1) = 0;
@@ -407,19 +407,19 @@
 %                 else
 %                     new_Z = [];
 %                 end
-%                 S = Star(new_V, I.C, I.d, I.predicate_lb, I.predicate_ub, new_Z);               
+%                 S = Star(new_V, I.C, I.d, I.predicate_lb, I.predicate_ub, new_Z);
 %             elseif l >= 0
 %                 % y is convex when x >= 0
 %                 % constraint 1: y <= y'(l) * (x - l) + y(l)
-%                 % constarint 2: y <= y'(u) * (x - u) + y(u) 
+%                 % constarint 2: y <= y'(u) * (x - u) + y(u)
 %                 % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
-%                 
-%                 
+%
+%
 %                 n = I.nVar + 1;
-%                 % over-approximation constraints 
+%                 % over-approximation constraints
 %                 % constraint 1: y <= y'(l) * (x - l) + y(l)
 %                 C1 = [-dy_l*I.V(index, 2:n) 1];
-%                 d1 = dy_l * I.V(index, 1) - dy_l*l + y_l; 
+%                 d1 = dy_l * I.V(index, 1) - dy_l*l + y_l;
 %                 % constraint 2: y <= y'(u) * (x - u) + y(u)
 %                 C2 = [-dy_u*I.V(index, 2:n) 1];
 %                 d2 = dy_u * I.V(index, 1) - dy_u*u + y_u;
@@ -427,7 +427,7 @@
 %                 a = (y_u - y_l)/(u - l);
 %                 C3 = [a*I.V(index, 2:n) -1];
 %                 d3 = a*l - y_l - a*I.V(index, 1);
-%                 
+%
 %                 m = size(I.C, 1);
 %                 C0 = [I.C zeros(m, 1)];
 %                 d0 = I.d;
@@ -435,21 +435,21 @@
 %                 new_d = [d0; d1; d2; d3];
 %                 new_V = [I.V zeros(I.dim, 1)];
 %                 new_V(index, :) = zeros(1, n+1);
-%                 new_V(index, n+1) = 1; 
-%                 
+%                 new_V(index, n+1) = 1;
+%
 %                 % update predicate bound
-%                 new_predicate_lb = [I.predicate_lb; y_l]; 
+%                 new_predicate_lb = [I.predicate_lb; y_l];
 %                 new_predicate_ub = [I.predicate_ub; y_u];
-%                 
+%
 %                 % update outer-zonotope
 %                 if ~isempty(I.Z)
 %                     c = I.Z.c;
-%                     V = I.Z.V;                
+%                     V = I.Z.V;
 %                     lamda = min(dy_l, dy_u);
 %                     mu1 = 0.5*(y_u + y_l - lamda *(u + l));
 %                     mu2 = 0.5*(y_u - y_l - lamda *(u - l));
 %                     c(index) = lamda * c(index) + mu1;
-%                     V(index, :) = lamda * V(index, :); 
+%                     V(index, :) = lamda * V(index, :);
 %                     I1 = zeros(I.dim, 1);
 %                     I1(index) = mu2;
 %                     V = [V I1];
@@ -457,21 +457,21 @@
 %                 else
 %                     new_Z = [];
 %                 end
-%                 
+%
 %                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-%                 
-%                 
+%
+%
 %             elseif u <= 0
 %                 % y is concave when x <= 0
 %                 % constraint 1: y >= y'(l) * (x - l) + y(l)
 %                 % constraint 2: y >= y'(u) * (x - u) + y(u)
 %                 % constraint 3: y <= (y(u) - y(l)) * (x -l) / (u - l) + y(l);
-%                 
+%
 %                 n = I.nVar + 1;
-%                 % over-approximation constraints 
+%                 % over-approximation constraints
 %                 % constraint 1: y >= y'(l) * (x - l) + y(l)
 %                 C1 = [dy_l*I.V(index, 2:n) -1];
-%                 d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l; 
+%                 d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l;
 %                 % constraint 2: y >= y'(u) * (x - u) + y(u)
 %                 C2 = [dy_u*I.V(index, 2:n) -1];
 %                 d2 = -dy_u * I.V(index, 1) + dy_u*u - y_u;
@@ -479,7 +479,7 @@
 %                 a = (y_u - y_l)/(u - l);
 %                 C3 = [-a*I.V(index, 2:n) 1];
 %                 d3 = -a*l + y_l + a*I.V(index, 1);
-%                 
+%
 %                 m = size(I.C, 1);
 %                 C0 = [I.C zeros(m, 1)];
 %                 d0 = I.d;
@@ -487,21 +487,21 @@
 %                 new_d = [d0; d1; d2; d3];
 %                 new_V = [I.V zeros(I.dim, 1)];
 %                 new_V(index, :) = zeros(1, n+1);
-%                 new_V(index, n+1) = 1; 
-%                 
+%                 new_V(index, n+1) = 1;
+%
 %                 % update predicate bound
-%                 new_predicate_lb = [I.predicate_lb; y_l]; 
+%                 new_predicate_lb = [I.predicate_lb; y_l];
 %                 new_predicate_ub = [I.predicate_ub; y_u];
-%                 
+%
 %                 % update outer-zonotope
 %                 if ~isempty(I.Z)
 %                     c = I.Z.c;
-%                     V = I.Z.V;                
+%                     V = I.Z.V;
 %                     lamda = min(dy_l, dy_u);
 %                     mu1 = 0.5*(y_u + y_l - lamda *(u + l));
 %                     mu2 = 0.5*(y_u - y_l - lamda *(u - l));
 %                     c(index) = lamda * c(index) + mu1;
-%                     V(index, :) = lamda * V(index, :); 
+%                     V(index, :) = lamda * V(index, :);
 %                     I1 = zeros(I.dim, 1);
 %                     I1(index) = mu2;
 %                     V = [V I1];
@@ -509,33 +509,33 @@
 %                 else
 %                     new_Z = [];
 %                 end
-%                 
+%
 %                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-%                 
-%                 
+%
+%
 %             elseif l <0 && u >0
 %                 % y is concave for x in [l, 0] and convex for x
 %                 % in [0, u]
-%                 % split can be done here 
-%                 
-%                 % combine two stars into one star               
+%                 % split can be done here
+%
+%                 % combine two stars into one star
 %                 x1 = (dy_u * u - y_u)/(dy_u - 1);
 %                 y1 = x1;
 %                 x2 = (dy_l * l - y_l)/(dy_l - 1);
-%                 y2 = x2; 
-%                 
-%                 % over-approximation constraints 
+%                 y2 = x2;
+%
+%                 % over-approximation constraints
 %                 % constraint 1: y >= y'(l) * (x - l) + y(l)
 %                 % constraint 2: y <= y'(u) * (x - u) + y(u)
 %                 % constraint 3: y <= (y(x1) - y(l))*(x - l)/(x1 - l) + y(l);
 %                 % constraint 4: y >= (y(x2) - y(u)) * (x - u)/(x2 - u) + y(u)
-%                 
-%                                
+%
+%
 %                 n = I.nVar + 1;
-%                 
+%
 %                 % constraint 1: y >= y'(l) * (x - l) + y(l)
 %                 C1 = [dy_l*I.V(index, 2:n) -1];
-%                 d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l; 
+%                 d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l;
 %                 % constraint 2: y <= y'(u) * (x - u) + y(u)
 %                 C2 = [-dy_u*I.V(index, 2:n) 1];
 %                 d2 = dy_u * I.V(index, 1) - dy_u*u + y_u;
@@ -543,12 +543,12 @@
 %                 a = (y1 - y_l)/(x1 - l);
 %                 C3 = [-a*I.V(index, 2:n) 1];
 %                 d3 = -a*l + y_l + a*I.V(index, 1);
-%                                 
+%
 %                 % constraint 4: y >= (y(x2) - y(u)) * (x - u)/(x2 - u) + y(u);
 %                 a = (y2 - y_u)/(x2 - u);
 %                 C4 = [a*I.V(index, 2:n) -1];
 %                 d4 = a*u - y_u - a*I.V(index, 1);
-%                 
+%
 %                 m = size(I.C, 1);
 %                 C0 = [I.C zeros(m, 1)];
 %                 d0 = I.d;
@@ -556,21 +556,21 @@
 %                 new_d = [d0; d1; d2; d3; d4];
 %                 new_V = [I.V zeros(I.dim, 1)];
 %                 new_V(index, :) = zeros(1, n+1);
-%                 new_V(index, n+1) = 1; 
-%                 
+%                 new_V(index, n+1) = 1;
+%
 %                 % update predicate bound
-%                 new_predicate_lb = [I.predicate_lb; y_l]; 
+%                 new_predicate_lb = [I.predicate_lb; y_l];
 %                 new_predicate_ub = [I.predicate_ub; y_u];
-%                 
+%
 %                 % update outer-zonotope
 %                 if ~isempty(I.Z)
 %                     c = I.Z.c;
-%                     V = I.Z.V;                
+%                     V = I.Z.V;
 %                     lamda = min(dy_l, dy_u);
 %                     mu1 = 0.5*(y_u + y_l - lamda *(u + l));
 %                     mu2 = 0.5*(y_u - y_l - lamda *(u - l));
 %                     c(index) = lamda * c(index) + mu1;
-%                     V(index, :) = lamda * V(index, :); 
+%                     V(index, :) = lamda * V(index, :);
 %                     I1 = zeros(I.dim, 1);
 %                     I1(index) = mu2;
 %                     V = [V I1];
@@ -578,31 +578,31 @@
 %                 else
 %                     new_Z = [];
 %                 end
-%                 
+%
 %                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub, new_Z);
-%                 
+%
 %             end
-% 
+%
 %         end
-        
-        
+
+
         % multiStepTanSig at one
         function S = multiStepTanSig_NoSplit(varargin)
             % @I: input star set
-            
-            % @l: l = min(x[index]), lower bound at neuron x[index] 
+
+            % @l: l = min(x[index]), lower bound at neuron x[index]
             % @u: u = min(x[index]), upper bound at neuron x[index]
             % @yl: = tansig(l); output of tansig at lower bound
             % @yu: = tansig(u); output of tansig at upper bound
             % @dyl: derivative of TanSig at the lower bound
             % @dyu: derivative of TanSig at the upper bound
-            
+
             % @S: output star set
-            
+
             % author: Dung Tran
             % date: 6/26/2020
             % update: 7/15/2020: add display option
-            
+
             switch nargin
                 case 1
                     I = varargin{1};
@@ -619,8 +619,8 @@
                 otherwise
                     error('Invalid number of input arguments, should be 1, 2 or 3');
             end
-            
-            
+
+
             N = I.dim;
             inds = 1:N;
             if strcmp(dis_opt, 'display')
@@ -637,7 +637,7 @@
             dyl = tansig('dn', l);
             dyu = tansig('dn', u);
 
-           
+
             % l ~= u
             map2 = find(l ~= u);
             m = length(map2);
@@ -648,10 +648,10 @@
 
             % new basis matrix
             new_V = [zeros(N, I.nVar+1) V2];
-            
+
              % l == u
             map1 = find(l == u);
-            yl1 = yl(map1(:));         
+            yl1 = yl(map1(:));
             new_V(map1, 1) = yl1;
             new_V(map1, 2:I.nVar+1+m) = 0;
 
@@ -667,7 +667,7 @@
             % C1, d1, x >= 0
             % y is convex when x >= 0
             % constraint 1: y <= y'(l) * (x - l) + y(l)
-            % constarint 2: y <= y'(u) * (x - u) + y(u) 
+            % constarint 2: y <= y'(u) * (x - u) + y(u)
             % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
             map1 = find(l >= 0 & l~=u);
             if ~isempty(map1)
@@ -678,7 +678,7 @@
                 % constraint 1: y <= y'(l) * (x - l) + y(l)
                 C11 = [-da.*I.V(map1, 2:nv) V2(map1, :)];
                 d11 = da.*(I.V(map1, 1)-l(map1)) + a;
-                % constraint 2: y <= y'(u) * (x - u) + y(u) 
+                % constraint 2: y <= y'(u) * (x - u) + y(u)
                 C12 = [-db.*I.V(map1, 2:nv) V2(map1, :)];
                 d12 = db.*(I.V(map1, 1) - u(map1)) + b;
                 % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
@@ -686,15 +686,15 @@
                 C13 = [gamma.*I.V(map1, 2:nv) -V2(map1, :)];
                 d13 = -gamma.*(I.V(map1, 1)-l(map1)) - a;
 
-                C1 = [C11; C12; C13]; 
+                C1 = [C11; C12; C13];
                 d1 = [d11; d12; d13];
             else
                 C1 = [];
-                d1 = [];                
+                d1 = [];
             end
-            
 
-            % C2, d2, x <= 0 
+
+            % C2, d2, x <= 0
             % y is concave when x <= 0
             % constraint 1: y >= y'(l) * (x - l) + y(l)
             % constraint 2: y >= y'(u) * (x - u) + y(u)
@@ -710,7 +710,7 @@
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 C21 = [da.*I.V(map1, 2:nv) -V2(map1, :)];
                 d21 = -da.*(I.V(map1, 1)-l(map1)) - a;
-                % constraint 2: y >= y'(u) * (x - u) + y(u) 
+                % constraint 2: y >= y'(u) * (x - u) + y(u)
                 C22 = [db.*I.V(map1, 2:nv) -V2(map1, :)];
                 d22 = -db.*(I.V(map1, 1) - u(map1)) - b;
                 % constraint 3: y <= (y(u) - y(l)) * (x -l) / (u - l) + y(l);
@@ -718,17 +718,17 @@
                 C23 = [-gamma.*I.V(map1, 2:nv) V2(map1, :)];
                 d23 = gamma.*(I.V(map1, 1)-l(map1)) + a;
 
-                C2 = [C21; C22; C23]; 
+                C2 = [C21; C22; C23];
                 d2 = [d21; d22; d23];
             else
                 C2 = [];
                 d2 = [];
             end
-            
+
             % C3, d3, l< 0 & u > 0, x >0 or x < 0
             %y is concave for x in [l, 0] and convex for x
             % in [0, u]
-            % split can be done here            
+            % split can be done here
 
             map1 = find(l < 0 & u > 0);
             if ~isempty(map1)
@@ -738,14 +738,14 @@
                 db = dyu(map1);
 
                 dmin = (min(da', db'))';
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 1: y >= min(y'(l), y'(u)) * (x - l) + y(l)
                 % constraint 2: y <= min(y'(l), y'(u)) * (x - u) + y(u)
 
                 % constraint 1: y >= min(y'(l), y'(u)) * (x - l) + y(l)
                 C31 = [dmin.*I.V(map1, 2:nv) -V2(map1, :)];
                 d31 = -dmin.*(I.V(map1, 1)-l(map1)) - a;
-                % constraint 2: y <= min(y'(l), y'(u)) * (x - u) + y(u) 
+                % constraint 2: y <= min(y'(l), y'(u)) * (x - u) + y(u)
                 C32 = [-dmin.*I.V(map1, 2:nv) V2(map1, :)];
                 d32 = dmin.*(I.V(map1, 1) - u(map1)) + b;
 
@@ -763,43 +763,43 @@
                 C34 = [g1.*I.V(map1, 2:nv) -V2(map1, :)];
                 d34 = -g1.*I.V(map1, 1) - y1;
 
-                C3 = [C31; C32; C33; C34]; 
+                C3 = [C31; C32; C33; C34];
                 d3 = [d31; d32; d33; d34];
             else
                 C3 = [];
                 d3 = [];
             end
-            
+
             new_C = [C0; C1; C2; C3];
-            new_d = [d0; d1; d2; d3]; 
+            new_d = [d0; d1; d2; d3];
 
             new_pred_lb = [I.predicate_lb; yl(map2)];
             new_pred_ub = [I.predicate_ub; yu(map2)];
 
             S = Star(new_V, new_C, new_d, new_pred_lb, new_pred_ub);
         end
-        
-        
+
+
         % multiStepTanSig at one
         function S = relaxedMultiStepTanSig_NoSplit(varargin)
             % @I: input star set
             % @relaxFactor: for relaxed approx-star method
             % @dis_opt; display option = [] or 'display'
-            
-            % @l: l = min(x[index]), lower bound at neuron x[index] 
+
+            % @l: l = min(x[index]), lower bound at neuron x[index]
             % @u: u = min(x[index]), upper bound at neuron x[index]
             % @yl: = tansig(l); output of tansig at lower bound
             % @yu: = tansig(u); output of tansig at upper bound
             % @dyl: derivative of TanSig at the lower bound
             % @dyu: derivative of TanSig at the upper bound
-            
+
             % @S: output star set
-            
+
             % author: Dung Tran
             % date: 6/26/2020
             % update: 7/15/2020: add display option
             %         7/16/2020: add lp_solver option
-            
+
             switch nargin
                 case 2
                     I = varargin{1};
@@ -819,19 +819,19 @@
                 otherwise
                     error('Invalid number of input arguments, should be 2, 3 or 4');
             end
-            
+
             if ~isa(I, 'Star')
                 error('Input is not a star');
             end
             if relaxFactor < 0 || relaxFactor > 1
                 error('Invalid relax factor');
             end
-            
-            
+
+
             [l, u] = I.estimateRanges;
             n1 = round((1-relaxFactor)*length(l));
             [~, midx] = sort(u - l, 'descend');
-            
+
             N = I.dim;
             if strcmp(dis_opt, 'display')
                 fprintf('\nComputing (1-%.3f) x %d = %d lower-bounds, i.e. relaxing %2.2f%%: ' , relaxFactor, length(l), n1, 100*relaxFactor);
@@ -849,7 +849,7 @@
             dyl = tansig('dn', l);
             dyu = tansig('dn', u);
 
-           
+
             % l ~= u
             map2 = find(l ~= u);
             m = length(map2);
@@ -860,10 +860,10 @@
 
             % new basis matrix
             new_V = [zeros(N, I.nVar+1) V2];
-            
+
              % l == u
             map1 = find(l == u);
-            yl1 = yl(map1(:));         
+            yl1 = yl(map1(:));
             new_V(map1, 1) = yl1;
             new_V(map1, 2:I.nVar+1+m) = 0;
 
@@ -879,7 +879,7 @@
             % C1, d1, x >= 0
             % y is convex when x >= 0
             % constraint 1: y <= y'(l) * (x - l) + y(l)
-            % constarint 2: y <= y'(u) * (x - u) + y(u) 
+            % constarint 2: y <= y'(u) * (x - u) + y(u)
             % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
             map1 = find(l >= 0 & l~=u);
             if ~isempty(map1)
@@ -890,7 +890,7 @@
                 % constraint 1: y <= y'(l) * (x - l) + y(l)
                 C11 = [-da.*I.V(map1, 2:nv) V2(map1, :)];
                 d11 = da.*(I.V(map1, 1)-l(map1)) + a;
-                % constraint 2: y <= y'(u) * (x - u) + y(u) 
+                % constraint 2: y <= y'(u) * (x - u) + y(u)
                 C12 = [-db.*I.V(map1, 2:nv) V2(map1, :)];
                 d12 = db.*(I.V(map1, 1) - u(map1)) + b;
                 % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
@@ -898,15 +898,15 @@
                 C13 = [gamma.*I.V(map1, 2:nv) -V2(map1, :)];
                 d13 = -gamma.*(I.V(map1, 1)-l(map1)) - a;
 
-                C1 = [C11; C12; C13]; 
+                C1 = [C11; C12; C13];
                 d1 = [d11; d12; d13];
             else
                 C1 = [];
-                d1 = [];                
+                d1 = [];
             end
-            
 
-            % C2, d2, x <= 0 
+
+            % C2, d2, x <= 0
             % y is concave when x <= 0
             % constraint 1: y >= y'(l) * (x - l) + y(l)
             % constraint 2: y >= y'(u) * (x - u) + y(u)
@@ -922,7 +922,7 @@
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 C21 = [da.*I.V(map1, 2:nv) -V2(map1, :)];
                 d21 = -da.*(I.V(map1, 1)-l(map1)) - a;
-                % constraint 2: y >= y'(u) * (x - u) + y(u) 
+                % constraint 2: y >= y'(u) * (x - u) + y(u)
                 C22 = [db.*I.V(map1, 2:nv) -V2(map1, :)];
                 d22 = -db.*(I.V(map1, 1) - u(map1)) - b;
                 % constraint 3: y <= (y(u) - y(l)) * (x -l) / (u - l) + y(l);
@@ -930,17 +930,17 @@
                 C23 = [-gamma.*I.V(map1, 2:nv) V2(map1, :)];
                 d23 = gamma.*(I.V(map1, 1)-l(map1)) + a;
 
-                C2 = [C21; C22; C23]; 
+                C2 = [C21; C22; C23];
                 d2 = [d21; d22; d23];
             else
                 C2 = [];
                 d2 = [];
             end
-            
+
             % C3, d3, l< 0 & u > 0, x >0 or x < 0
             %y is concave for x in [l, 0] and convex for x
             % in [0, u]
-            % split can be done here            
+            % split can be done here
 
             map1 = find(l < 0 & u > 0);
             if ~isempty(map1)
@@ -950,14 +950,14 @@
                 db = dyu(map1);
 
                 dmin = (min(da', db'))';
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 1: y >= min(y'(l), y'(u)) * (x - l) + y(l)
                 % constraint 2: y <= min(y'(l), y'(u)) * (x - u) + y(u)
 
                 % constraint 1: y >= min(y'(l), y'(u)) * (x - l) + y(l)
                 C31 = [dmin.*I.V(map1, 2:nv) -V2(map1, :)];
                 d31 = -dmin.*(I.V(map1, 1)-l(map1)) - a;
-                % constraint 2: y <= min(y'(l), y'(u)) * (x - u) + y(u) 
+                % constraint 2: y <= min(y'(l), y'(u)) * (x - u) + y(u)
                 C32 = [-dmin.*I.V(map1, 2:nv) V2(map1, :)];
                 d32 = dmin.*(I.V(map1, 1) - u(map1)) + b;
 
@@ -975,47 +975,47 @@
                 C34 = [g1.*I.V(map1, 2:nv) -V2(map1, :)];
                 d34 = -g1.*I.V(map1, 1) - y1;
 
-                C3 = [C31; C32; C33; C34]; 
+                C3 = [C31; C32; C33; C34];
                 d3 = [d31; d32; d33; d34];
             else
                 C3 = [];
                 d3 = [];
             end
-            
+
             new_C = [C0; C1; C2; C3];
-            new_d = [d0; d1; d2; d3]; 
+            new_d = [d0; d1; d2; d3];
 
             new_pred_lb = [I.predicate_lb; yl(map2)];
             new_pred_ub = [I.predicate_ub; yu(map2)];
 
             S = Star(new_V, new_C, new_d, new_pred_lb, new_pred_ub);
         end
-        
-        
+
+
     end
-    
-    
+
+
     methods(Static) % over-approximate reachability analysis with zonotope
-        
-        
+
+
         % reachability analysis with zonotope
         function Z = reach_zono_approx(I)
             % @I: input star
             % @Z: output star
-            
+
             % author: Dung Tran
             % date: 5/3/2019
-            
+
             % method: approximate sigmoid function by a zonotope
             % reference: Fast and Effective Robustness Certification,
             % Gagandeep Singh, NIPS, 2018
-            
+
             if ~isa(I, 'Zono')
                 error('Input set is not a Zonotope');
             end
-            
+
             B = I.getBox;
-            
+
             lb = B.lb;
             ub = B.ub;
             G = [tansig('dn', lb) tansig('dn', ub)];
@@ -1025,17 +1025,17 @@
             mu2 = 0.5 * (tansig(ub) - tansig(lb) - gamma_mat * (ub - lb));
             Z1 = I.affineMap(gamma_mat, mu1);
             new_V = diag(mu2);
-            
+
             V = [Z1.V new_V];
             Z = Zono(Z1.c, V);
-                  
+
         end
-        
+
          % dealing with multiple inputs in parallel
         function S = reach_zono_approx_multipleInputs(varargin)
             % author: Dung Tran
             % date: 3/27/2020
-            
+
             switch nargin
                 case 1
                     I = varargin{1};
@@ -1046,36 +1046,36 @@
                 otherwise
                     error('Invalid number of input arguments, should be 1 or 2');
             end
-            
+
             p = length(I);
             S = [];
             if isempty(parallel)
-                
+
                 for i=1:p
                     S =[S TanSig.reach_zono_approx(I(i))];
                 end
-                
+
             elseif strcmp(parallel, 'parallel')
-                
+
                 parfor i=1:p
                     S =[S, TanSig.reach_zono_approx(I(i))];
                 end
-                
+
             else
                 error('Unknown parallel computation option');
             end
 
         end
-         
+
     end
-    
-    
+
+
     methods(Static) % reachability using abstract domain
-        
+
         function S = stepTanSig_abstract_domain(I, index, l, u, y_l, y_u, dy_l, dy_u)
             % @I: input star set
             % @index: index of the neuron
-            % @l: l = min(x[index]), lower bound at neuron x[index] 
+            % @l: l = min(x[index]), lower bound at neuron x[index]
             % @u: u = min(x[index]), upper bound at neuron x[index]
             % @y_l: = tansig(l); output of tansig at lower bound
             % @y_u: = tansig(u); output of tansig at upper bound
@@ -1091,15 +1091,15 @@
                 new_V = I.V;
                 new_V(index, 1:I.nVar+1) = 0;
                 new_V(index, 1) = y_l;
-                S = Star(new_V, I.C, I.d, I.predicate_lb, I.predicate_ub);                
+                S = Star(new_V, I.C, I.d, I.predicate_lb, I.predicate_ub);
             elseif l >= 0
                 % y is convex when x >= 0
-                % constraint 2: y <= y'(u) * (x - u) + y(u) 
+                % constraint 2: y <= y'(u) * (x - u) + y(u)
                 % constraint 3: y >= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
 
 
                 n = I.nVar + 1;
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 2: y <= y'(u) * (x - u) + y(u)
                 C2 = [-dy_u*I.V(index, 2:n) 1];
                 d2 = dy_u * I.V(index, 1) - dy_u*u + y_u;
@@ -1117,10 +1117,10 @@
                 new_d = [d0; d3; d2];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
+                new_V(index, n+1) = 1;
 
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; y_l]; 
+                new_predicate_lb = [I.predicate_lb; y_l];
                 new_predicate_ub = [I.predicate_ub; y_u];
                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub);
 
@@ -1131,10 +1131,10 @@
                 % constraint 3: y <= (y(u) - y(l)) * (x -l) / (u - l) + y(l);
 
                 n = I.nVar + 1;
-                % over-approximation constraints 
+                % over-approximation constraints
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 C1 = [dy_l*I.V(index, 2:n) -1];
-                d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l; 
+                d1 = -dy_l * I.V(index, 1) + dy_l*l - y_l;
                 % constraint 3: y <= (y(u) - y(l)) * (x - l) / (u - l) + y(l);
                 a = (y_u - y_l)/(u - l);
                 C3 = [-a*I.V(index, 2:n) 1];
@@ -1147,10 +1147,10 @@
                 new_d = [d0; d1; d3];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
+                new_V(index, n+1) = 1;
 
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; y_l]; 
+                new_predicate_lb = [I.predicate_lb; y_l];
                 new_predicate_ub = [I.predicate_ub; y_u];
                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub);
 
@@ -1158,10 +1158,10 @@
             elseif l <0 && u >0
                 % y is concave for x in [l, 0] and convex for x
                 % in [0, u]
-                % split can be done here 
+                % split can be done here
 
-                
-                % over-approximation constraints 
+
+                % over-approximation constraints
                 % constraint 1: y >= y'(l) * (x - l) + y(l)
                 % constraint 2: y <= y'(u) * (x - u) + y(u)
 
@@ -1170,7 +1170,7 @@
                 dy_min = min(dy_l, dy_u);
                 % constraint 1: y >= y'_min * (x - l) + y(l)
                 C1 = [dy_min*I.V(index, 2:n) -1];
-                d1 = -dy_min * I.V(index, 1) + dy_min*l - y_l; 
+                d1 = -dy_min * I.V(index, 1) + dy_min*l - y_l;
                 % constraint 2: y <= y'_min * (x - u) + y(u)
                 C2 = [-dy_min*I.V(index, 2:n) 1];
                 d2 = dy_min * I.V(index, 1) - dy_min*u + y_u;
@@ -1182,19 +1182,19 @@
                 new_d = [d0; d1; d2];
                 new_V = [I.V zeros(I.dim, 1)];
                 new_V(index, :) = zeros(1, n+1);
-                new_V(index, n+1) = 1; 
+                new_V(index, n+1) = 1;
 
                 % update predicate bound
-                new_predicate_lb = [I.predicate_lb; y_l]; 
+                new_predicate_lb = [I.predicate_lb; y_l];
                 new_predicate_ub = [I.predicate_ub; y_u];
                 S = Star(new_V, new_C, new_d, new_predicate_lb, new_predicate_ub);
 
             end
 
         end
-        
-        
-        
+
+
+
         function S = reach_abstract_domain_approx(I)
         % @I: star input set
         % @Z: Star output set
@@ -1209,7 +1209,7 @@
                 error('Input set is not a Star');
             end
 
-            % [l, u] = I.estimateRanges;  
+            % [l, u] = I.estimateRanges;
             [l, u] = I.getRanges;
             y_l = tansig(l);
             y_u = tansig(u);
@@ -1219,7 +1219,7 @@
             n = I.dim;
             S = I;
             for i=1:n
-                S = TanSig.stepTanSig_abstract_domain(S, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+                S = TanSig.stepTanSig_abstract_domain(S, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i));
             end
 
             end
@@ -1260,24 +1260,24 @@
 
         end
 
-    
+
     end
-    
+
 
 methods(Static) % over-approximate reachability analysis using abstract-domain (absdom) based on eran
-    
+
     % step over-approximate reachability analysis using abstract-domain
     % we use absdom set to represent abstract-domain
     function A = stepTanSig_absdom(I, index, l, u, y_l, y_u, dy_l, dy_u)
         % @I: absdom-input set
         % @index: index of neuron performing stepReach
-        % @l: l = min(x[index]), lower bound at neuron x[index] 
+        % @l: l = min(x[index]), lower bound at neuron x[index]
         % @u: u = min(x[index]), upper bound at neuron x[index]
         % @y_l: = tansig(l); output of tansig at lower bound
         % @y_u: = tansig(u); output of tansig at upper bound
         % @dy_l: derivative of TanSig at the lower bound
         % @dy_u: derivative of TanSig at the upper bound
-        
+
         % @A: absdom output set
 
         % author: Sung Woo Choi
@@ -1285,11 +1285,11 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 
         % reference: An Abstract Domain for Certifying Neural Networks,
         % Gagandeep Singh, POPL 2019
-        
+
         if ~isa(I, 'AbsDom')
                 error('Input is not a AbsDom');
         end
-            
+
         lower_a = I.lower_a;
         upper_a = I.upper_a;
         lb = I.lb;
@@ -1324,7 +1324,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
                 L(index+1) = dlamda;
                 lower_a{len}(index,:) = L;
             end
-            
+
             if u <=0
                 % constraint 2: y[index] <= y(u) + lamda * (x[index] - u)
                 U = zeros(1, I.dim + 1);
@@ -1338,28 +1338,28 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
                 U(index+1) = dlamda;
                 upper_a{len}(index,:) = U;
             end
-            
+
             lb{len}(index) = y_l;
             ub{len}(index) = y_u;
-            
+
             A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
         end
     end
-    
+
     function A = reach_absdom_approx(I)
         % @I: absdom imput set
         % %A: absdom output set
-        
+
         % author: Sung Woo Choi
         % date: 01/29/2021
-        
+
         % reference: An abstract domain for certifying neural networks. Proceedings of the ACM on Programming Languages,
         % Gagandeep Singh, POPL, 2019
-        
+
         if ~isa(I, 'AbsDom')
             error('Input is not a AbsDom');
         end
-            
+
         if isempty(I)
             A = [];
         else
@@ -1371,7 +1371,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 
             l = lb{len};
             u = ub{len};
-         
+
             y_l = tansig(l);
             y_u = tansig(u);
             dy_l = tansig('dn', l);
@@ -1385,26 +1385,26 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             A = AbsDom(lower_a, upper_a, lb, ub, I.iter);
 
             for i=1:I.dim
-                A = TanSig.stepTanSig_absdom(A, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+                A = TanSig.stepTanSig_absdom(A, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i));
             end
         end
     end
 end
 
 methods(Static) % over-approximate reachability analysis using abstract-domain (absdom) based on eran
-    
+
     % step over-approximate reachability analysis using abstract-domain
     % we use absdom set to represent abstract-domain
     function R = stepTanSig_absdom_twoConstraints_rstar(I, index, l, u, y_l, y_u, dy_l, dy_u)
         % @I: rstar-input set
         % @index: index of neuron performing stepReach
-        % @l: l = min(x[index]), lower bound at neuron x[index] 
+        % @l: l = min(x[index]), lower bound at neuron x[index]
         % @u: u = min(x[index]), upper bound at neuron x[index]
         % @y_l: = tansig(l); output of tansig at lower bound
         % @y_u: = tansig(u); output of tansig at upper bound
         % @dy_l: derivative of TanSig at the lower bound
         % @dy_u: derivative of TanSig at the upper bound
-        
+
         % @A: rstar output set
 
         % author: Sung Woo Choi
@@ -1412,11 +1412,11 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 
         % reference: An Abstract Domain for Certifying Neural Networks,
         % Gagandeep Singh, POPL 2019
-        
+
         if ~isa(I, 'RStar')
             error('Input is not a RStar');
         end
-            
+
         lower_a = I.lower_a;
         upper_a = I.upper_a;
         lb = I.lb;
@@ -1426,7 +1426,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             new_V = I.V;
             new_V(index,:) = 0;
             new_V(index,1) = y_l;
-            
+
             L = zeros(1, I.dim + 1);
             L(index+1) = y_l;
             lower_a{len}(index,:) = L;
@@ -1443,58 +1443,58 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             new_V = [I.V zeros(I.dim, 1)];
             new_V(index, :) = 0;
             new_V(index, end) = 1;
-            
+
             C0 = [I.C zeros(size(I.C,1),1)];
             d0 = I.d;
-                
-            
+
+
             if l >= 0
                 lambda = (y_u - y_l)/(u - l);
-                
+
                 % constraint 1: y[index] >= y(l) + lamda * (x[index] - l)
                 L = zeros(1, I.dim + 1);
                 L(1) = y_l - lambda*l;
                 L(index+1) = lambda;
                 lower_a{len}(index,:) = L;
-                
+
                 C1 = [lambda*I.X(index,:) -1];
                 d1 = -y_l - lambda*(I.c(index) - l);
-                
+
                 % constraint 2: y[index] <= y(u) + lamda' * (x[index] - u)
                 U = zeros(1, I.dim + 1);
                 U(1) = y_u - dy_u*u;
                 U(index+1) = dy_u;
                 upper_a{len}(index,:) = U;
-                
+
                 C2 = [-dy_u*I.X(index,:) 1];
                 d2 = y_u + dy_u*(I.c(index) - u);
             elseif u <= 0
                 lambda = (y_u - y_l)/(u - l);
-                
+
                 % constraint 1: y[index] >= y(l) + lambda' * (x[index] - l)
                 L = zeros(1, I.dim + 1);
                 L(1) = y_l - dy_l*l;
                 L(index+1) = dy_l;
                 lower_a{len}(index,:) = L;
-                
+
                 C1 = [dy_l*I.X(index,:) -1];
                 d1 = -y_l - dy_l*(I.c(index) - l);
-                
+
                 % constraint 2: y[index] <= y(l) + lambda * (x[index] - l)
                 U = zeros(1, I.dim + 1);
                 U(1) = y_l - lambda*l;
                 U(index+1) = lambda;
                 upper_a{len}(index,:) = U;
-                
+
                 C2 = [-lambda*I.X(index,:) 1];
                 d2 = y_l + lambda*(I.c(index) - l);
-                
+
 %                 % constraint 2: y[index] <= y(u) + lambda * (x[index] - u)
 %                 U = zeros(1, I.dim + 1);
 %                 U(1) = y_u - lambda*u;
 %                 U(index+1) = lambda;
 %                 upper_a{len}(index,:) = U;
-%                 
+%
 %                 C2 = [-lambda*I.X(index,:) 1];
 %                 d2 = y_u + lambda*(I.c(index) - u);
             else
@@ -1504,20 +1504,20 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
                 L(1) = y_l - dlambda*l;
                 L(index+1) = dlambda;
                 lower_a{len}(index,:) = L;
-                
+
                 C1 = [dlambda*I.X(index,:) -1];
                 d1 = -y_l - dlambda*(I.c(index) - l);
-                
+
                 % constraint 2: y[index] <= y(u) + lambda' * (x[index] - u)
                 U = zeros(1, I.dim + 1);
                 U(1) = y_u - dlambda*u;
                 U(index+1) = dlambda;
                 upper_a{len}(index,:) = U;
-                
+
                 C2 = [-dlambda*I.X(index,:) 1];
                 d2 = y_u + dlambda*(I.c(index) - u);
             end
-          
+
 %             dlamda = min(dy_l , dy_u);
 %             if l > 0
 %                 % constraint 1: y[index] >= y(l) + lamda * (x[index] - l)
@@ -1525,7 +1525,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 %                 L(1) = y_l - lamda*l;
 %                 L(index+1) = lamda;
 %                 lower_a{len}(index,:) = L;
-%                 
+%
 %                 C1 = [lamda*I.X(index,:) -1];
 %                 d1 = -y_l - lamda*(I.c(index) - l);
 %             else
@@ -1534,18 +1534,18 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 %                 L(1) = y_l - dlamda*l;
 %                 L(index+1) = dlamda;
 %                 lower_a{len}(index,:) = L;
-%                 
+%
 %                 C1 = [dy_l*I.X(index,:) -1];
 %                 d1 = -y_l - dy_l*(I.c(index) - l);
 %             end
-%             
+%
 %             if u <=0
 %                 % constraint 2: y[index] <= y(u) + lamda * (x[index] - u)
 %                 U = zeros(1, I.dim + 1);
 %                 U(1) = y_u - lamda*u;
 %                 U(index+1) = lamda;
 %                 upper_a{len}(index,:) = U;
-%                 
+%
 %                 C2 = [-lamda*I.X(index,:) 1];
 %                 d2 = y_u + lamda*(I.c(index) - u);
 %             else
@@ -1554,38 +1554,38 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 %                 U(1) = y_u - dlamda*u;
 %                 U(index+1) = dlamda;
 %                 upper_a{len}(index,:) = U;
-%                 
+%
 %                 C2 = [-dlamda*I.X(index,:) 1];
 %                 d2 = y_u + dlamda*(I.c(index) - u);
 %             end
 
             new_pred_lb = [I.predicate_lb; y_l];
             new_pred_ub = [I.predicate_ub; y_u];
-                    
+
             lb{len}(index) = y_l;
             ub{len}(index) = y_u;
-            
+
             new_C = [C0; C1; C2];
             new_d = [d0; d1; d2];
-            
+
             R = RStar(new_V, new_C, new_d, new_pred_lb, new_pred_ub, lower_a, upper_a, lb, ub, I.iter);
         end
     end
-    
+
     function R = reach_rstar_absdom_with_two_pred_const(I)
         % @I: RStar imput set
         % %A: RStar output set
-        
+
         % author: Sung Woo Choi
         % date: 01/29/2021
-        
+
         % reference: An abstract domain for certifying neural networks. Proceedings of the ACM on Programming Languages,
         % Gagandeep Singh, POPL, 2019
-        
+
         if ~isa(I, 'RStar')
             error('Input is not a RStar');
         end
-            
+
         if isempty(I)
             R = [];
         else
@@ -1604,7 +1604,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
 %             if(u_e ~= u)
 %                 fprintf('different upper bound %e \n', u_e-u);
 %             end
-            
+
             y_l = tansig(l);
             y_u = tansig(u);
             dy_l = tansig('dn', l);
@@ -1618,7 +1618,7 @@ methods(Static) % over-approximate reachability analysis using abstract-domain (
             R = RStar(I.V, I.C, I.d, I.predicate_lb, I.predicate_ub, lower_a, upper_a, lb, ub, I.iter);
 
             for i=1:I.dim
-                R = TanSig.stepTanSig_absdom_twoConstraints_rstar(R, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i)); 
+                R = TanSig.stepTanSig_absdom_twoConstraints_rstar(R, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i));
             end
         end
     end
@@ -1629,16 +1629,16 @@ methods(Static) % main reach method
     % main function for reachability analysis
     function R = reach(varargin)
         % @I: an array of star input sets
-        % @method: 'approx-star' or 'approx-zono' or 'abs-dom' 
+        % @method: 'approx-star' or 'approx-zono' or 'abs-dom'
         % @option: = 'parallel' or [] using parallel computation or not
 
         % author: Dung Tran
         % date: 3/27/2019
         % update: 7/15/2020 : add display option
         %         7/16/2020: add lp_solver option
-        
+
         switch nargin
-            
+
             case 6
                 I = varargin{1};
                 method = varargin{2};
@@ -1646,7 +1646,7 @@ methods(Static) % main reach method
                 relaxFactor = varargin{4}; % used for aprox-star only
                 dis_opt = varargin{5}; % display option
                 lp_solver = varargin{6};
-            
+
             case 5
                 I = varargin{1};
                 method = varargin{2};
@@ -1674,7 +1674,7 @@ methods(Static) % main reach method
                 option = [];
                 relaxFactor = 0; % for relaxed approx-star method
                 dis_opt = [];
-                
+
             case 1
                 I = varargin{1};
                 method = 'approx-star';
@@ -1706,7 +1706,6 @@ methods(Static) % main reach method
 end
 
 
-    
-    
-end
 
+
+end

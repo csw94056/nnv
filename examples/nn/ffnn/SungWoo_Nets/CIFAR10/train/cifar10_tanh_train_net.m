@@ -12,7 +12,7 @@ url = 'https://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz';
 helperCIFAR10Data.download(url,cifar10Data);
 
 %Load the CIFAR-10 training and test data.
-[trainX_full,trainY_full,testX,testY] = helperCIFAR10Data.load(cifar10Data);
+[trainX_full,trainY_full,testX_orig,testY_orig] = helperCIFAR10Data.load(cifar10Data);
 
 %Each image is a 32x32 RGB image and there are 50,000 training samples.
 
@@ -41,25 +41,37 @@ trainY = trainY_full(1:45000)';
 
 validX = trainX_full(:,45001:end);
 validY = trainY_full(45001:end)';
- 
+
+% % for k = 1:1000
+% %     digit = reshape(testX_orig(:,:,:,k),[32,32,3]);
+% % %     digit = images(k,:,:,:);
+% %     
+% %     for i = 1:3
+% %        digit(:,:,i) = digit(:,:,i)';
+% %        C(i,:) = reshape(digit(:,:,i),1024,1);
+% %     end
+% %     B = reshape(C,[3,1024]);
+% %     testX(:,k) = reshape(B,3072,1);
+% % end
 % testX = reshape(testX, [3072 10000]);
-% testY = testY';
+testX = testX_orig;
+testY = testY_orig;
 
 % % Plot 100 smaples of images
-% figure                                          % initialize figure
-% colormap(gray)                                  % set to grayscale
-% for i = 1:100                                    % preview first 150 samples
-%     subplot(10,10,i)                              % plot them in 6 x 6 grid
-%     digit = reshape(trainX(:, i), [32,32,3]);     % row = 28 x 28 image
-%     imagesc(digit)                              % show the image
-%     title(trainY(i))                   % show the label
-% end
+figure                                          % initialize figure
+colormap(gray)                                  % set to grayscale
+for i = 1:100                                    % preview first 150 samples
+    subplot(10,10,i)                              % plot them in 6 x 6 grid
+    digit = reshape(trainX(:, i), [32,32,3]);     % row = 28 x 28 image
+    imagesc(digit)                              % show the image
+    title(trainY(i))                   % show the label
+end
 
 
 
 % One hot
 trainY = categorical(trainY); % Change the data to categorical
-% validY = categorical(validY); % Change the data to categorical
+validY = categorical(validY); % Change the data to categorical
 testY = categorical(testY); % Change the data to categorical
 
 
@@ -109,7 +121,7 @@ testY = categorical(testY); % Change the data to categorical
 classes = ["airplane" "automobile" "bird" "cat" "dee" "dog" "frog" "horse" "ship" "truck"];
 net = importONNXNetwork('cifar_relu_9_200.onnx','OutputLayerType','classification','Classes',classes);
 
-predY = classify(net,testX);
+predY = classify(net,testX/255);
 confusion_matrix = confusionmat(testY, predY)
 accuracy = sum(predY == testY)/length(testY)
 

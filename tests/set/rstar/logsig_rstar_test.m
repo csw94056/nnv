@@ -48,10 +48,14 @@ S = Star(P);        % star approx
 S.predicate_lb = -ones(input_dim, 1);
 S.predicate_ub = ones(input_dim, 1);
 Sa = S;             % star absdom approx
+B = Box(lb,ub);
+Z = B.toZono;
 
 figure;
 nexttile;
 plot(A, 'r');
+hold on;
+plot(Z, 'g');
 hold on;
 plot(Sa, 'b');
 hold on;
@@ -72,8 +76,11 @@ for i = 1:steps
     Sa = Sa.affineMap(W{i}, b{i});
     R2 = R2.affineMap(W{i}, b{i});
     S = S.affineMap(W{i}, b{i});
+    Z = Z.affineMap(W{i}, b{i});
     nexttile;
     plot(A, 'r');
+    hold on;
+    plot(Z, 'g');
     hold on;
     plot(Sa, 'b');
     hold on;
@@ -105,8 +112,11 @@ for i = 1:steps
     Sa = LogSig.reach_abstract_domain_approx(Sa);
     R2 = LogSig.reach_rstar_absdom_with_two_pred_const(R2);
     S = LogSig.reach_star_approx_no_split(S);
+    Z = LogSig.reach_zono_approx(Z);
     nexttile;
     plot(A, 'r');
+    hold on;
+    plot(Z, 'g');
     hold on;
     plot(Sa, 'b');
     hold on;
@@ -137,6 +147,10 @@ plot(A, 'r');
 hold on;
 title('AbsDom');
 nexttile;
+plot(Z, 'g');
+hold on;
+title('Zono');
+nexttile;
 plot(Sa, 'b');
 title('Star AbsDom');
 nexttile;
@@ -165,6 +179,8 @@ title('dot plots');
 nexttile;
 plot(A, 'r');
 hold on;
+plot(Z, 'g');
+hold on;
 plot(Sa, 'b');
 hold on;
 plot(R2, 'y');
@@ -188,6 +204,8 @@ title('All');
 
 fprintf('\nAbsdom bounds');
 [l, u] = A.getRanges
+fprintf('Zono bounds');
+[l, u] = Z.getRanges;
 fprintf('RStar Exact bounds');
 [l, u] = R2.getExactRanges
 fprintf('RStar approx bounds');

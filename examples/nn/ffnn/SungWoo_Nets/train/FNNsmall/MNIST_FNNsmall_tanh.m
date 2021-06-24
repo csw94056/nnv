@@ -78,7 +78,8 @@ testY = categorical(testY); % Change the data to categorical
 % save MNIST_tanh_100_100_DenseNet.mat net;
 
 load ../../MNIST/nets/FNNsmall/MNIST_FNNsmall_tanh.mat net;
-predY = classify(net,testX)';
+predY = classify(net,testX/255)';
+confusion_matrix = confusionmat(testY, predY)
 accuracy = sum(predY == testY)/length(testY)
 
 N = 500; % get 150 images and its labels from the imdsValidation
@@ -107,8 +108,8 @@ end
 %     title(IM_labels(i))                   % show the label
 % end
 
-IM = [IM_labels IM_data'];
-writematrix(IM,'../../MNIST/data/MNIST_FNNsmall_tanh_raw.csv');
+% IM = [IM_labels IM_data'];
+% writematrix(IM,'../../MNIST/data/MNIST_FNNsmall_tanh_raw.csv');
 
 function images = loadMNISTImages(filename, normalize)
     %loadMNISTImages returns a 28x28x[number of MNIST images] matrix containing

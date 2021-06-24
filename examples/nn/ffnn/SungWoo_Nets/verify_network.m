@@ -7,9 +7,8 @@ format long;
 % network trained with images: [0 1] -> normalized, 
 %                              [0 255] ->  not_normalized
 dataset_ = 'MNIST';
-% net_ = 'sigmoid_100_50';
-net_ = 'MNIST_FNNsmall_tanh';
-n_ = 'FNNsmall';
+net_ = 'MNIST_FNNmed_tanh';
+n_ = 'FNNmed';
 normalized = 0;
 
 
@@ -38,11 +37,11 @@ csv_data = csvread(image_dir);
 IM_labels = csv_data(:,1);
 IM_data = csv_data(:,2:end)';
 
-% reachMethod = 'approx-star';
+reachMethod = 'approx-star';
 
 % reachMethod = 'abs-dom';    %Star abstract domain (LP)
 % reachMethod = 'rstar-absdom-two';
-reachMethod = 'absdom';
+% reachMethod = 'absdom';
 % reachMethod = 'approx-zono';
 
 
@@ -91,6 +90,38 @@ total_vt = zeros(K, M); % total verification time
 % 
 % IM = [IM_labels(S) IM_data(:,S)'];
 % writematrix(IM,'sigmoid_100_100.csv');
+
+
+% R = cell(N, M);
+
+% for j = 1:M
+%     R = [];
+%     E = zeros(1,N);
+%     fprintf('\tepsilon: %f\n', eps(j));
+%     for n = 1:N
+% %         fprintf('%d\n',n);
+%         images = attack_images(IM_data(:,n), eps(j), reachMethod, normalized); 
+%         labels = IM_labels(n)+1;
+% 
+% %         [R{j,n} t] = nnv_net.reach(images, reachMethod, numCores, 0, 0, 'linprog');
+%         [S, t] = nnv_net.reach(images, reachMethod, numCores, 0, 0, 'linprog');
+%         R = [R S];
+%     end
+%     
+%     fprintf('isEmptySet?\n');
+%     for n = 1:N
+%        fprintf('%d\n',n);
+%        E(n) = isEmptySet(R(n));
+%     end
+%     find(E == 1)
+% end
+% 
+% for j = 1:1
+%     for n = 1:N
+%        fprintf('%d\n',n);
+%        E(n) = isEmptySet(R(n));
+%     end
+% end
 
 for i=1:K
     for j=1:M

@@ -438,14 +438,19 @@ classdef RStar
                 xmin = obj.V(index,1);
                 xmax = obj.V(index,1);
             else
-                [~, fval, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+                % **** linprog is much faster than glpk
+                options = optimoptions(@linprog, 'Display','none'); 
+                options.OptimalityTolerance = 1e-10; % set tolerance
+                [~, fval, exitflag, ~] = linprog(f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);             
+%                 [~, fval, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
                 if exitflag > 0
                     xmin = fval + obj.V(index, 1);
                 else
                     error('Cannot find an optimal solution, exitflag = %d', exitflag);
-                end
-                
-                [~, fval, exitflag, ~] = glpk(-f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+                end          
+          
+                [~, fval, exitflag, ~] = linprog(-f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);   
+%                 [~, fval, exitflag, ~] = glpk(-f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
                 if exitflag > 0
                     xmax = -fval + obj.V(index, 1);
                 else
@@ -564,6 +569,35 @@ classdef RStar
             S = Star(obj1.V, new_C, new_d);     
             if isEmptySet(S)
                 S = [];
+            end
+        end
+        
+        % check if a index is larger than other
+        function bool = is_p1_larger_than_p2(obj, p1_id, p2_id)
+            % @p1_id: index of point 1
+            % @p2_id: index of point 2
+            % @bool = 1 if there exists the case that p1 >= p2
+            %       = 0 if there is no case that p1 >= p2
+            
+            % author: Sung Woo Choi
+            % date: 06/23/2021
+            % reference: star set
+          
+            if p1_id < 1 || p1_id > obj.dim
+                error('Invalid index for point 1');
+            end
+            
+            if p2_id < 1 || p2_id > obj.dim
+                error('Invalid index for point 2');
+            end
+            
+            d1 = obj.c(p1_id) - obj.c(p2_id);
+            C1 = obj.X(p2_id, :) - obj.X(p1_id, :);
+            S = Star(obj.V, [obj.C; C1], [obj.d;d1], obj.predicate_lb, obj.predicate_ub);
+            if S.isEmptySet 
+                bool = 0;
+            else
+                bool = 1;
             end
         end
 

@@ -56,8 +56,12 @@ testY = testY';
 % end
 
 
-
+% test_label = char(uint8(testY)) - 1;
+% test = [test_label' testX'];
+% writematrix(test,'../../CIFAR10/data/CIFAR_matlab.csv');
 % One hot
+
+
 trainY = categorical(trainY); % Change the data to categorical
 % validY = categorical(validY); % Change the data to categorical
 testY = categorical(testY); % Change the data to categorical
@@ -115,6 +119,7 @@ testY = categorical(testY); % Change the data to categorical
 % 
 load ../nets/FNNsmall/CIFAR10_FNNsmall_tanh.mat;
 predY = classify(net,testX);
+confusion_matrix = confusionmat(testY, predY)
 accuracy = sum(predY == testY)/length(testY)
 
 N = 2500; % get 150 images and its labels from the imdsValidation

@@ -291,9 +291,9 @@ classdef Star
             options.OptimalityTolerance = 1e-10; % set tolerance
             f = zeros(1, obj.nVar);
             [~, ~, exitflag, ~] = linprog(f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);
-            if exitflag == 1
+            if exitflag == 1 || exitflag == -9
                 bool = 0;
-            elseif exitflag == -2
+            elseif exitflag == -2 
                 bool = 1;
             else
                 error('Error, exitflag = %d', exitflag);
@@ -950,18 +950,18 @@ classdef Star
                 xmax = obj.V(index,1);
             else
                 % **** linprog is much faster than glpk
-                %options = optimoptions(@linprog, 'Display','none'); 
-                %options.OptimalityTolerance = 1e-10; % set tolerance
-                %[~, fval, exitflag, ~] = linprog(f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);             
-                [~, fval, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+                options = optimoptions(@linprog, 'Display','none'); 
+                options.OptimalityTolerance = 1e-10; % set tolerance
+                [~, fval, exitflag, ~] = linprog(f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);             
+%                 [~, fval, exitflag, ~] = glpk(f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
                 if exitflag > 0
                     xmin = fval + obj.V(index, 1);
                 else
                     error('Cannot find an optimal solution, exitflag = %d', exitflag);
                 end          
           
-                %[~, fval, exitflag, ~] = linprog(-f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);   
-                [~, fval, exitflag, ~] = glpk(-f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
+                [~, fval, exitflag, ~] = linprog(-f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options);   
+%                 [~, fval, exitflag, ~] = glpk(-f, obj.C, obj.d, obj.predicate_lb, obj.predicate_ub);
                 if exitflag > 0
                     xmax = -fval + obj.V(index, 1);
                 else

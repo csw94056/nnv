@@ -9,8 +9,8 @@ format long;
 % dataset_ = 'MNIST';
 dataset_ = "CIFAR10";
 % net_ = 'sigmoid_100_50';
-net_ = 'CIFAR10_FNNsmall_tanh';
-n_ = 'FNNsmall';
+net_ = 'CIFAR10_FNNbig_tanh';
+n_ = 'FNNbig';
 normalized = 0;
 
 
@@ -55,7 +55,17 @@ lp_solver = 'linprog' % 'linprog'
 %eps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 % eps = [0.010, 0.012, 0.014, 0.016, 0.018, 0.0200];%, 0.022, 0.024, 0.026, 0.028, 0.030];
 
-eps = [0.004,0.006,0.008,0.010,0.012,0.014];
+% eps = [0.004,0.006,0.008,0.010,0.012,0.014];
+
+% eps = [0.0020, 0.0030, 0.0040, 0.005, 0.006, 0.007, 0.008];
+
+eps = [0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016];
+eps = 0.0016
+
+
+% eps = [0.0020, 0.0040, 0.0060, 0.008, 0.010, 0.012];
+% eps = [0.0040, 0.0045, 0.0050, 0.0055, 0.0060, 0.0065];
+
 % eps = 0.014
 
 % eps = [0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02];
@@ -79,6 +89,19 @@ vt = cell(K, M); % detail verification time
 cands = cell(K,M); % counterexample
 total_vt = zeros(K, M); % total verification time
 
+% % Plot 150 smaples of images
+% figure                                          % initialize figure
+% for i = 1:100                                    % preview first 150 samples
+%     subplot(10,10,i)                              % plot them in 6 x 6 grid
+%     digit = reshape(uint8(IM_data(:, i)), [32,32,3]);     % row = 28 x 28 image
+%     imagesc(digit)                              % show the image
+%     title(IM_labels(i))                   % show the label
+% end
+% 
+% predY = classify(net,IM_data/255)';
+% labels = double(predY);
+% labels = labels - 1;
+% accuracy = sum(labels == IM_labels)/length(IM_labels)
 
 % S = [];
 % j = 1;
@@ -98,7 +121,7 @@ total_vt = zeros(K, M); % total verification time
 
 for i=1:K
     for j=1:M
-        eps(j)
+        fprintf('\tepsilon: %f\n',eps(j)');
         images = attack_images(IM_data, eps(j), reachMethod, normalized); 
         labels = IM_labels + 1;
         t = tic;
