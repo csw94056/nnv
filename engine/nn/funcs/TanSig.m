@@ -619,8 +619,7 @@
                 otherwise
                     error('Invalid number of input arguments, should be 1, 2 or 3');
             end
-
-
+            
             N = I.dim;
             inds = 1:N;
             if strcmp(dis_opt, 'display')
@@ -827,8 +826,18 @@
                 error('Invalid relax factor');
             end
 
-
-            [l, u] = I.estimateRanges;
+            if isa(lp_solver, 'glpk') || isa(lp_solver, 'linprog')
+                if ~I.isEmptySet
+                    N = I.dim;
+                    l = I.getMins(1:N, [], [], lp_solver);
+                    u = I.getMaxs(1:N, [], [], lp_solver);
+                else
+                    l = [];
+                    u = [];
+                end
+            elseif isa(lp_solver, 'estimate')
+                [l, u] = I.estimateRanges;
+            end
             n1 = round((1-relaxFactor)*length(l));
             [~, midx] = sort(u - l, 'descend');
 
@@ -1195,7 +1204,7 @@
 
 
 
-        function S = reach_abstract_domain_approx(I)
+        function S = reach_abstract_domain_approx(varargin) %I
         % @I: star input set
         % @Z: Star output set
 
@@ -1204,13 +1213,35 @@
 
         % reference: An abstract domain for certifying neural networks. Proceedings of the ACM on Programming Languages,
         % Gagandeep Singh, POPL, 2019
+        
+            switch nargin
+                case 1
+                    I = varargin{1};
+                    lp_solver = 'linprog';
+                case 2
+                    I = varargin{1};
+                    lp_solver = varargin{2};
+                otherwise
+                    error('Invalid number of input arguments, should be 1 or 2');
+            end
 
             if ~isa(I, 'Star')
                 error('Input set is not a Star');
             end
-
-            % [l, u] = I.estimateRanges;
-            [l, u] = I.getRanges;
+            
+            if strcmp(lp_solver, 'glpk') || strcmp(lp_solver, 'linprog')
+                if ~I.isEmptySet
+                    N = I.dim;
+                    l = I.getMins(1:N, [], [], lp_solver);
+                    u = I.getMaxs(1:N, [], [], lp_solver);
+                else
+                    l = [];
+                    u = [];
+                end
+            elseif strcmp(lp_solver, 'estimate')
+                [l, u] = I.estimateRanges;
+            end
+            
             y_l = tansig(l);
             y_u = tansig(u);
             dy_l = tansig('dn', l);
@@ -1222,7 +1253,7 @@
                 S = TanSig.stepTanSig_abstract_domain(S, i, l(i), u(i), y_l(i), y_u(i), dy_l(i), dy_u(i));
             end
 
-            end
+        end
 
         % dealing with multiple inputs in parallel
         function S = reach_abstract_domain_approx_multipleInputs(varargin)

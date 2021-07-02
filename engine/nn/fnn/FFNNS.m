@@ -2054,7 +2054,19 @@ classdef FFNNS < handle
                         error('Only rstar-absdom-two is supported')
                     end
                 else
-                    [lb, ub] = R.estimateRanges;
+%                     if strcmp(obj.reachMethod, 'abs-dom')
+                        if ~R.isEmptySet
+                            N = R.dim;
+                            lb = R.getMins(1:N, [], [], obj.lp_solver);
+                            ub = R.getMins(1:N, [], [], obj.lp_solver);
+                        else
+                            empty_set = 1;
+                            lb = [];
+                            ub = [];
+                        end
+%                     else
+%                         [lb, ub] = R.estimateRanges;
+%                     end
                 end
                
                 max_val = lb(correct_id);
@@ -2063,24 +2075,28 @@ classdef FFNNS < handle
 
                 if isempty(max_cd)
                     robust = 1;
-                elseif ~empty_set
-                    if isa(R, 'RStar')
-                        S = Star(lb, ub);
-                        n = length(max_cd);
-                        count = 0;
-                        for i=1:n
+                else
+                    if ~empty_set
+                        if isa(R, 'RStar') || isa(R, 'Star')
+                            S = Star(lb, ub);
+                            n = length(max_cd);
+                            count = 0;
+                            for i=1:n
 
-                            if S.is_p1_larger_than_p2(max_cd(i), correct_id)
-                                cands = max_cd(i);
-                                break;
-                            else
-                                count = count + 1;
+                                if S.is_p1_larger_than_p2(max_cd(i), correct_id)
+                                    cands = max_cd(i);
+                                    break;
+                                else
+                                    count = count + 1;
+                                end
+                            end
+
+                            if count == n
+                                robust = 1;
                             end
                         end
-
-                        if count == n
-                            robust = 1;
-                        end
+                    else
+                        error('Infeasible set');
                     end
                     
                     if robust ~= 1

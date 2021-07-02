@@ -1005,6 +1005,7 @@ classdef Star
                 if strcmp(lp_solver, 'linprog')
                     options = optimoptions(@linprog, 'Display','none');
                     options.OptimalityTolerance = 1e-10; % set tolerance
+                    options.MaxIterations = Inf;
                     [~, fval, exitflag, ~] = linprog(f, obj.C, obj.d, [], [], obj.predicate_lb, obj.predicate_ub, options); 
                     if exitflag == 1
                         xmin = fval + obj.V(index, 1);
@@ -1403,7 +1404,7 @@ classdef Star
         
         % quickly estimate lower bound and upper bound vector of state
         % variables
-        function [lb, ub] = estimateRanges(obj)
+        function [lb, ub] = estimateBounds(obj)
             
             % author: Dung Tran
             % date: 7/19/2019
@@ -1426,7 +1427,7 @@ classdef Star
         
         % estimate ranges using clip method from Stanley Bak
         % it is slower than the for-loop method
-        function [lb, ub] = estimateBounds(obj)
+        function [lb, ub] = estimateRanges(obj)
             % @lb: lowerbound vector
             % @ub: upper bound vector
             
