@@ -7,8 +7,8 @@ format long;
 % network trained with images: [0 1] -> normalized, 
 %                              [0 255] ->  not_normalized
 dataset_ = 'MNIST';
-net_ = 'MNIST_FNNmed_tanh';
-n_ = 'FNNmed';
+net_ = 'MNIST_FNNbig_tanh';
+n_ = 'FNNbig';
 normalized = 0;
 
 
@@ -27,28 +27,26 @@ image_dir = sprintf('%s/data/%s.csv', dataset_,net_)
 % image_dir = sprintf('%s/data/%s_raw.csv', dataset_,net_)
 % image_dir = sprintf('%s/data/%s_zono.csv', dataset_,net_)
 
+
+% reachMethod = 'approx-star'
+% reachMethod = 'abs-dom'    %Star abstract domain (LP)
+reachMethod = 'rstar-absdom-two'
+% reachMethod = 'absdom'
+% reachMethod = 'approx-zono'
+
+relaxFactor = [0];
+numCores = 1;
+disp_opt = 0; %'display';
+lp_solver = 'linprog' % 'linprog'
 normalized = 1;
 %% load network
 load(net_dir);
-nnv_net = net2nnv_net(net);
+nnv_net = net2nnv_net(net, lp_solver);
 
 %% load images
 csv_data = csvread(image_dir);
 IM_labels = csv_data(:,1);
 IM_data = csv_data(:,2:end)';
-
-reachMethod = 'approx-star';
-
-% reachMethod = 'abs-dom';    %Star abstract domain (LP)
-% reachMethod = 'rstar-absdom-two';
-% reachMethod = 'absdom';
-% reachMethod = 'approx-zono';
-
-
-relaxFactor = [0];
-numCores = 1;
-disp_opt = 0;
-lp_solver = 'linprog' % 'linprog'
 
 %eps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 % eps = [0.010, 0.012, 0.014, 0.016, 0.018, 0.020, 0.022, 0.024, 0.026, 0.028, 0.030];
@@ -99,14 +97,22 @@ total_vt = zeros(K, M); % total verification time
 %     E = zeros(1,N);
 %     fprintf('\tepsilon: %f\n', eps(j));
 %     for n = 1:N
-% %         fprintf('%d\n',n);
+%         fprintf('%d\n',n);
 %         images = attack_images(IM_data(:,n), eps(j), reachMethod, normalized); 
 %         labels = IM_labels(n)+1;
 % 
 % %         [R{j,n} t] = nnv_net.reach(images, reachMethod, numCores, 0, 0, 'linprog');
 %         [S, t] = nnv_net.reach(images, reachMethod, numCores, 0, 0, 'linprog');
 %         R = [R S];
+%         
+%         E(n) = isEmptySet(R(n));
+%         if(E(n))
+%             fprintf('%d is an empty set!!!!!!!!!!!!!!!!!!!!!!!\n', n);
+%         else
+%             fprintf('%d is NOT an empty set\n', n);
+%         end
 %     end
+% end
 %     
 %     fprintf('isEmptySet?\n');
 %     for n = 1:N
@@ -124,7 +130,7 @@ total_vt = zeros(K, M); % total verification time
 % end
 
 for i=1:K
-    for j=1:M
+    for j=1:1
         eps(j)
         images = attack_images(IM_data, eps(j), reachMethod, normalized); 
         labels = IM_labels+1;
@@ -205,7 +211,7 @@ function images = attack_images(in_images, epsilon, reachMethod, normalized)
     end
 end
 
-function nnv_net = net2nnv_net(net)
+function nnv_net = net2nnv_net(net, lp_solver)  
     if strcmp(net.Layers(4).Type,'Sigmoid')
     act_fn = 'logsig';
     elseif strcmp(net.Layers(4).Type,'Tanh')
@@ -215,9 +221,11 @@ function nnv_net = net2nnv_net(net)
     L = [];
     for i = 3:2:length(net.Layers)-4
         L1 = LayerS(net.Layers(i).Weights, net.Layers(i).Bias, act_fn);
+        L1.lp_solver = lp_solver;
         L = [L L1]; 
     end
     L2 = LayerS(net.Layers(i+2).Weights, net.Layers(i+2).Bias, 'purelin');
+    L2.lp_solver = lp_solver;
     nnv_net = FFNNS([L L2]);
-    nnv_net.lp_solver = 'linprog';
+    nnv_net.lp_solver = lp_solver;
 end

@@ -3,13 +3,18 @@ clear;
 clc;
 format long;
 
+RelaxedStar_ENABLE = 1;
+StarAbsDom_ENABLE = 1;
+StarApprox_ENABLE = 1;
+Zono_ENABLE = 1;
 %%
 % network trained with images: [0 1] -> normalized, 
 %                              [0 255] ->  not_normalized
 dataset_ = 'MNIST';
-net_ = 'MNIST_FNNmed_tanh';
+% net_ = 'MNIST_FNNsmall_tanh';
+net_ = 'mnist_fnnsmall_tanh';
+lp_solver = 'linprog';
 normalized = 0;
-
 
 norm_ = '';
 if normalized
@@ -17,21 +22,26 @@ if normalized
 end
 
 net_dir = sprintf('%s.mat', net_)
-image_dir = sprintf('%s.csv', net_)
+image_dir = sprintf('image5_FNNsmall_tanh.csv')
+% image_dir = sprintf('%s.csv', net_)
 
 normalize = 1;
 %% load network
 load(net_dir);
-nnv_net = net2nnv_net(net);
+nnv_net = net2nnv_net(net, lp_solver);
 
 %% load images
 csv_data = csvread(image_dir);
 IM_labels = csv_data(:,1);
 IM_data = csv_data(:,2:end)';
 
+% save('mnist_fnnsmall_tanh.mat','net','nnv_net')
+
+% IM = [IM_labels(5) IM_data(:,5)'];
+% writematrix(IM,'image5_FNNsmall_tanh.csv');
+
 numCores = 1;
 disp_opt = 0;
-lp_solver = 'linprog' % 'linprog''
 
 % eps = [0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.017, 0.018, 0.019, 0.02];
 eps = 0.01;
@@ -40,7 +50,8 @@ N = size(IM_data, 2);
 M = length(eps);
 
 l = length(nnv_net.Layers);
-n = 26 %26
+% n = 26 %26
+n = 1
 j = 1
 
 % figure                                          % initialize figure
@@ -56,83 +67,162 @@ j = 1
 % reachMethod = 'absdom';
 % reachMethod = 'approx-zono';
 
-RS = attack_images(IM_data(:,n), eps(j), 'rstar-absdom-two', normalize); 
-labels = IM_labels(n)+1;
-A = attack_images(IM_data(:,n), eps(j), 'abs-dom', normalize);
-S = attack_images(IM_data(:,n), eps(j), 'approx-star', normalize);
-Z = attack_images(IM_data(:,n), eps(j), 'approx-zono', normalize);
+RelaxedStar_ENABLE = 1;
+StarAbsDom_ENABLE = 1;
+StarApprox_ENABLE = 1;
+Zono_ENABLE = 1;
 
-for i = 1:l
-    % Affine Mapping
-    fprintf('\nindex: %d\n', i);
-    fprintf('Affine Mapping\n');
+for n = 1:N
 
-    RS = RS.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
-    A = A.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
-    S = S.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
-    Z = Z.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
-    
-    % Check infeasibility of set after affine mapping
-    RS_empty = RS.isEmptySet;
-    A_empty = A.isEmptySet;
-    S_empty = S.isEmptySet;
-    Z_star = Z.toStar;
-    Z_empty  = Z_star.isEmptySet;
-    
-    if RS_empty
-        fprintf('RS is an infeasible set\n');
+    if RelaxedStar_ENABLE
+        RS = attack_images(IM_data(:,n), eps(j), 'rstar-absdom-two', normalize); 
     end
-    if A_empty
-        fprintf('A is an infeasible set\n');
+    if StarAbsDom_ENABLE
+        A = attack_images(IM_data(:,n), eps(j), 'abs-dom', normalize);
     end
-    if S_empty
-        fprintf('S is an infeasible set\n');
+    if StarApprox_ENABLE
+        S = attack_images(IM_data(:,n), eps(j), 'approx-star', normalize);
     end
-    if Z_empty
-        fprintf('Z is an infeasible set\n');
+    if Zono_ENABLE
+        Z = attack_images(IM_data(:,n), eps(j), 'approx-zono', normalize);
     end
-    
-    % Get predicate bounds of each sets
-    [l_rs, u_rs] = RS.getRanges;
-    [l_a, u_a] = A.getRanges;
-    [l_s, u_s] = S.getRanges;
-    [l_z, u_z] = Z.getRanges;
-    
-    if i == l
-        break;
+    labels = IM_labels(n)+1;
+    for i = 1:l
+        % Affine Mapping
+        fprintf('\nindex: %d\n', i);
+        fprintf('Affine Mapping\n');
+
+        if RelaxedStar_ENABLE
+            RS = RS.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
+        end
+        if StarAbsDom_ENABLE
+            A = A.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
+        end
+        if StarApprox_ENABLE
+            S = S.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
+        end
+        if Zono_ENABLE
+            Z = Z.affineMap(nnv_net.Layers(i).W, nnv_net.Layers(i).b);
+        end
+
+        % Check infeasibility of set after affine mapping
+        if RelaxedStar_ENABLE
+            RS_empty = RS.isEmptySet;
+        else
+            RS_empty = 0;
+        end
+        if StarAbsDom_ENABLE
+            A_empty = A.isEmptySet;
+        else
+            A_empty = 0;
+        end
+        if StarApprox_ENABLE
+            S_empty = S.isEmptySet;
+        else
+            S_empty = 0;
+        end
+        if Zono_ENABLE
+            Z_star = Z.toStar;
+            Z_empty  = Z_star.isEmptySet;
+        else
+            Z_empty = 0;
+        end
+
+        if RS_empty & RelaxedStar_ENABLE
+            fprintf('RS is an infeasible set\n');
+        end
+        if A_empty & StarAbsDom_ENABLE
+            fprintf('A is an infeasible set\n');
+        end
+        if S_empty & StarApprox_ENABLE
+            fprintf('S is an infeasible set\n');
+        end
+        if Z_empty & Zono_ENABLE
+            fprintf('Z is an infeasible set\n');
+        end
+
+        % Get predicate bounds of each sets
+        if RelaxedStar_ENABLE
+            [l_rs, u_rs] = RS.getRanges;
+        end
+        if StarAbsDom_ENABLE
+            [l_a, u_a] = A.getRanges;
+        end
+        if StarApprox_ENABLE
+            [l_s, u_s] = S.getRanges;
+        end
+        if Zono_ENABLE
+            [l_z, u_z] = Z.getRanges;
+        end
+
+        if i == l
+            break;
+        end
+        % Activation Function
+        fprintf('\nActivation Function\n');
+        if RelaxedStar_ENABLE
+            RS = TanSig.reach_rstar_absdom_with_two_pred_const(RS);
+        end
+        if StarAbsDom_ENABLE
+            A = TanSig.reach_abstract_domain_approx(A, lp_solver);
+        end
+        if StarApprox_ENABLE
+            S = TanSig.multiStepTanSig_NoSplit(S, 0, lp_solver);
+        end
+        if Zono_ENABLE
+            Z = TanSig.reach_zono_approx(Z);
+        end
+
+        % Check infeasibility of set after affine mapping
+        if RelaxedStar_ENABLE
+            RS_empty = RS.isEmptySet;
+        else
+            RS_empty = 0;
+        end
+        if StarAbsDom_ENABLE
+            A_empty = A.isEmptySet;
+        else
+            A_empty = 0;
+        end
+        if StarApprox_ENABLE
+            S_empty = S.isEmptySet;
+        else
+            S_empty = 0;
+        end
+        if Zono_ENABLE
+            Z_star = Z.toStar;
+            Z_empty  = Z_star.isEmptySet;
+        else
+            Z_empty = 0;
+        end
+
+        if RS_empty & RelaxedStar_ENABLE
+            fprintf('RS is an infeasible set\n');
+        end
+        if A_empty & StarAbsDom_ENABLE
+            fprintf('A is an infeasible set\n');
+        end
+        if S_empty & StarApprox_ENABLE
+            fprintf('S is an infeasible set\n');
+        end
+        if Z_empty & Zono_ENABLE
+            fprintf('Z is an infeasible set\n');
+        end
+
+        % Get predicate bounds of each sets
+        if RelaxedStar_ENABLE
+            [l_rs, u_rs] = RS.getRanges;
+        end
+        if StarAbsDom_ENABLE
+            [l_a, u_a] = A.getRanges;
+        end
+        if StarApprox_ENABLE
+            [l_s, u_s] = S.getRanges;
+        end
+        if Zono_ENABLE
+            [l_z, u_z] = Z.getRanges;
+        end
     end
-    % Activation Function
-    fprintf('\nActivation Function\n');
-    RS = TanSig.reach_rstar_absdom_with_two_pred_const(RS);
-    A = TanSig.reach_abstract_domain_approx(A);
-    S = TanSig.multiStepTanSig_NoSplit(S);
-    Z = TanSig.reach_zono_approx(Z);
-    
-    % Check infeasibility of set after affine mapping
-    RS_empty = RS.isEmptySet;
-    A_empty = A.isEmptySet;
-    S_empty = S.isEmptySet;
-    Z_star = Z.toStar;
-    Z_empty  = Z_star.isEmptySet;
-    
-    if RS_empty
-        fprintf('RS is an infeasible set\n');
-    end
-    if A_empty
-        fprintf('A is an infeasible set\n');
-    end
-    if S_empty
-        fprintf('S is an infeasible set\n');
-    end
-    if Z_empty
-        fprintf('Z is an infeasible set\n');
-    end
-    
-    % Get predicate bounds of each sets
-    [l_rs, u_rs] = RS.getRanges;
-    [l_a, u_a] = A.getRanges;
-    [l_s, u_s] = S.getRanges;
-    [l_z, u_z] = Z.getRanges;
 end
 
 function images = attack_images(in_images, epsilon, reachMethod, normalized)
@@ -169,9 +259,7 @@ function images = attack_images(in_images, epsilon, reachMethod, normalized)
     end
 end
 
-function nnv_net = net2nnv_net(net)
-    lp_solver_ = 'linprog';
-    
+function nnv_net = net2nnv_net(net, lp_solver_)  
     if strcmp(net.Layers(4).Type,'Sigmoid')
     act_fn = 'logsig';
     elseif strcmp(net.Layers(4).Type,'Tanh')

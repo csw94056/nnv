@@ -98,18 +98,18 @@ for i=1:10000
     end
 end
 
-% Plot 150 smaples of images
-% figure                                          % initialize figure
-% colormap(gray)                                  % set to grayscale
-% for i = 1:150                                    % preview first 150 samples
-%     subplot(15,10,i)                              % plot them in 6 x 6 grid
-%     digit = reshape(IM_data(:, i), [28,28]);     % row = 28 x 28 image
-%     imagesc(digit)                              % show the image
-%     title(IM_labels(i))                   % show the label
-% end
+%Plot 100 smaples of images
+figure                                          % initialize figure
+colormap(gray)                                  % set to grayscale
+for i = 1:100                                    % preview first 150 samples
+    subplot(10,10,i)                              % plot them in 6 x 6 grid
+    digit = reshape(IM_data(:, i), [28,28]);     % row = 28 x 28 image
+    imagesc(digit)                              % show the image
+    title(IM_labels(i))                   % show the label
+end
 
-% IM = [IM_labels IM_data'];
-% writematrix(IM,'../../MNIST/data/MNIST_FNNsmall_tanh_raw.csv');
+IM = [IM_labels IM_data'];
+writematrix(IM,'../../MNIST/data/MNIST_FNNsmall_tanh_raw.csv');
 
 function images = loadMNISTImages(filename, normalize)
     %loadMNISTImages returns a 28x28x[number of MNIST images] matrix containing

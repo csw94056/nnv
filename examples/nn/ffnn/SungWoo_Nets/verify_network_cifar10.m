@@ -9,8 +9,8 @@ format long;
 % dataset_ = 'MNIST';
 dataset_ = "CIFAR10";
 % net_ = 'sigmoid_100_50';
-net_ = 'CIFAR10_FNNbig_tanh';
-n_ = 'FNNbig';
+net_ = 'CIFAR10_FNNsmall_tanh';
+n_ = 'FNNsmall';
 normalized = 0;
 
 
@@ -41,10 +41,10 @@ IM_data = csv_data(:,2:end)';
 
 % reachMethod = 'approx-star';
 
-% reachMethod = 'abs-dom';    %Star abstract domain (LP)
-% reachMethod = 'rstar-absdom-two';
-reachMethod = 'absdom';
-% reachMethod = 'approx-zono';
+% reachMethod = 'abs-dom'    %Star abstract domain (LP)
+% reachMethod = 'rstar-absdom-two'
+% reachMethod = 'absdom'
+reachMethod = 'approx-zono'
 
 
 relaxFactor = [0];
@@ -55,12 +55,12 @@ lp_solver = 'linprog' % 'linprog'
 %eps = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 % eps = [0.010, 0.012, 0.014, 0.016, 0.018, 0.0200];%, 0.022, 0.024, 0.026, 0.028, 0.030];
 
-% eps = [0.004,0.006,0.008,0.010,0.012,0.014];
+eps = [0.004,0.006,0.008,0.010,0.012,0.014];
 
 % eps = [0.0020, 0.0030, 0.0040, 0.005, 0.006, 0.007, 0.008];
 
-eps = [0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016];
-eps = 0.0016
+% eps = [0.0010, 0.0011, 0.0012, 0.0013, 0.0014, 0.0015, 0.0016];
+% eps = 0.0016
 
 
 % eps = [0.0020, 0.0040, 0.0060, 0.008, 0.010, 0.012];
